@@ -909,27 +909,48 @@
 
 
 
-  // Formulario de cita: abre el correo con los datos pre-llenados
+  // Formulario de cita: Envío directo y seguro con Web3Forms
   const citaForm = document.getElementById('citaForm');
   const formNote = document.getElementById('formNote');
-  citaForm.addEventListener('submit', (e) => {
+  const submitBtn = citaForm.querySelector('.cta-btn');
+
+  citaForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const f = new FormData(citaForm);
-    const subject = `Nueva cita — ${f.get('nombre')}`;
-    const body = [
-      'Solicitud de cita para toma de requerimientos',
-      '',
-      `Nombre completo: ${f.get('nombre')}`,
-      `Teléfono: ${f.get('telefono')}`,
-      `Dirección: ${f.get('direccion')}`,
-      '',
-      'Idea del requerimiento:',
-      f.get('idea'),
-    ].join('\n');
-    window.location.href = 'mailto:bragonyita@gmail.com'
-      + '?subject=' + encodeURIComponent(subject)
-      + '&body=' + encodeURIComponent(body);
-    formNote.textContent = 'Se abrió tu aplicación de correo con los datos listos — solo presiona enviar. ✉️';
+    
+    // Feedback visual de carga
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enviando...';
+    formNote.textContent = '';
+    formNote.style.color = 'var(--muted)';
+
+    const formData = new FormData(citaForm);
+    // Este placeholder será reemplazado automáticamente en el deploy por GitHub Actions usando un Secret.
+    formData.append('access_key', '__WEB3FORMS_ACCESS_KEY__'); 
+    formData.append('subject', `Nueva cita — ${formData.get('nombre')}`);
+    formData.append('from_name', 'Madera Viva Web');
+
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        formNote.style.color = '#f0d48a'; // Color oro claro de tu paleta
+        formNote.textContent = '¡Gracias! Hemos recibido tu requerimiento. Te contactaremos pronto. 🪵✨';
+        citaForm.reset();
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (error) {
+      formNote.style.color = '#ff6b6b';
+      formNote.textContent = 'Ocurrió un error al enviar. Por favor intenta de nuevo o contáctanos por teléfono.';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Agendar mi cita';
+    }
   });
 </script>
 </body>
