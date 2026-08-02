@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Madera Viva — Iluminando la esencia de la madera</title>
+<style>
+  :root {
+    --negro: #0d0b09;
+    --negro-card: #16120e;
+    --oro: #d4a94e;
+    --oro-claro: #f0d48a;
+    --texto: #e8ddc8;
+    --muted: #9a8c72;
+    /* Variables de la luz interactiva */
+    --glow-color: #fff2d0;
+    --glow-intensity: 1;
+    --glow-blur: 44px;
+    --gx: 0px;
+    --gy: 0px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  /* CTA de portada */
+  .hero-cta {
+    margin-top: 2.4rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--oro);
+    text-decoration: none;
+    font-size: 1rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    border: 1px solid #4a3d28;
+    border-radius: 999px;
+    padding: 0.85rem 2.2rem;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
+    z-index: 3;
+  }
+  .hero-cta:hover {
+    border-color: var(--oro);
+    color: var(--oro-claro);
+    box-shadow: 0 0 24px rgba(212,169,78,0.35);
+  }
+  .cta-arrow { animation: bounce-down 1.8s ease-in-out infinite; }
+  @keyframes bounce-down {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(4px); }
+  }
+
+  body {
+    background: var(--negro);
+    color: var(--texto);
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ============ HERO ============ */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 3rem 1.5rem;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 40%, rgba(60,45,25,0.25), transparent 70%),
+      var(--negro);
+    cursor: crosshair;
+  }
+
+  /* Luz ambiental que sigue al mouse */
+  .ambient-light {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      circle 420px at var(--mx, 50%) var(--my, 42%),
+      color-mix(in srgb, var(--glow-color) calc(var(--glow-intensity) * 14%), transparent),
+      transparent 75%
+    );
+    transition: background 0.15s ease-out;
+  }
+
+  .logo-wrap {
+    position: relative;
+    width: min(360px, 76vw);
+    aspect-ratio: 320 / 300;
+    margin-bottom: 2.5rem;
+  }
+
+  .logo-wrap svg, .logo-wrap .wood-img { width: 100%; height: 100%; display: block; }
+  .wood-img { position: relative; z-index: 3; object-fit: contain; }
+  .pegs-svg { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+
+  /* Capa de resplandor detrás de la madera (la luz indirecta) */
+  .glow-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    transform: translate(var(--gx), var(--gy)) scale(1.08);
+    opacity: var(--glow-intensity);
+    filter: blur(var(--glow-blur));
+    transition: opacity 0.25s ease, filter 0.25s ease;
+    pointer-events: none;
+  }
+  .glow-layer path { fill: var(--glow-color); }
+
+  /* Luz de borde: escapa por los canales entre las tablas */
+  .channel-light {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    transform: scale(1.015);
+    opacity: calc(var(--glow-intensity) * 0.9);
+    filter: blur(5px);
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+  }
+  .channel-light path { fill: var(--glow-color); }
+
+  .glow-layer.breathing, .channel-light.breathing {
+    animation: breathe 3.4s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: calc(var(--glow-intensity) * 0.55); }
+    50%      { opacity: var(--glow-intensity); }
+  }
+
+  .brand-title {
+    font-size: clamp(2.2rem, 6vw, 3.6rem);
+    letter-spacing: 0.28em;
+    color: var(--oro);
+    font-weight: 400;
+    text-align: center;
+    text-shadow: 0 0 24px color-mix(in srgb, var(--glow-color) 35%, transparent);
+  }
+  .brand-title small { display: block; font-size: 0.32em; letter-spacing: 0.55em; color: var(--muted); margin-top: 0.9rem; border-top: 1px solid #3a3225; padding-top: 0.9rem; }
+
+
+  .hint { position: absolute; bottom: 1.2rem; font-size: 0.7rem; letter-spacing: 0.2em; color: #5a4f3c; text-transform: uppercase; }
+
+  /* ============ SECCIONES ============ */
+  section { max-width: 1000px; margin: 0 auto; padding: 5.5rem 1.5rem; }
+
+  .section-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--oro);
+    margin-bottom: 0.8rem;
+  }
+  h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 400; color: var(--oro-claro); margin-bottom: 2rem; }
+
+  .vision-quote {
+    font-size: clamp(1.3rem, 3vw, 1.9rem);
+    font-style: italic;
+    color: var(--texto);
+    border-left: 3px solid var(--oro);
+    padding: 1.2rem 0 1.2rem 2rem;
+    background: linear-gradient(90deg, rgba(212,169,78,0.07), transparent 60%);
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.4rem;
+  }
+  .card {
+    background: var(--negro-card);
+    border: 1px solid #2a2318;
+    border-radius: 12px;
+    padding: 1.8rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.25s ease, transform 0.25s ease;
+  }
+  .card:hover { border-color: var(--oro); transform: translateY(-4px); }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--oro), transparent);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .card:hover::before { opacity: 1; }
+  .card h3 { color: var(--oro); font-weight: 400; font-size: 1.15rem; margin-bottom: 0.7rem; letter-spacing: 0.05em; }
+  .card p { color: var(--muted); font-size: 0.95rem; }
+
+  .team-card { display: flex; gap: 1.4rem; align-items: flex-start; }
+  .avatar {
+    flex-shrink: 0;
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem;
+    color: var(--negro);
+    background: linear-gradient(135deg, var(--oro-claro), var(--oro));
+    box-shadow: 0 0 22px rgba(212,169,78,0.35);
+  }
+  .team-card .rol { font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+
+  /* ============ PROCESO (pasos con clientes) ============ */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 1.4rem;
+    counter-reset: paso;
+  }
+  .step {
+    background: var(--negro-card);
+    border: 1px solid #2a2318;
+    border-radius: 12px;
+    padding: 2rem 1.6rem 1.8rem;
+    position: relative;
+    transition: border-color 0.25s ease, transform 0.25s ease;
+  }
+  .step:hover { border-color: var(--oro); transform: translateY(-4px); }
+  .step:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -1.15rem;
+    top: 2.1rem;
+    color: var(--oro);
+    font-size: 1.1rem;
+    z-index: 1;
+  }
+  .step-num {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.25rem;
+    color: var(--negro);
+    background: linear-gradient(135deg, var(--oro-claro), var(--oro));
+    box-shadow: 0 0 18px rgba(212,169,78,0.35);
+    margin-bottom: 1.1rem;
+  }
+  .step h3 { color: var(--oro); font-weight: 400; font-size: 1.1rem; margin-bottom: 0.6rem; letter-spacing: 0.04em; }
+  .step p { color: var(--muted); font-size: 0.92rem; }
+
+  /* ============ FORMULARIO DE CITA ============ */
+  .cita-form {
+    background: var(--negro-card);
+    border: 1px solid #2a2318;
+    border-radius: 14px;
+    padding: 2.2rem;
+    max-width: 760px;
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.3rem;
+  }
+  .form-field { display: flex; flex-direction: column; gap: 0.45rem; }
+  .form-wide { grid-column: 1 / -1; }
+  .form-field label {
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--oro);
+  }
+  .form-field input, .form-field textarea {
+    background: #0f0c09;
+    border: 1px solid #33291c;
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    color: var(--texto);
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    resize: vertical;
+  }
+  .form-field input:focus, .form-field textarea:focus {
+    border-color: var(--oro);
+    box-shadow: 0 0 0 3px rgba(212,169,78,0.15);
+  }
+  .form-field input::placeholder, .form-field textarea::placeholder { color: #5a4f3c; }
+  .cta-btn {
+    margin-top: 1.6rem;
+    background: linear-gradient(135deg, var(--oro-claro), var(--oro));
+    color: var(--negro);
+    border: none;
+    border-radius: 10px;
+    padding: 0.95rem 2.4rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 0 22px rgba(212,169,78,0.25);
+  }
+  .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 0 32px rgba(212,169,78,0.45); }
+  .form-note { margin-top: 1rem; font-size: 0.85rem; color: var(--muted); }
+
+  @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
+
+  /* ============ NUESTRO ESTILO ============ */
+  .estilo-intro { color: var(--muted); max-width: 640px; margin: -0.8rem 0 2.4rem; font-size: 1.02rem; }
+  .estilo-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 2.2rem;
+    align-items: center;
+  }
+  .estilo-grid + .estilo-grid { margin-top: 3.2rem; }
+  .estilo-reverse .room-vignette { order: 2; }
+  .estilo-reverse .estilo-features { order: 1; }
+  @media (max-width: 760px) {
+    .estilo-grid { grid-template-columns: 1fr; }
+    .estilo-reverse .room-vignette { order: 1; }
+    .estilo-reverse .estilo-features { order: 2; }
+  }
+
+  /* Viñeta: cocina — cielo de madera, gabinetes grafito, granito y barra de listones */
+  .gab-vignette { background: linear-gradient(180deg, #14110d, #0d0b08); }
+  .gv-ceiling {
+    position: absolute; top: 0; left: 0; right: 0; height: 10%;
+    background: repeating-linear-gradient(90deg, #6b4c2a 0 26px, #5a3f20 26px 52px);
+    border-bottom: 1px solid #2a1d0e;
+  }
+  .gv-cove {
+    position: absolute; top: 10%; left: 3%; right: 3%; height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(255,206,130,0.95), transparent);
+    box-shadow: 0 8px 34px 10px rgba(255,185,100,0.45);
+  }
+  .gv-uppers {
+    position: absolute; top: 16%; left: 8%; right: 8%; height: 22%;
+    display: flex; gap: 1.2%;
+  }
+  .gv-uppers span {
+    flex: 1;
+    background: linear-gradient(170deg, #3d4045 0%, #26282c 55%, #2e3136 100%);
+    border: 1px solid #1a1c1f;
+    border-radius: 2px;
+    box-shadow: inset 0 3px 8px rgba(255,255,255,0.07);
+  }
+  .gv-lightline {
+    position: absolute; top: 38.5%; left: 8%; right: 8%; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255,244,220,0.95), transparent);
+    box-shadow: 0 5px 24px 6px rgba(255,235,200,0.35);
+  }
+  .gv-backsplash {
+    position: absolute; top: 39%; left: 8%; right: 8%; height: 15%;
+    background:
+      repeating-linear-gradient(112deg, rgba(150,138,120,0.28) 0 1.5px, transparent 1.5px 30px),
+      linear-gradient(180deg, #d9d3c6, #c3bcab);
+  }
+  .gv-counter {
+    position: absolute; top: 54%; left: 6.5%; right: 6.5%; height: 4%;
+    background: linear-gradient(180deg, #17181c, #060608);
+    border-radius: 2px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.65), inset 0 1px 2px rgba(255,255,255,0.12);
+  }
+  .gv-lowers {
+    position: absolute; top: 58%; left: 8%; right: 8%; height: 12%;
+    display: flex; gap: 1.2%;
+  }
+  .gv-lowers span {
+    flex: 1;
+    background: linear-gradient(180deg, #34373b, #202225);
+    border: 1px solid #17191c;
+    border-radius: 2px;
+  }
+  .gv-islandtop {
+    position: absolute; top: 70%; left: 3%; right: 3%; height: 4.5%;
+    background: linear-gradient(180deg, #1a1b20, #050507);
+    border-radius: 2px;
+    box-shadow: 0 5px 16px rgba(0,0,0,0.7), inset 0 1px 2px rgba(255,255,255,0.14);
+    z-index: 2;
+  }
+  .gv-island {
+    position: absolute; top: 74.5%; left: 3%; right: 3%; bottom: 0;
+    background: repeating-linear-gradient(90deg, #c39a5e 0 7px, #241808 7px 13px);
+    box-shadow: inset 0 22px 34px -6px rgba(255,196,110,0.55), inset 0 -18px 26px rgba(0,0,0,0.55);
+  }
+
+  /* Viñeta: baño — espejo LED + mueble flotante (sin retrete) */
+  .ban-vignette { background: linear-gradient(180deg, #17130f 0%, #100d0a 60%, #0b0907 100%); }
+  .bv-mirror {
+    position: absolute; top: 8%; left: 24%; right: 24%; height: 44%;
+    background: linear-gradient(125deg, #262320 0%, #1a1815 45%, #232019 100%);
+    border-radius: 5px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  }
+  .bv-mframe {
+    position: absolute; inset: 7%;
+    border: 2px solid rgba(255,242,208,0.95);
+    border-radius: 3px;
+    box-shadow: 0 0 20px rgba(255,235,190,0.55), inset 0 0 20px rgba(255,235,190,0.35);
+  }
+  .bv-counter {
+    position: absolute; top: 56%; left: 16%; right: 16%; height: 3%;
+    background: linear-gradient(180deg, #efe8da, #cfc6b4);
+    border-radius: 2px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.55);
+  }
+  .bv-sink {
+    position: absolute; top: 49.5%; left: 21%; width: 17%; height: 7%;
+    background: linear-gradient(180deg, #f4efe4, #d8d0bf);
+    border-radius: 6px 6px 8px 8px;
+    box-shadow: inset 0 -4px 8px rgba(0,0,0,0.15);
+  }
+  .bv-faucet {
+    position: absolute; top: 46%; left: 41%; width: 1.6%; height: 11%;
+    background: linear-gradient(180deg, var(--oro-claro), var(--oro));
+    border-radius: 2px 2px 0 0;
+  }
+  .bv-faucet::after {
+    content: '';
+    position: absolute; top: 0; right: 100%; width: 320%; height: 22%;
+    background: linear-gradient(90deg, var(--oro), var(--oro-claro));
+    border-radius: 2px;
+  }
+  .bv-vanity {
+    position: absolute; top: 61%; left: 18%; right: 18%; height: 22%;
+    display: flex; flex-direction: column; gap: 4%;
+  }
+  .bv-vanity span {
+    flex: 1;
+    background-color: #4a3722;
+    background-image: repeating-linear-gradient(90deg, rgba(0,0,0,0.14) 0 3px, transparent 3px 9px);
+    border: 1px solid #2a1e10;
+    border-radius: 4px;
+    position: relative;
+  }
+  .bv-vanity span::after {
+    content: '';
+    position: absolute; top: 42%; left: 40%; width: 20%; height: 8%;
+    background: linear-gradient(90deg, var(--oro-claro), var(--oro));
+    border-radius: 2px;
+    opacity: 0.9;
+  }
+  .bv-glow {
+    position: absolute; top: 84.5%; left: 22%; right: 22%; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255,218,155,0.7), transparent);
+    box-shadow: 0 6px 26px 8px rgba(255,190,110,0.3);
+  }
+
+  /* Viñeta: terraza con techo WPC tipo madera en perspectiva 3D */
+  .per-vignette { perspective: 700px; }
+  .pv-sky {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 90% 60% at 50% 100%, #16130e, #0a0806 70%);
+  }
+  .pv-ceiling3d {
+    position: absolute; top: 5%; left: 5%; right: 5%; height: 72%;
+    background:
+      repeating-linear-gradient(180deg, rgba(0,0,0,0.35) 0 2px, transparent 2px 11px),
+      linear-gradient(180deg, #6b4c2a 0%, #57402290 55%, #33240f 100%),
+      #4a3520;
+    transform: perspective(620px) rotateX(-36deg);
+    transform-origin: 50% 0%;
+    border-bottom: 1px solid #1a1208;
+    box-shadow: inset 0 30px 50px rgba(255,190,110,0.12);
+  }
+  .pv-spot {
+    position: absolute; width: 1.6%; aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle at 45% 40%, #fff8e2 0%, #ffdf9e 45%, rgba(120,90,50,0.4) 75%, transparent 100%);
+    box-shadow: 0 0 22px 6px rgba(255,230,180,0.55);
+  }
+  .pv-strip-near {
+    position: absolute; top: 4%; left: 7%; right: 7%; height: 2.5px;
+    background: linear-gradient(90deg, transparent 2%, rgba(255,228,175,0.95) 15%, rgba(255,228,175,0.95) 85%, transparent 98%);
+    box-shadow: 0 8px 38px 10px rgba(255,195,110,0.35);
+  }
+  .pv-glowwash {
+    position: absolute; top: 53%; left: 10%; right: 10%; height: 32%;
+    background: radial-gradient(ellipse 70% 100% at 50% 0%, rgba(255,200,120,0.14), transparent 75%);
+  }
+  .pv-floor3d {
+    position: absolute; bottom: -2%; left: -8%; right: -8%; height: 26%;
+    background:
+      repeating-linear-gradient(90deg, rgba(0,0,0,0.25) 0 2px, transparent 2px 40px),
+      linear-gradient(180deg, #241a0e, #38281564);
+    transform: perspective(700px) rotateX(50deg);
+    transform-origin: 50% 100%;
+    border-top: 1px solid rgba(255,214,150,0.14);
+    box-shadow: inset 0 16px 30px rgba(255,190,110,0.1);
+  }
+
+  /* Viñeta: muro TV con luz indirecta (CSS puro) */
+  .room-vignette {
+    position: relative;
+    aspect-ratio: 5 / 4;
+    border-radius: 14px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #191512 0%, #12100c 55%, #0c0a08 100%);
+    border: 1px solid #2a2318;
+  }
+  .rv-ceiling {
+    position: absolute; top: 0; left: 4%; right: 4%; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255,214,150,0.75), transparent);
+    box-shadow: 0 4px 26px 6px rgba(255,190,110,0.28);
+  }
+  .rv-slats {
+    position: absolute; top: 8%; bottom: 22%; left: 6%; width: 15%;
+    background: repeating-linear-gradient(90deg, #43301d 0 5px, #191209 5px 11px);
+    border-radius: 3px;
+    box-shadow: -8px 0 22px rgba(255,190,110,0.12), inset 0 -30px 40px rgba(0,0,0,0.55);
+  }
+  .rv-circle {
+    position: absolute; top: 14%; left: 27%; width: 44%; aspect-ratio: 1;
+    border-radius: 50%;
+    border: 2px solid rgba(255,222,168,0.85);
+    box-shadow: 0 0 26px rgba(255,190,110,0.45), inset 0 0 26px rgba(255,190,110,0.28);
+  }
+  .rv-tv {
+    position: absolute; top: 26%; left: 31%; width: 36%; height: 26%;
+    background: #060504;
+    border: 1px solid #21180f;
+    border-radius: 3px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  }
+  .rv-shelf {
+    position: absolute; top: 10%; right: 7%; width: 13%; bottom: 30%;
+    display: flex; flex-direction: column; gap: 8%;
+  }
+  .rv-shelf span {
+    flex: 1;
+    background: #171209;
+    border-radius: 3px;
+    box-shadow: inset 0 -14px 22px rgba(255,190,110,0.30), inset 0 2px 6px rgba(0,0,0,0.6);
+  }
+  .rv-console {
+    position: absolute; bottom: 15%; left: 10%; width: 68%; height: 7%;
+    background: linear-gradient(180deg, #1c1712, #0f0c09);
+    border-radius: 4px;
+    box-shadow: 0 16px 26px -8px rgba(255,190,110,0.35);
+  }
+  .rv-floor {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 12%;
+    background: linear-gradient(180deg, #241b10, #17110a);
+    border-top: 1px solid rgba(255,214,150,0.12);
+  }
+
+  .estilo-features { display: flex; flex-direction: column; gap: 1.6rem; }
+
+  /* Servicios */
+  .serv-icon {
+    color: var(--oro);
+    font-size: 0.85rem;
+    margin-bottom: 0.8rem;
+    text-shadow: 0 0 12px rgba(255,190,110,0.6);
+  }
+  .feature { position: relative; padding-left: 1.4rem; }
+  .feature-bar {
+    position: absolute; left: 0; top: 0.3rem; bottom: 0.3rem; width: 3px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, var(--oro-claro), rgba(212,169,78,0.15));
+    box-shadow: 0 0 12px rgba(255,190,110,0.4);
+  }
+  .feature h3 { color: var(--oro); font-weight: 400; font-size: 1.12rem; margin-bottom: 0.45rem; letter-spacing: 0.04em; }
+  .feature p { color: var(--muted); font-size: 0.94rem; }
+
+  footer {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    border-top: 1px solid #221c13;
+    color: #5a4f3c;
+    font-size: 0.78rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+  }
+  footer .mini-m { color: var(--oro); font-size: 1.4rem; display: block; margin-bottom: 0.8rem; }
+</style>
+</head>
+<body>
+
+<!-- ============ HERO CON LUZ INTERACTIVA ============ -->
+<div class="hero" id="hero">
+  <div class="ambient-light" id="ambient"></div>
+
+  <div class="logo-wrap">
+    <!-- Capa 1: luz indirecta detrás de la madera (silueta EXACTA vectorizada de la foto) -->
+    <div class="glow-layer breathing" id="glow">
+      <svg viewBox="95 45 320 300" aria-hidden="true">
+        <path d="M 157 77 L 189.4 77 L 252.5 178 L 315.6 77 L 348 77 L 252.5 230 Z M 126 98 L 149 98 L 252.5 263.6 L 356 98 L 384 98 L 384 312 L 356 312 L 356 146.2 L 265.5 291 L 239.5 291 L 149 146.2 L 149 312 L 126 312 Z"/>
+      </svg>
+    </div>
+
+    <!-- Capa 2: luz de borde que escapa por los canales (misma silueta, blur corto) -->
+    <div class="channel-light breathing" id="channels">
+      <svg viewBox="95 45 320 300" aria-hidden="true">
+        <path d="M 157 77 L 189.4 77 L 252.5 178 L 315.6 77 L 348 77 L 252.5 230 Z M 126 98 L 149 98 L 252.5 263.6 L 356 98 L 384 98 L 384 312 L 356 312 L 356 146.2 L 265.5 291 L 239.5 291 L 149 146.2 L 149 312 L 126 312 Z"/>
+      </svg>
+    </div>
+
+    <!-- Capa 3: la madera REAL recortada de la foto original (canales transparentes) -->
+    <svg class="wood-img" viewBox="95 45 320 300" role="img" aria-label="Logo M de Madera Viva en madera de nogal">
+      <defs><clipPath id="mClip"><path d="M 157 77 L 189.4 77 L 252.5 178 L 315.6 77 L 348 77 L 252.5 230 Z M 126 98 L 149 98 L 252.5 263.6 L 356 98 L 384 98 L 384 312 L 356 312 L 356 146.2 L 265.5 291 L 239.5 291 L 149 146.2 L 149 312 L 126 312 Z"/></clipPath></defs>
+      <image href="logo-texture.png" x="-2" y="-3" width="512" height="512" clip-path="url(#mClip)"/>
+    </svg>
+  </div>
+
+  <h1 class="brand-title">MADERA&nbsp;VIVA
+    <small>ILUMINANDO LA ESENCIA DE LA MADERA</small>
+  </h1>
+
+  <a href="#agendar" class="hero-cta">Empieza acá <span class="cta-arrow">↓</span></a>
+
+  <p class="hint">Mueve el cursor para dirigir la luz</p>
+</div>
+
+<!-- ============ VISIÓN ============ -->
+<section>
+  <p class="section-label">Nuestra Visión</p>
+  <h2>Creamos experiencias, no solo productos</h2>
+  <blockquote class="vision-quote">
+    "Entregar un servicio de calidad y que los clientes crean en nosotros."
+  </blockquote>
+</section>
+
+<!-- ============ NUESTRO ESTILO ============ -->
+<section id="estilo">
+  <p class="section-label">Nuestro Estilo</p>
+  <h2>Espacios que proyectan elegancia</h2>
+  <p class="estilo-intro">Cada pared vacía tiene potencial. Diseñamos ambientes donde la madera, los paneles oscuros y la luz indirecta se combinan para transformar tu espacio en una experiencia.</p>
+  <div class="estilo-grid">
+    <div class="room-vignette" aria-hidden="true">
+      <div class="rv-ceiling"></div>
+      <div class="rv-slats"></div>
+      <div class="rv-circle"></div>
+      <div class="rv-tv"></div>
+      <div class="rv-shelf"><span></span><span></span><span></span></div>
+      <div class="rv-console"></div>
+      <div class="rv-floor"></div>
+    </div>
+    <div class="estilo-features">
+      <div class="feature">
+        <div class="feature-bar"></div>
+        <h3>Muros y paneles TV</h3>
+        <p>Paneles en tonos oscuros con acentos de madera que convierten la pared principal en el corazón del ambiente.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-bar"></div>
+        <h3>Iluminación indirecta cálida</h3>
+        <p>Líneas y curvas de luz LED que abrazan la madera, creando profundidad y una atmósfera acogedora.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-bar"></div>
+        <h3>Mobiliario flotante a medida</h3>
+        <p>Consolas, repisas y nichos iluminados diseñados milímetro a milímetro para tu espacio.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="estilo-grid estilo-reverse">
+    <div class="room-vignette gab-vignette" aria-hidden="true">
+      <div class="gv-ceiling"></div>
+      <div class="gv-cove"></div>
+      <div class="gv-uppers"><span></span><span></span><span></span><span></span></div>
+      <div class="gv-lightline"></div>
+      <div class="gv-backsplash"></div>
+      <div class="gv-counter"></div>
+      <div class="gv-lowers"><span></span><span></span><span></span><span></span></div>
+      <div class="gv-islandtop"></div>
+      <div class="gv-island"></div>
+    </div>
+    <div class="estilo-features">
+      <div class="feature">
+        <div class="feature-bar"></div>
+        <h3>Gabinetes que se sienten de lujo</h3>
+        <p>Puertas elegantes sin tiradores, cubiertas tipo granito y barras revestidas con listones de madera iluminados.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-bar"></div>
+        <h3>Cada centímetro aprovechado</h3>
+        <p>Diseño a medida: tus gabinetes se adaptan a tu espacio y a tu forma de usarlo, no al revés.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="estilo-grid">
+    <div class="room-vignette ban-vignette" aria-hidden="true">
+      <div class="bv-mirror"><div class="bv-mframe"></div></div>
+      <div class="bv-counter"></div>
+      <div class="bv-sink"></div>
+      <div class="bv-faucet"></div>
+      <div class="bv-vanity"><span></span><span></span></div>
+      <div class="bv-glow"></div>
+    </div>
+    <div class="estilo-features">
+      <div class="feature">
+        <div class="feature-bar"></div>
+        <h3>Baños con calidez y elegancia</h3>
+        <p>Espejos con luz propia que iluminan tu rostro de manera uniforme, perfectos para empezar el día.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-bar"></div>
+        <h3>Muebles que flotan</h3>
+        <p>Gavetas de madera resistentes a la humedad con luz inferior, que hacen sentir el baño más amplio y lujoso.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="estilo-grid estilo-reverse">
+    <div class="room-vignette per-vignette" aria-hidden="true">
+      <div class="pv-sky"></div>
+      <div class="pv-ceiling3d">
+        <span class="pv-spot" style="left:27%;top:14%"></span>
+        <span class="pv-spot" style="left:50%;top:14%"></span>
+        <span class="pv-spot" style="left:73%;top:14%"></span>
+        <span class="pv-spot" style="left:27%;top:40%"></span>
+        <span class="pv-spot" style="left:50%;top:40%"></span>
+        <span class="pv-spot" style="left:73%;top:40%"></span>
+        <span class="pv-spot" style="left:27%;top:66%"></span>
+        <span class="pv-spot" style="left:50%;top:66%"></span>
+        <span class="pv-spot" style="left:73%;top:66%"></span>
+      </div>
+      <div class="pv-strip-near"></div>
+      <div class="pv-glowwash"></div>
+      <div class="pv-floor3d"></div>
+    </div>
+    <div class="estilo-features">
+      <div class="feature">
+        <div class="feature-bar"></div>
+        <h3>Techos tipo madera con luz integrada</h3>
+        <p>Nuestra especialidad: cielos de listones que se ven y se sienten como madera real, pero de un material moderno (WPC) que no se pudre ni se deforma.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-bar"></div>
+        <h3>Pérgolas y terrazas para vivir la noche</h3>
+        <p>Focos empotrados y líneas de luz LED integradas que convierten tu terraza en el rincón favorito de la casa.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SERVICIOS ============ -->
+<section id="servicios">
+  <p class="section-label">Nuestros Servicios</p>
+  <h2>Todo lo que podemos hacer por tu espacio</h2>
+  <p class="estilo-intro">El muro con luz es solo un ejemplo. Trabajamos cada rincón de tu casa, por dentro y por fuera.</p>
+  <div class="cards servicios-grid">
+    <div class="card">
+      <div class="serv-icon">◆</div>
+      <h3>Muros y paneles TV</h3>
+      <p>Paredes principales con madera, paneles y luz indirecta que transforman tu sala.</p>
+    </div>
+    <div class="card">
+      <div class="serv-icon">◆</div>
+      <h3>Gabinetes</h3>
+      <p>Gabinetes a medida para cocina y todo el hogar, con acabados finos y diseño funcional.</p>
+    </div>
+    <div class="card">
+      <div class="serv-icon">◆</div>
+      <h3>Muebles para el baño</h3>
+      <p>Muebles elegantes y resistentes a la humedad, diseñados para aprovechar cada centímetro.</p>
+    </div>
+    <div class="card">
+      <div class="serv-icon">◆</div>
+      <h3>Techos de madera y vigas</h3>
+      <p>Techos con calidez de madera y vigas decorativas de materiales modernos que no se deforman ni requieren mantenimiento.</p>
+    </div>
+    <div class="card">
+      <div class="serv-icon">◆</div>
+      <h3>Pisos modernos</h3>
+      <p>Pisos con apariencia de madera, resistentes al agua y al uso diario — perfectos para toda la casa.</p>
+    </div>
+    <div class="card">
+      <div class="serv-icon">◆</div>
+      <h3>Pérgolas</h3>
+      <p>Espacios exteriores con sombra y estilo: pérgolas que convierten tu terraza o jardín en un lugar para disfrutar.</p>
+    </div>
+    <div class="card">
+      <div class="serv-icon">◆</div>
+      <h3>Techos estilo canadiense</h3>
+      <p>Techos con teja shingle: elegantes, duraderos y con ese acabado de cabaña moderna.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PILARES EMPRESARIALES ============ -->
+<section>
+  <p class="section-label">Pilares Empresariales</p>
+  <h2>Lo que nos define</h2>
+  <div class="cards">
+    <div class="card">
+      <h3>Maestría técnica</h3>
+      <p>No creamos productos: creamos experiencias. Cada pieza refleja precisión, oficio y pasión por la madera.</p>
+    </div>
+    <div class="card">
+      <h3>Escalabilidad</h3>
+      <p>Nuestra ambición es movernos por toda Guatemala, llevando calidad y confianza a cada rincón del país.</p>
+    </div>
+    <div class="card">
+      <h3>Innovación continua</h3>
+      <p>Creamos nuevos productos y optimizamos los procesos que ya existen para entregar siempre lo mejor.</p>
+    </div>
+    <div class="card">
+      <h3>Compromiso</h3>
+      <p>Cumplimos con los tiempos de entrega y respetamos los precios acordados. Nuestra palabra es nuestro contrato.</p>
+    </div>
+    <div class="card">
+      <h3>Atención de primer nivel</h3>
+      <p>El cliente está en el centro de todo. Cada interacción debe ser una experiencia de primer nivel.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ MECANISMOS DE CONTROL ============ -->
+<section>
+  <p class="section-label">Nuestro Proceso</p>
+  <h2>De la idea a tu proyecto terminado</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Agenda tu cita</h3>
+      <p>Coordinamos una visita para la toma de requerimientos y entender exactamente lo que necesitas.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Cotización</h3>
+      <p>Recibes una propuesta clara y detallada, con precios y tiempos definidos desde el inicio.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Ejecución</h3>
+      <p>Manos a la obra: fabricamos tu proyecto con maestría técnica y supervisión de calidad constante.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h3>Entrega de proyecto</h3>
+      <p>Recibes tu proyecto en el tiempo acordado, listo para iluminar tu espacio.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AGENDA TU CITA ============ -->
+<section id="agendar">
+  <p class="section-label">Agenda tu Cita</p>
+  <h2>Cuéntanos tu idea y te visitamos</h2>
+  <form class="cita-form" id="citaForm">
+    <div class="form-grid">
+      <div class="form-field">
+        <label for="nombre">Nombre completo</label>
+        <input type="text" id="nombre" name="nombre" required autocomplete="name" placeholder="Tu nombre y apellido">
+      </div>
+      <div class="form-field">
+        <label for="telefono">Número de teléfono</label>
+        <input type="tel" id="telefono" name="telefono" required autocomplete="tel" placeholder="5555-5555">
+      </div>
+      <div class="form-field form-wide">
+        <label for="direccion">Dirección</label>
+        <input type="text" id="direccion" name="direccion" required autocomplete="street-address" placeholder="Dirección donde se realizará el proyecto">
+      </div>
+      <div class="form-field form-wide">
+        <label for="idea">Idea del requerimiento</label>
+        <textarea id="idea" name="idea" rows="4" required placeholder="Cuéntanos qué tienes en mente: mueble, iluminación, espacio a transformar..."></textarea>
+      </div>
+    </div>
+    <button type="submit" class="cta-btn">Agendar mi cita</button>
+    <p class="form-note" id="formNote"></p>
+  </form>
+</section>
+
+<footer>
+  <span class="mini-m">M</span>
+  Madera Viva · Iluminando la esencia de la madera · Guatemala
+</footer>
+
+<script>
+  const root = document.documentElement;
+  const hero = document.getElementById('hero');
+  const glow = document.getElementById('glow');
+
+  // La luz sigue al cursor: la posición del mouse actúa como fuente de luz,
+  // el resplandor detrás de la madera se desplaza en dirección opuesta (sombra proyectada).
+  hero.addEventListener('mousemove', (e) => {
+    const rect = hero.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width;   // 0..1
+    const py = (e.clientY - rect.top) / rect.height;   // 0..1
+
+    // Luz ambiental sigue directamente al mouse
+    root.style.setProperty('--mx', (px * 100) + '%');
+    root.style.setProperty('--my', (py * 100) + '%');
+
+    // El halo detrás de la M se desplaza sutilmente en sentido opuesto al cursor
+    const dx = (0.5 - px) * 36;
+    const dy = (0.5 - py) * 36;
+    root.style.setProperty('--gx', dx.toFixed(1) + 'px');
+    root.style.setProperty('--gy', dy.toFixed(1) + 'px');
+  });
+
+  // Soporte táctil
+  hero.addEventListener('touchmove', (e) => {
+    const t = e.touches[0];
+    if (!t) return;
+    const rect = hero.getBoundingClientRect();
+    const px = (t.clientX - rect.left) / rect.width;
+    const py = (t.clientY - rect.top) / rect.height;
+    root.style.setProperty('--mx', (px * 100) + '%');
+    root.style.setProperty('--my', (py * 100) + '%');
+    root.style.setProperty('--gx', ((0.5 - px) * 36).toFixed(1) + 'px');
+    root.style.setProperty('--gy', ((0.5 - py) * 36).toFixed(1) + 'px');
+  }, { passive: true });
+
+
+
+  // Formulario de cita: abre el correo con los datos pre-llenados
+  const citaForm = document.getElementById('citaForm');
+  const formNote = document.getElementById('formNote');
+  citaForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const f = new FormData(citaForm);
+    const subject = `Nueva cita — ${f.get('nombre')}`;
+    const body = [
+      'Solicitud de cita para toma de requerimientos',
+      '',
+      `Nombre completo: ${f.get('nombre')}`,
+      `Teléfono: ${f.get('telefono')}`,
+      `Dirección: ${f.get('direccion')}`,
+      '',
+      'Idea del requerimiento:',
+      f.get('idea'),
+    ].join('\n');
+    window.location.href = 'mailto:bragonyita@gmail.com'
+      + '?subject=' + encodeURIComponent(subject)
+      + '&body=' + encodeURIComponent(body);
+    formNote.textContent = 'Se abrió tu aplicación de correo con los datos listos — solo presiona enviar. ✉️';
+  });
+</script>
+</body>
+</html>
