@@ -247,7 +247,7 @@
     opacity: 0; transform: translateY(8px); transition: opacity .3s ease, transform .3s ease;
   }
   .galeria figure:hover figcaption { opacity: 1; transform: none; }
-  .galeria-cta { margin-top: 40px; display: flex; align-items: center; justify-content: center; gap: 14px; }
+  .galeria-cta { margin-top: 40px; display: flex; align-items: center; justify-content: center; gap: 18px 36px; flex-wrap: wrap; }
   .ig-link { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-size: 13px; letter-spacing: .08em; color: var(--nogal); font-weight: 500; }
   .ig-link img { width: 26px; height: 26px; }
 
@@ -314,8 +314,11 @@
   .foot-links { display: flex; gap: 26px; justify-content: center; flex-wrap: wrap; margin-top: 28px; font-size: 13px; }
   .foot-links a { text-decoration: none; color: rgba(240,234,224,.8); }
   .foot-links a:hover { color: var(--marfil); }
-  .foot-ig { display: inline-flex; margin-top: 26px; background: var(--marfil); border-radius: 50%; padding: 9px; }
-  .foot-ig img { width: 24px; height: 24px; }
+  .foot-social { display: flex; gap: 14px; justify-content: center; margin-top: 26px; }
+  .foot-social a { display: inline-flex; background: var(--marfil); border-radius: 50%; padding: 9px; transition: transform .2s ease; }
+  .foot-social a:hover { transform: translateY(-2px); }
+  .foot-social img { width: 24px; height: 24px; }
+  .galeria.vacia { display: none; }
   .copy { margin-top: 36px; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: rgba(240,234,224,.4); }
 
   /* WhatsApp flotante */
@@ -520,6 +523,9 @@
       <a href="https://www.instagram.com/maderavivagt/" target="_blank" rel="noopener" class="ig-link">
         <img src="img/instagram.png" alt="">Más proyectos en @maderavivagt
       </a>
+      <a href="https://wa.me/50230508989?text=Hola%20Madera%20Viva%2C%20quiero%20cotizar%20un%20proyecto" target="_blank" rel="noopener" class="ig-link">
+        <img src="img/whatsapp.svg" alt="">Cotiza por WhatsApp
+      </a>
     </div>
   </div>
 </section>
@@ -582,7 +588,7 @@
       </div>
       <ul class="contacto-lista">
         <li><span>WhatsApp</span><a href="https://wa.me/50230508989?text=Hola%20Madera%20Viva%2C%20quiero%20agendar%20una%20visita" target="_blank" rel="noopener">3050 8989</a></li>
-        <li><span>Correo</span><a href="mailto:info@maderavivagt.com">info@maderavivagt.com</a></li>
+        <li><span>Correo</span><a href="mailto:andres@maderavivagt.com">andres@maderavivagt.com</a></li>
       </ul>
     </div>
     <form class="cita-form reveal" id="citaForm">
@@ -620,9 +626,12 @@
       <a href="#proyectos">Proyectos</a>
       <a href="#agendar">Agenda tu visita</a>
       <a href="https://wa.me/50230508989" target="_blank" rel="noopener">WhatsApp 3050 8989</a>
-      <a href="mailto:info@maderavivagt.com">info@maderavivagt.com</a>
+      <a href="mailto:andres@maderavivagt.com">andres@maderavivagt.com</a>
     </div>
-    <a href="https://www.instagram.com/maderavivagt/" target="_blank" rel="noopener" class="foot-ig" aria-label="Instagram de Madera Viva"><img src="img/instagram.png" alt=""></a>
+    <div class="foot-social">
+      <a href="https://www.instagram.com/maderavivagt/" target="_blank" rel="noopener" aria-label="Instagram de Madera Viva"><img src="img/instagram.png" alt=""></a>
+      <a href="https://wa.me/50230508989?text=Hola%20Madera%20Viva%2C%20quiero%20m%C3%A1s%20informaci%C3%B3n" target="_blank" rel="noopener" aria-label="WhatsApp de Madera Viva"><img src="img/whatsapp.svg" alt=""></a>
+    </div>
     <p class="copy">Madera Viva · Guatemala</p>
   </div>
 </footer>
@@ -674,6 +683,10 @@
   vid.addEventListener('loadedmetadata', () => {
     if (vid.videoWidth > vid.videoHeight) document.getElementById('videoFrame').classList.add('landscape');
   });
+
+  // ---- Galería: se oculta mientras no haya fotos
+  const galeria = document.getElementById('galeria');
+  if (!galeria.querySelector('figure')) galeria.classList.add('vacia');
 
   // ---- Galería con foto ampliada
   const lb = document.getElementById('lightbox');
