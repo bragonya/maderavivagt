@@ -3,17 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Madera Viva — Iluminando la esencia de la madera</title>
+<title>Madera Viva — Diseño que transforma, detalles que iluminan</title>
+<meta name="description" content="Madera Viva diseña, fabrica e instala proyectos en madera, melamina y WPC para casas y comercios en Guatemala: paneles con luz LED, muebles a medida, cocinas, pérgolas y más.">
+<meta property="og:title" content="Madera Viva — Diseño que transforma, detalles que iluminan">
+<meta property="og:description" content="Paneles decorativos, muebles a medida, cocinas y pérgolas en madera, melamina y WPC. Visita y cotización sin costo.">
+<meta property="og:image" content="https://maderavivagt.com/email/mv-hero.jpg">
+<meta property="og:url" content="https://maderavivagt.com/">
+<meta name="theme-color" content="#292724">
+<link rel="icon" type="image/png" href="img/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --negro: #0d0b09;
-    --negro-card: #16120e;
-    --oro: #d4a94e;
-    --oro-claro: #f0d48a;
-    --texto: #e8ddc8;
-    --muted: #9a8c72;
-    /* Variables de la luz interactiva */
-    --glow-color: #fff2d0;
+    --nogal: #8B6549;
+    --nogal-oscuro: #6E4F38;
+    --arena: #D5C1A4;
+    --marfil: #F0EAE0;
+    --marfil-claro: #F7F3EC;
+    --carbon: #292724;
+    --texto: #4A4540;
+    --muted: #6B635B;
+    --linea: #E0D3C0;
+    --serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    --sans: 'Montserrat', Arial, Helvetica, sans-serif;
+    /* Luz interactiva del logo */
+    --glow-color: #ffe9c2;
     --glow-intensity: 1;
     --glow-blur: 44px;
     --gx: 0px;
@@ -21,935 +36,691 @@
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
-
-  /* CTA de portada */
-  .hero-cta {
-    margin-top: 2.4rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    color: var(--oro);
-    text-decoration: none;
-    font-size: 1rem;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    border: 1px solid #4a3d28;
-    border-radius: 999px;
-    padding: 0.85rem 2.2rem;
-    transition: border-color 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
-    z-index: 3;
-  }
-  .hero-cta:hover {
-    border-color: var(--oro);
-    color: var(--oro-claro);
-    box-shadow: 0 0 24px rgba(212,169,78,0.35);
-  }
-  .cta-arrow { animation: bounce-down 1.8s ease-in-out infinite; }
-  @keyframes bounce-down {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(4px); }
-  }
-
+  html { scroll-behavior: smooth; scroll-padding-top: 76px; }
   body {
-    background: var(--negro);
+    background: var(--marfil-claro);
     color: var(--texto);
-    font-family: Georgia, 'Times New Roman', serif;
-    line-height: 1.6;
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  img, video { max-width: 100%; display: block; }
+  a { color: inherit; }
+
+  .wrap { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+
+  /* ============ NAVEGACIÓN ============ */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    transition: background .3s ease, box-shadow .3s ease;
+  }
+  .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+  .nav-logo img { height: 40px; width: auto; transition: opacity .3s ease; }
+  .nav-logo .logo-dark { display: none; }
+  .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+  .nav-links a {
+    text-decoration: none; font-size: 12px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--marfil); font-weight: 500; transition: color .2s ease;
+  }
+  .nav-links a:hover { color: var(--arena); }
+  .nav-cta {
+    border: 1px solid rgba(240,234,224,.5); padding: 9px 18px;
+  }
+  .nav.scrolled { background: rgba(247,243,236,.96); backdrop-filter: blur(8px); box-shadow: 0 1px 0 var(--linea); }
+  .nav.scrolled .nav-links a { color: var(--carbon); }
+  .nav.scrolled .nav-links a:hover { color: var(--nogal); }
+  .nav.scrolled .nav-cta { border-color: var(--nogal); color: var(--nogal) !important; }
+  .nav.scrolled .logo-light { display: none; }
+  .nav.scrolled .logo-dark { display: block; }
+  .nav-toggle { display: none; background: none; border: 0; cursor: pointer; padding: 8px; }
+  .nav-toggle span { display: block; width: 24px; height: 1.5px; background: var(--marfil); margin: 6px 0; transition: transform .25s ease, opacity .25s ease; }
+  .nav.scrolled .nav-toggle span, .nav.open .nav-toggle span { background: var(--carbon); }
+
+  @media (max-width: 860px) {
+    .nav-toggle { display: block; }
+    .nav-links {
+      position: fixed; top: 72px; left: 0; right: 0;
+      flex-direction: column; gap: 0; background: var(--marfil-claro);
+      border-bottom: 1px solid var(--linea);
+      max-height: 0; overflow: hidden; transition: max-height .3s ease;
+    }
+    .nav.open { background: var(--marfil-claro); }
+    .nav.open .logo-light { display: none; }
+    .nav.open .logo-dark { display: block; }
+    .nav.open .nav-links { max-height: 360px; }
+    .nav-links li { width: 100%; border-top: 1px solid var(--linea); }
+    .nav-links a { display: block; padding: 16px 24px; color: var(--carbon); }
+    .nav-cta { border: 0; color: var(--nogal) !important; }
+    .nav.open .nav-toggle span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+    .nav.open .nav-toggle span:nth-child(2) { opacity: 0; }
+    .nav.open .nav-toggle span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
   }
 
-  /* ============ HERO ============ */
+  /* ============ HERO CON LUZ ============ */
   .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    padding: 3rem 1.5rem;
+    min-height: 100vh; min-height: 100svh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    padding: 110px 24px 80px;
     background:
-      radial-gradient(ellipse 80% 60% at 50% 40%, rgba(60,45,25,0.25), transparent 70%),
-      var(--negro);
-    cursor: crosshair;
-  }
-
-  /* Luz ambiental que sigue al mouse */
-  .ambient-light {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: radial-gradient(
-      circle 420px at var(--mx, 50%) var(--my, 42%),
-      color-mix(in srgb, var(--glow-color) calc(var(--glow-intensity) * 14%), transparent),
-      transparent 75%
-    );
-    transition: background 0.15s ease-out;
-  }
-
-  .logo-wrap {
-    position: relative;
-    width: min(360px, 76vw);
-    aspect-ratio: 320 / 300;
-    margin-bottom: 2.5rem;
-  }
-
-  .logo-wrap svg, .logo-wrap .wood-img { width: 100%; height: 100%; display: block; }
-  .wood-img { position: relative; z-index: 3; object-fit: contain; }
-  .pegs-svg { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
-
-  /* Capa de resplandor detrás de la madera (la luz indirecta) */
-  .glow-layer {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    transform: translate(var(--gx), var(--gy)) scale(1.08);
-    opacity: var(--glow-intensity);
-    filter: blur(var(--glow-blur));
-    transition: opacity 0.25s ease, filter 0.25s ease;
-    pointer-events: none;
-  }
-  .glow-layer path { fill: var(--glow-color); }
-
-  /* Luz de borde: escapa por los canales entre las tablas */
-  .channel-light {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    transform: scale(1.015);
-    opacity: calc(var(--glow-intensity) * 0.9);
-    filter: blur(5px);
-    transition: opacity 0.25s ease;
-    pointer-events: none;
-  }
-  .channel-light path { fill: var(--glow-color); }
-
-  .glow-layer.breathing, .channel-light.breathing {
-    animation: breathe 3.4s ease-in-out infinite;
-  }
-  @keyframes breathe {
-    0%, 100% { opacity: calc(var(--glow-intensity) * 0.55); }
-    50%      { opacity: var(--glow-intensity); }
-  }
-
-  .brand-title {
-    font-size: clamp(2.2rem, 6vw, 3.6rem);
-    letter-spacing: 0.28em;
-    color: var(--oro);
-    font-weight: 400;
+      radial-gradient(ellipse 80% 60% at 50% 38%, rgba(139,101,73,.28), transparent 70%),
+      var(--carbon);
+    color: var(--marfil);
     text-align: center;
-    text-shadow: 0 0 24px color-mix(in srgb, var(--glow-color) 35%, transparent);
   }
-  .brand-title small { display: block; font-size: 0.32em; letter-spacing: 0.55em; color: var(--muted); margin-top: 0.9rem; border-top: 1px solid #3a3225; padding-top: 0.9rem; }
+  .ambient-light {
+    position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(circle 440px at var(--mx, 50%) var(--my, 40%),
+      color-mix(in srgb, var(--glow-color) calc(var(--glow-intensity) * 12%), transparent), transparent 75%);
+  }
+  .logo-wrap { position: relative; width: min(230px, 52vw); aspect-ratio: 320 / 300; margin-bottom: 40px; }
+  .logo-wrap svg { width: 100%; height: 100%; display: block; }
+  .wood-img { position: relative; z-index: 3; }
+  .glow-layer {
+    position: absolute; inset: 0; z-index: 1;
+    transform: translate(var(--gx), var(--gy)) scale(1.08);
+    opacity: var(--glow-intensity); filter: blur(var(--glow-blur)); pointer-events: none;
+  }
+  .glow-layer path, .channel-light path { fill: var(--glow-color); }
+  .channel-light {
+    position: absolute; inset: 0; z-index: 2; transform: scale(1.015);
+    opacity: calc(var(--glow-intensity) * .9); filter: blur(5px); pointer-events: none;
+  }
+  .breathing { animation: breathe 3.4s ease-in-out infinite; }
+  @keyframes breathe { 0%,100% { opacity: calc(var(--glow-intensity) * .55); } 50% { opacity: var(--glow-intensity); } }
 
+  .eyebrow {
+    font-family: var(--sans); font-size: 11px; letter-spacing: .32em; text-transform: uppercase;
+    color: var(--nogal); font-weight: 500;
+  }
+  .hero .eyebrow { color: var(--arena); margin-bottom: 18px; position: relative; }
+  .hero h1 {
+    font-family: var(--serif); font-weight: 500; font-style: italic;
+    font-size: clamp(38px, 6.2vw, 72px); line-height: 1.08; color: var(--marfil);
+    max-width: 880px; position: relative;
+  }
+  .hero-sub { margin: 22px auto 0; max-width: 560px; color: rgba(240,234,224,.78); font-size: 16px; position: relative; }
+  .hero-actions { margin-top: 38px; display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; position: relative; }
 
-  .hint { position: absolute; bottom: 1.2rem; font-size: 0.7rem; letter-spacing: 0.2em; color: #5a4f3c; text-transform: uppercase; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase;
+    text-decoration: none; padding: 16px 30px; border: 1px solid transparent; cursor: pointer;
+    transition: background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary { background: var(--nogal); color: var(--marfil-claro); }
+  .btn-primary:hover { background: var(--nogal-oscuro); }
+  .btn-ghost-light { border-color: rgba(240,234,224,.5); color: var(--marfil); }
+  .btn-ghost-light:hover { border-color: var(--marfil); }
+  .btn-ghost { border-color: var(--nogal); color: var(--nogal); }
+  .btn-ghost:hover { background: var(--nogal); color: var(--marfil-claro); }
+
+  .scroll-hint {
+    position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%);
+    font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: rgba(213,193,164,.6);
+  }
+  .scroll-hint::after {
+    content: ''; display: block; width: 1px; height: 34px; margin: 10px auto 0;
+    background: linear-gradient(var(--arena), transparent); animation: drip 2s ease-in-out infinite;
+  }
+  @keyframes drip { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
 
   /* ============ SECCIONES ============ */
-  section { max-width: 1000px; margin: 0 auto; padding: 5.5rem 1.5rem; }
+  section { padding: 110px 0; }
+  .section-head { max-width: 640px; margin-bottom: 56px; }
+  .section-head.center { margin-left: auto; margin-right: auto; text-align: center; }
+  h2 {
+    font-family: var(--serif); font-weight: 600; color: var(--carbon);
+    font-size: clamp(32px, 4.4vw, 48px); line-height: 1.12; margin-top: 14px;
+  }
+  .rule { width: 48px; height: 2px; background: var(--nogal); margin-top: 22px; }
+  .center .rule { margin-left: auto; margin-right: auto; }
+  .lead { margin-top: 20px; color: var(--muted); font-size: 16.5px; }
 
-  .section-label {
-    font-size: 0.72rem;
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    color: var(--oro);
-    margin-bottom: 0.8rem;
+  /* Esencia */
+  .esencia { background: var(--marfil-claro); }
+  .esencia-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
+  .esencia-quote {
+    font-family: var(--serif); font-style: italic; font-size: clamp(26px, 3vw, 34px); line-height: 1.35; color: var(--carbon);
+    border-left: 2px solid var(--nogal); padding-left: 28px;
   }
-  h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 400; color: var(--oro-claro); margin-bottom: 2rem; }
-
-  .vision-quote {
-    font-size: clamp(1.3rem, 3vw, 1.9rem);
-    font-style: italic;
-    color: var(--texto);
-    border-left: 3px solid var(--oro);
-    padding: 1.2rem 0 1.2rem 2rem;
-    background: linear-gradient(90deg, rgba(212,169,78,0.07), transparent 60%);
-  }
-
-  .cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.4rem;
-  }
-  .card {
-    background: var(--negro-card);
-    border: 1px solid #2a2318;
-    border-radius: 12px;
-    padding: 1.8rem;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.25s ease, transform 0.25s ease;
-  }
-  .card:hover { border-color: var(--oro); transform: translateY(-4px); }
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--oro), transparent);
-    opacity: 0;
-    transition: opacity 0.25s ease;
-  }
-  .card:hover::before { opacity: 1; }
-  .card h3 { color: var(--oro); font-weight: 400; font-size: 1.15rem; margin-bottom: 0.7rem; letter-spacing: 0.05em; }
-  .card p { color: var(--muted); font-size: 0.95rem; }
-
-  .team-card { display: flex; gap: 1.4rem; align-items: flex-start; }
-  .avatar {
-    flex-shrink: 0;
-    width: 64px; height: 64px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.6rem;
-    color: var(--negro);
-    background: linear-gradient(135deg, var(--oro-claro), var(--oro));
-    box-shadow: 0 0 22px rgba(212,169,78,0.35);
-  }
-  .team-card .rol { font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
-
-  /* ============ PROCESO (pasos con clientes) ============ */
-  .steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-    gap: 1.4rem;
-    counter-reset: paso;
-  }
-  .step {
-    background: var(--negro-card);
-    border: 1px solid #2a2318;
-    border-radius: 12px;
-    padding: 2rem 1.6rem 1.8rem;
-    position: relative;
-    transition: border-color 0.25s ease, transform 0.25s ease;
-  }
-  .step:hover { border-color: var(--oro); transform: translateY(-4px); }
-  .step:not(:last-child)::after {
-    content: '→';
-    position: absolute;
-    right: -1.15rem;
-    top: 2.1rem;
-    color: var(--oro);
-    font-size: 1.1rem;
-    z-index: 1;
-  }
-  .step-num {
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.25rem;
-    color: var(--negro);
-    background: linear-gradient(135deg, var(--oro-claro), var(--oro));
-    box-shadow: 0 0 18px rgba(212,169,78,0.35);
-    margin-bottom: 1.1rem;
-  }
-  .step h3 { color: var(--oro); font-weight: 400; font-size: 1.1rem; margin-bottom: 0.6rem; letter-spacing: 0.04em; }
-  .step p { color: var(--muted); font-size: 0.92rem; }
-
-  /* ============ FORMULARIO DE CITA ============ */
-  .cita-form {
-    background: var(--negro-card);
-    border: 1px solid #2a2318;
-    border-radius: 14px;
-    padding: 2.2rem;
-    max-width: 760px;
-  }
-  .form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.3rem;
-  }
-  .form-field { display: flex; flex-direction: column; gap: 0.45rem; }
-  .form-wide { grid-column: 1 / -1; }
-  .form-field label {
-    font-size: 0.72rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--oro);
-  }
-  .form-field input, .form-field textarea {
-    background: #0f0c09;
-    border: 1px solid #33291c;
-    border-radius: 8px;
-    padding: 0.85rem 1rem;
-    color: var(--texto);
-    font-family: inherit;
-    font-size: 0.95rem;
-    outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    resize: vertical;
-  }
-  .form-field input:focus, .form-field textarea:focus {
-    border-color: var(--oro);
-    box-shadow: 0 0 0 3px rgba(212,169,78,0.15);
-  }
-  .form-field input::placeholder, .form-field textarea::placeholder { color: #5a4f3c; }
-  .cta-btn {
-    margin-top: 1.6rem;
-    background: linear-gradient(135deg, var(--oro-claro), var(--oro));
-    color: var(--negro);
-    border: none;
-    border-radius: 10px;
-    padding: 0.95rem 2.4rem;
-    font-family: inherit;
-    font-size: 0.95rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-    box-shadow: 0 0 22px rgba(212,169,78,0.25);
-  }
-  .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 0 32px rgba(212,169,78,0.45); }
-  .form-note { margin-top: 1rem; font-size: 0.85rem; color: var(--muted); }
-
-  @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
-
-  /* ============ NUESTRO ESTILO ============ */
-  .estilo-intro { color: var(--muted); max-width: 640px; margin: -0.8rem 0 2.4rem; font-size: 1.02rem; }
-  .estilo-grid {
-    display: grid;
-    grid-template-columns: 1.15fr 1fr;
-    gap: 2.2rem;
-    align-items: center;
-  }
-  .estilo-grid + .estilo-grid { margin-top: 3.2rem; }
-  .estilo-reverse .room-vignette { order: 2; }
-  .estilo-reverse .estilo-features { order: 1; }
-  @media (max-width: 760px) {
-    .estilo-grid { grid-template-columns: 1fr; }
-    .estilo-reverse .room-vignette { order: 1; }
-    .estilo-reverse .estilo-features { order: 2; }
+  .valores { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; list-style: none; }
+  .valores li {
+    font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--nogal); font-weight: 600;
+    border: 1px solid var(--arena); padding: 8px 14px;
   }
 
-  /* Viñeta: cocina — cielo de madera, gabinetes grafito, granito y barra de listones */
-  .gab-vignette { background: linear-gradient(180deg, #14110d, #0d0b08); }
-  .gv-ceiling {
-    position: absolute; top: 0; left: 0; right: 0; height: 10%;
-    background: repeating-linear-gradient(90deg, #6b4c2a 0 26px, #5a3f20 26px 52px);
-    border-bottom: 1px solid #2a1d0e;
+  /* Video */
+  .video-sec { background: var(--carbon); color: var(--marfil); }
+  .video-sec h2 { color: var(--marfil); }
+  .video-sec .lead { color: rgba(240,234,224,.75); }
+  .video-grid { display: grid; grid-template-columns: 1fr 1.05fr; gap: 72px; align-items: center; }
+  .video-frame {
+    position: relative; justify-self: center; width: 100%; max-width: 380px;
+    border: 1px solid rgba(213,193,164,.35); padding: 10px; background: rgba(240,234,224,.03);
   }
-  .gv-cove {
-    position: absolute; top: 10%; left: 3%; right: 3%; height: 3px;
-    background: linear-gradient(90deg, transparent, rgba(255,206,130,0.95), transparent);
-    box-shadow: 0 8px 34px 10px rgba(255,185,100,0.45);
-  }
-  .gv-uppers {
-    position: absolute; top: 16%; left: 8%; right: 8%; height: 22%;
-    display: flex; gap: 1.2%;
-  }
-  .gv-uppers span {
-    flex: 1;
-    background: linear-gradient(170deg, #3d4045 0%, #26282c 55%, #2e3136 100%);
-    border: 1px solid #1a1c1f;
-    border-radius: 2px;
-    box-shadow: inset 0 3px 8px rgba(255,255,255,0.07);
-  }
-  .gv-lightline {
-    position: absolute; top: 38.5%; left: 8%; right: 8%; height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(255,244,220,0.95), transparent);
-    box-shadow: 0 5px 24px 6px rgba(255,235,200,0.35);
-  }
-  .gv-backsplash {
-    position: absolute; top: 39%; left: 8%; right: 8%; height: 15%;
-    background:
-      repeating-linear-gradient(112deg, rgba(150,138,120,0.28) 0 1.5px, transparent 1.5px 30px),
-      linear-gradient(180deg, #d9d3c6, #c3bcab);
-  }
-  .gv-counter {
-    position: absolute; top: 54%; left: 6.5%; right: 6.5%; height: 4%;
-    background: linear-gradient(180deg, #17181c, #060608);
-    border-radius: 2px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.65), inset 0 1px 2px rgba(255,255,255,0.12);
-  }
-  .gv-lowers {
-    position: absolute; top: 58%; left: 8%; right: 8%; height: 12%;
-    display: flex; gap: 1.2%;
-  }
-  .gv-lowers span {
-    flex: 1;
-    background: linear-gradient(180deg, #34373b, #202225);
-    border: 1px solid #17191c;
-    border-radius: 2px;
-  }
-  .gv-islandtop {
-    position: absolute; top: 70%; left: 3%; right: 3%; height: 4.5%;
-    background: linear-gradient(180deg, #1a1b20, #050507);
-    border-radius: 2px;
-    box-shadow: 0 5px 16px rgba(0,0,0,0.7), inset 0 1px 2px rgba(255,255,255,0.14);
-    z-index: 2;
-  }
-  .gv-island {
-    position: absolute; top: 74.5%; left: 3%; right: 3%; bottom: 0;
-    background: repeating-linear-gradient(90deg, #c39a5e 0 7px, #241808 7px 13px);
-    box-shadow: inset 0 22px 34px -6px rgba(255,196,110,0.55), inset 0 -18px 26px rgba(0,0,0,0.55);
-  }
-
-  /* Viñeta: baño — espejo LED + mueble flotante (sin retrete) */
-  .ban-vignette { background: linear-gradient(180deg, #17130f 0%, #100d0a 60%, #0b0907 100%); }
-  .bv-mirror {
-    position: absolute; top: 8%; left: 24%; right: 24%; height: 44%;
-    background: linear-gradient(125deg, #262320 0%, #1a1815 45%, #232019 100%);
-    border-radius: 5px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-  }
-  .bv-mframe {
-    position: absolute; inset: 7%;
-    border: 2px solid rgba(255,242,208,0.95);
-    border-radius: 3px;
-    box-shadow: 0 0 20px rgba(255,235,190,0.55), inset 0 0 20px rgba(255,235,190,0.35);
-  }
-  .bv-counter {
-    position: absolute; top: 56%; left: 16%; right: 16%; height: 3%;
-    background: linear-gradient(180deg, #efe8da, #cfc6b4);
-    border-radius: 2px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.55);
-  }
-  .bv-sink {
-    position: absolute; top: 49.5%; left: 21%; width: 17%; height: 7%;
-    background: linear-gradient(180deg, #f4efe4, #d8d0bf);
-    border-radius: 6px 6px 8px 8px;
-    box-shadow: inset 0 -4px 8px rgba(0,0,0,0.15);
-  }
-  .bv-faucet {
-    position: absolute; top: 46%; left: 41%; width: 1.6%; height: 11%;
-    background: linear-gradient(180deg, var(--oro-claro), var(--oro));
-    border-radius: 2px 2px 0 0;
-  }
-  .bv-faucet::after {
-    content: '';
-    position: absolute; top: 0; right: 100%; width: 320%; height: 22%;
-    background: linear-gradient(90deg, var(--oro), var(--oro-claro));
-    border-radius: 2px;
-  }
-  .bv-vanity {
-    position: absolute; top: 61%; left: 18%; right: 18%; height: 22%;
-    display: flex; flex-direction: column; gap: 4%;
-  }
-  .bv-vanity span {
-    flex: 1;
-    background-color: #4a3722;
-    background-image: repeating-linear-gradient(90deg, rgba(0,0,0,0.14) 0 3px, transparent 3px 9px);
-    border: 1px solid #2a1e10;
-    border-radius: 4px;
-    position: relative;
-  }
-  .bv-vanity span::after {
-    content: '';
-    position: absolute; top: 42%; left: 40%; width: 20%; height: 8%;
-    background: linear-gradient(90deg, var(--oro-claro), var(--oro));
-    border-radius: 2px;
-    opacity: 0.9;
-  }
-  .bv-glow {
-    position: absolute; top: 84.5%; left: 22%; right: 22%; height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(255,218,155,0.7), transparent);
-    box-shadow: 0 6px 26px 8px rgba(255,190,110,0.3);
-  }
-
-  /* Viñeta: terraza con techo WPC tipo madera en perspectiva 3D */
-  .per-vignette { perspective: 700px; }
-  .pv-sky {
-    position: absolute; inset: 0;
-    background: radial-gradient(ellipse 90% 60% at 50% 100%, #16130e, #0a0806 70%);
-  }
-  .pv-ceiling3d {
-    position: absolute; top: 5%; left: 5%; right: 5%; height: 72%;
-    background:
-      repeating-linear-gradient(180deg, rgba(0,0,0,0.35) 0 2px, transparent 2px 11px),
-      linear-gradient(180deg, #6b4c2a 0%, #57402290 55%, #33240f 100%),
-      #4a3520;
-    transform: perspective(620px) rotateX(-36deg);
-    transform-origin: 50% 0%;
-    border-bottom: 1px solid #1a1208;
-    box-shadow: inset 0 30px 50px rgba(255,190,110,0.12);
-  }
-  .pv-spot {
-    position: absolute; width: 1.6%; aspect-ratio: 1;
-    border-radius: 50%;
-    background: radial-gradient(circle at 45% 40%, #fff8e2 0%, #ffdf9e 45%, rgba(120,90,50,0.4) 75%, transparent 100%);
-    box-shadow: 0 0 22px 6px rgba(255,230,180,0.55);
-  }
-  .pv-strip-near {
-    position: absolute; top: 4%; left: 7%; right: 7%; height: 2.5px;
-    background: linear-gradient(90deg, transparent 2%, rgba(255,228,175,0.95) 15%, rgba(255,228,175,0.95) 85%, transparent 98%);
-    box-shadow: 0 8px 38px 10px rgba(255,195,110,0.35);
-  }
-  .pv-glowwash {
-    position: absolute; top: 53%; left: 10%; right: 10%; height: 32%;
-    background: radial-gradient(ellipse 70% 100% at 50% 0%, rgba(255,200,120,0.14), transparent 75%);
-  }
-  .pv-floor3d {
-    position: absolute; bottom: -2%; left: -8%; right: -8%; height: 26%;
-    background:
-      repeating-linear-gradient(90deg, rgba(0,0,0,0.25) 0 2px, transparent 2px 40px),
-      linear-gradient(180deg, #241a0e, #38281564);
-    transform: perspective(700px) rotateX(50deg);
-    transform-origin: 50% 100%;
-    border-top: 1px solid rgba(255,214,150,0.14);
-    box-shadow: inset 0 16px 30px rgba(255,190,110,0.1);
-  }
-
-  /* Viñeta: muro TV con luz indirecta (CSS puro) */
-  .room-vignette {
-    position: relative;
-    aspect-ratio: 5 / 4;
-    border-radius: 14px;
-    overflow: hidden;
-    background: linear-gradient(180deg, #191512 0%, #12100c 55%, #0c0a08 100%);
-    border: 1px solid #2a2318;
-  }
-  .rv-ceiling {
-    position: absolute; top: 0; left: 4%; right: 4%; height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(255,214,150,0.75), transparent);
-    box-shadow: 0 4px 26px 6px rgba(255,190,110,0.28);
-  }
-  .rv-slats {
-    position: absolute; top: 8%; bottom: 22%; left: 6%; width: 15%;
-    background: repeating-linear-gradient(90deg, #43301d 0 5px, #191209 5px 11px);
-    border-radius: 3px;
-    box-shadow: -8px 0 22px rgba(255,190,110,0.12), inset 0 -30px 40px rgba(0,0,0,0.55);
-  }
-  .rv-circle {
-    position: absolute; top: 14%; left: 27%; width: 44%; aspect-ratio: 1;
-    border-radius: 50%;
-    border: 2px solid rgba(255,222,168,0.85);
-    box-shadow: 0 0 26px rgba(255,190,110,0.45), inset 0 0 26px rgba(255,190,110,0.28);
-  }
-  .rv-tv {
-    position: absolute; top: 26%; left: 31%; width: 36%; height: 26%;
-    background: #060504;
-    border: 1px solid #21180f;
-    border-radius: 3px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-  }
-  .rv-shelf {
-    position: absolute; top: 10%; right: 7%; width: 13%; bottom: 30%;
-    display: flex; flex-direction: column; gap: 8%;
-  }
-  .rv-shelf span {
-    flex: 1;
-    background: #171209;
-    border-radius: 3px;
-    box-shadow: inset 0 -14px 22px rgba(255,190,110,0.30), inset 0 2px 6px rgba(0,0,0,0.6);
-  }
-  .rv-console {
-    position: absolute; bottom: 15%; left: 10%; width: 68%; height: 7%;
-    background: linear-gradient(180deg, #1c1712, #0f0c09);
-    border-radius: 4px;
-    box-shadow: 0 16px 26px -8px rgba(255,190,110,0.35);
-  }
-  .rv-floor {
-    position: absolute; bottom: 0; left: 0; right: 0; height: 12%;
-    background: linear-gradient(180deg, #241b10, #17110a);
-    border-top: 1px solid rgba(255,214,150,0.12);
-  }
-
-  .estilo-features { display: flex; flex-direction: column; gap: 1.6rem; }
+  .video-frame video { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; background: #1d1b19; }
+  .video-frame.landscape { max-width: 640px; }
+  .video-frame.landscape video { aspect-ratio: 16 / 9; }
+  .video-points { list-style: none; margin-top: 30px; display: grid; gap: 16px; }
+  .video-points li { display: flex; gap: 14px; align-items: baseline; }
+  .video-points b { font-family: var(--serif); font-size: 22px; color: var(--arena); font-weight: 500; min-width: 30px; }
 
   /* Servicios */
-  .serv-icon {
-    color: var(--oro);
-    font-size: 0.85rem;
-    margin-bottom: 0.8rem;
-    text-shadow: 0 0 12px rgba(255,190,110,0.6);
+  .servicios { background: var(--marfil); }
+  .serv-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--linea); border: 1px solid var(--linea); }
+  .serv {
+    background: var(--marfil-claro); padding: 38px 32px 34px; position: relative;
+    transition: background .25s ease;
   }
-  .feature { position: relative; padding-left: 1.4rem; }
-  .feature-bar {
-    position: absolute; left: 0; top: 0.3rem; bottom: 0.3rem; width: 3px;
-    border-radius: 2px;
-    background: linear-gradient(180deg, var(--oro-claro), rgba(212,169,78,0.15));
-    box-shadow: 0 0 12px rgba(255,190,110,0.4);
+  .serv:hover { background: #fff; }
+  .serv::before {
+    content: ''; position: absolute; left: 0; top: 0; height: 2px; width: 0; background: var(--nogal);
+    transition: width .35s ease;
   }
-  .feature h3 { color: var(--oro); font-weight: 400; font-size: 1.12rem; margin-bottom: 0.45rem; letter-spacing: 0.04em; }
-  .feature p { color: var(--muted); font-size: 0.94rem; }
+  .serv:hover::before { width: 100%; }
+  .serv-num { font-family: var(--serif); font-size: 18px; color: var(--nogal); }
+  .serv h3 { font-family: var(--sans); font-size: 16px; font-weight: 600; color: var(--carbon); margin: 10px 0 8px; letter-spacing: .01em; }
+  .serv p { font-size: 14.5px; color: var(--muted); line-height: 1.65; }
+  .serv.destacado { background: var(--carbon); }
+  .serv.destacado h3 { color: var(--marfil); }
+  .serv.destacado p { color: rgba(240,234,224,.72); }
+  .serv.destacado .serv-num { color: var(--arena); }
+  .serv.destacado:hover { background: #33302c; }
+  .badge { display: inline-block; margin-top: 14px; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--arena); border: 1px solid rgba(213,193,164,.45); padding: 5px 10px; }
 
-  footer {
-    text-align: center;
-    padding: 3rem 1.5rem;
-    border-top: 1px solid #221c13;
-    color: #5a4f3c;
-    font-size: 0.78rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
+  /* Proyectos */
+  .proyectos { background: var(--marfil-claro); }
+  .galeria { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 280px; gap: 14px; }
+  .galeria figure { position: relative; overflow: hidden; background: var(--marfil); cursor: zoom-in; }
+  .galeria figure.alto { grid-row: span 2; }
+  .galeria figure.ancho { grid-column: span 2; }
+  .galeria img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
+  .galeria figure:hover img { transform: scale(1.04); }
+  .galeria figcaption {
+    position: absolute; left: 0; right: 0; bottom: 0; padding: 40px 18px 14px;
+    background: linear-gradient(transparent, rgba(41,39,36,.75));
+    color: var(--marfil); font-family: var(--serif); font-style: italic; font-size: 19px;
+    opacity: 0; transform: translateY(8px); transition: opacity .3s ease, transform .3s ease;
   }
-  footer .mini-m { color: var(--oro); font-size: 1.4rem; display: block; margin-bottom: 0.8rem; }
+  .galeria figure:hover figcaption { opacity: 1; transform: none; }
+  .galeria-cta { margin-top: 40px; display: flex; align-items: center; justify-content: center; gap: 14px; }
+  .ig-link { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-size: 13px; letter-spacing: .08em; color: var(--nogal); font-weight: 500; }
+  .ig-link img { width: 26px; height: 26px; }
+
+  .lightbox {
+    position: fixed; inset: 0; z-index: 100; background: rgba(20,19,17,.92);
+    display: none; align-items: center; justify-content: center; padding: 30px; cursor: zoom-out;
+  }
+  .lightbox.on { display: flex; }
+  .lightbox img { max-height: 88vh; max-width: 92vw; width: auto; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+
+  /* Materiales */
+  .materiales { background: var(--marfil); }
+  .mat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .mat img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+  .mat h3 { font-size: 12px; letter-spacing: .26em; text-transform: uppercase; color: var(--carbon); font-weight: 600; margin: 18px 0 6px; }
+  .mat p { font-size: 14.5px; color: var(--muted); }
+
+  /* Proceso */
+  .proceso { background: var(--marfil-claro); }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; position: relative; }
+  .steps::before { content: ''; position: absolute; top: 26px; left: 6%; right: 6%; height: 1px; background: var(--arena); }
+  .step { position: relative; text-align: center; padding: 0 6px; }
+  .step-num {
+    width: 54px; height: 54px; margin: 0 auto 22px; border-radius: 50%;
+    background: var(--marfil-claro); border: 1px solid var(--nogal); color: var(--nogal);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif); font-size: 22px; position: relative;
+  }
+  .step h3 { font-size: 15px; font-weight: 600; color: var(--carbon); margin-bottom: 8px; }
+  .step p { font-size: 14px; color: var(--muted); }
+
+  /* Agendar */
+  .agendar { background: var(--marfil); }
+  .agendar-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 72px; align-items: start; }
+  .contacto-lista { list-style: none; margin-top: 34px; display: grid; gap: 18px; }
+  .contacto-lista li { display: flex; flex-direction: column; }
+  .contacto-lista span { font-size: 10.5px; letter-spacing: .24em; text-transform: uppercase; color: var(--nogal); font-weight: 600; }
+  .contacto-lista a { text-decoration: none; font-family: var(--serif); font-size: 24px; color: var(--carbon); }
+  .contacto-lista a:hover { color: var(--nogal); }
+  .oferta { margin-top: 34px; padding: 22px 24px; background: var(--marfil-claro); border: 1px solid var(--arena); }
+  .oferta strong { display: block; font-family: var(--serif); font-size: 22px; color: var(--carbon); font-weight: 600; }
+  .oferta p { font-size: 14px; color: var(--muted); margin-top: 4px; }
+
+  .cita-form { background: var(--marfil-claro); border: 1px solid var(--linea); padding: 40px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .form-field { display: flex; flex-direction: column; gap: 8px; }
+  .form-wide { grid-column: 1 / -1; }
+  .form-field label { font-size: 10.5px; letter-spacing: .22em; text-transform: uppercase; color: var(--nogal); font-weight: 600; }
+  .form-field input, .form-field textarea {
+    background: #fff; border: 1px solid var(--linea); padding: 14px 16px;
+    color: var(--carbon); font-family: var(--sans); font-size: 15px; outline: none; resize: vertical;
+    transition: border-color .2s ease, box-shadow .2s ease; border-radius: 0;
+  }
+  .form-field input:focus, .form-field textarea:focus { border-color: var(--nogal); box-shadow: 0 0 0 3px rgba(139,101,73,.12); }
+  .form-field input::placeholder, .form-field textarea::placeholder { color: #A89D90; }
+  .cita-form .btn { margin-top: 26px; width: 100%; border: 0; }
+  .cita-form .btn:disabled { opacity: .6; cursor: wait; transform: none; }
+  .form-note { margin-top: 14px; font-size: 14px; color: var(--muted); min-height: 1em; }
+
+  /* Footer */
+  footer { background: var(--carbon); color: rgba(240,234,224,.7); padding: 72px 0 36px; text-align: center; }
+  footer .logo { width: 96px; margin: 0 auto; }
+  footer .tagline { font-family: var(--serif); font-style: italic; font-size: 21px; color: var(--arena); margin-top: 20px; }
+  .foot-links { display: flex; gap: 26px; justify-content: center; flex-wrap: wrap; margin-top: 28px; font-size: 13px; }
+  .foot-links a { text-decoration: none; color: rgba(240,234,224,.8); }
+  .foot-links a:hover { color: var(--marfil); }
+  .foot-ig { display: inline-flex; margin-top: 26px; background: var(--marfil); border-radius: 50%; padding: 9px; }
+  .foot-ig img { width: 24px; height: 24px; }
+  .copy { margin-top: 36px; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: rgba(240,234,224,.4); }
+
+  /* WhatsApp flotante */
+  .wa-float {
+    position: fixed; right: 20px; bottom: 20px; z-index: 60;
+    width: 56px; height: 56px; border-radius: 50%; background: var(--nogal);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 28px rgba(41,39,36,.3); transition: transform .2s ease, background .2s ease;
+  }
+  .wa-float:hover { transform: scale(1.06); background: var(--nogal-oscuro); }
+  .wa-float svg { width: 26px; height: 26px; fill: var(--marfil-claro); }
+
+  /* Animación de entrada */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .8s ease, transform .8s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .breathing, .scroll-hint::after { animation: none; }
+    html { scroll-behavior: auto; }
+  }
+
+  /* Responsive */
+  @media (max-width: 960px) {
+    .serv-grid { grid-template-columns: repeat(2, 1fr); }
+    .esencia-grid, .video-grid, .agendar-grid { grid-template-columns: 1fr; gap: 48px; }
+    .galeria { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 220px; }
+    .galeria figure.ancho { grid-column: span 2; }
+  }
+  @media (max-width: 640px) {
+    section { padding: 80px 0; }
+    .serv-grid { grid-template-columns: 1fr; }
+    .mat-grid { grid-template-columns: 1fr; gap: 34px; }
+    .steps { grid-template-columns: 1fr 1fr; row-gap: 40px; }
+    .steps::before { display: none; }
+    .form-grid { grid-template-columns: 1fr; }
+    .cita-form { padding: 26px 20px; }
+    .galeria { grid-auto-rows: 170px; gap: 8px; }
+    .galeria figcaption { opacity: 1; transform: none; font-size: 16px; padding: 30px 12px 10px; }
+    .hero-actions .btn { width: 100%; }
+  }
 </style>
 </head>
 <body>
 
+<!-- ============ NAVEGACIÓN ============ -->
+<nav class="nav" id="nav">
+  <div class="wrap">
+    <a href="#inicio" class="nav-logo" aria-label="Madera Viva, inicio">
+      <img src="img/logo-marfil.png" alt="Madera Viva" class="logo-light">
+      <img src="img/logo.png" alt="Madera Viva" class="logo-dark">
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span><span></span></button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#proyectos">Proyectos</a></li>
+      <li><a href="#proceso">Proceso</a></li>
+      <li><a href="#agendar" class="nav-cta">Agenda tu visita</a></li>
+    </ul>
+  </div>
+</nav>
+
 <!-- ============ HERO CON LUZ INTERACTIVA ============ -->
-<div class="hero" id="hero">
-  <div class="ambient-light" id="ambient"></div>
+<header class="hero" id="inicio">
+  <div class="ambient-light"></div>
 
-  <div class="logo-wrap">
-    <!-- Capa 1: luz indirecta detrás de la madera (silueta EXACTA vectorizada de la foto) -->
-    <div class="glow-layer breathing" id="glow">
-      <svg viewBox="95 45 320 300" aria-hidden="true">
-        <path d="M 157 77 L 189.4 77 L 252.5 178 L 315.6 77 L 348 77 L 252.5 230 Z M 126 98 L 149 98 L 252.5 263.6 L 356 98 L 384 98 L 384 312 L 356 312 L 356 146.2 L 265.5 291 L 239.5 291 L 149 146.2 L 149 312 L 126 312 Z"/>
-      </svg>
+  <div class="logo-wrap" aria-hidden="true">
+    <div class="glow-layer breathing">
+      <svg viewBox="95 45 320 300"><path d="M 157 77 L 189.4 77 L 252.5 178 L 315.6 77 L 348 77 L 252.5 230 Z M 126 98 L 149 98 L 252.5 263.6 L 356 98 L 384 98 L 384 312 L 356 312 L 356 146.2 L 265.5 291 L 239.5 291 L 149 146.2 L 149 312 L 126 312 Z"/></svg>
     </div>
-
-    <!-- Capa 2: luz de borde que escapa por los canales (misma silueta, blur corto) -->
-    <div class="channel-light breathing" id="channels">
-      <svg viewBox="95 45 320 300" aria-hidden="true">
-        <path d="M 157 77 L 189.4 77 L 252.5 178 L 315.6 77 L 348 77 L 252.5 230 Z M 126 98 L 149 98 L 252.5 263.6 L 356 98 L 384 98 L 384 312 L 356 312 L 356 146.2 L 265.5 291 L 239.5 291 L 149 146.2 L 149 312 L 126 312 Z"/>
-      </svg>
+    <div class="channel-light breathing">
+      <svg viewBox="95 45 320 300"><path d="M 157 77 L 189.4 77 L 252.5 178 L 315.6 77 L 348 77 L 252.5 230 Z M 126 98 L 149 98 L 252.5 263.6 L 356 98 L 384 98 L 384 312 L 356 312 L 356 146.2 L 265.5 291 L 239.5 291 L 149 146.2 L 149 312 L 126 312 Z"/></svg>
     </div>
-
-    <!-- Capa 3: la madera REAL recortada de la foto original (canales transparentes) -->
-    <svg class="wood-img" viewBox="95 45 320 300" role="img" aria-label="Logo M de Madera Viva en madera de nogal">
+    <svg class="wood-img" viewBox="95 45 320 300">
       <defs><clipPath id="mClip"><path d="M 157 77 L 189.4 77 L 252.5 178 L 315.6 77 L 348 77 L 252.5 230 Z M 126 98 L 149 98 L 252.5 263.6 L 356 98 L 384 98 L 384 312 L 356 312 L 356 146.2 L 265.5 291 L 239.5 291 L 149 146.2 L 149 312 L 126 312 Z"/></clipPath></defs>
       <image href="logo-texture.png" x="-2" y="-3" width="512" height="512" clip-path="url(#mClip)"/>
     </svg>
   </div>
 
-  <h1 class="brand-title">MADERA&nbsp;VIVA
-    <small>ILUMINANDO LA ESENCIA DE LA MADERA</small>
-  </h1>
+  <p class="eyebrow">Madera · Melamina · WPC</p>
+  <h1>Diseño que transforma,<br>detalles que iluminan.</h1>
+  <p class="hero-sub">Diseñamos, fabricamos e instalamos proyectos a medida para casas y comercios en Guatemala.</p>
+  <div class="hero-actions">
+    <a href="#agendar" class="btn btn-primary">Agenda tu visita sin costo</a>
+    <a href="#proyectos" class="btn btn-ghost-light">Ver proyectos</a>
+  </div>
+  <p class="scroll-hint">Desliza</p>
+</header>
 
-  <a href="#agendar" class="hero-cta">Empieza aquí <span class="cta-arrow">↓</span></a>
-
-  <p class="hint">Mueve el cursor para dirigir la luz</p>
-</div>
-
-<!-- ============ VISIÓN ============ -->
-<section>
-  <p class="section-label">Nuestra Visión</p>
-  <h2>Creamos experiencias, no solo productos</h2>
-  <blockquote class="vision-quote">
-    "Entregar un servicio de calidad y que los clientes crean en nosotros."
-  </blockquote>
+<!-- ============ ESENCIA ============ -->
+<section class="esencia">
+  <div class="wrap esencia-grid">
+    <div class="reveal">
+      <p class="eyebrow">Quiénes somos</p>
+      <h2>Transformamos espacios con soluciones cálidas y funcionales</h2>
+      <div class="rule"></div>
+      <p class="lead">En Madera Viva unimos el oficio de la carpintería con materiales modernos y luz cálida. Cada proyecto se diseña para tu espacio, se fabrica con cuidado y se instala con el compromiso de respetar tiempos y precios acordados.</p>
+      <ul class="valores">
+        <li>Calidad</li><li>Confianza</li><li>Personalización</li><li>Detalle</li><li>Funcionalidad</li>
+      </ul>
+    </div>
+    <blockquote class="esencia-quote reveal">“Entregar un servicio de calidad y que nuestros clientes crean en nosotros.”</blockquote>
+  </div>
 </section>
 
-<!-- ============ NUESTRO ESTILO ============ -->
-<section id="estilo">
-  <p class="section-label">Nuestro Estilo</p>
-  <h2>Espacios que proyectan elegancia</h2>
-  <p class="estilo-intro">Cada pared vacía tiene potencial. Diseñamos ambientes donde la madera, los paneles oscuros y la luz indirecta se combinan para transformar tu espacio en una experiencia.</p>
-  <div class="estilo-grid">
-    <div class="room-vignette" aria-hidden="true">
-      <div class="rv-ceiling"></div>
-      <div class="rv-slats"></div>
-      <div class="rv-circle"></div>
-      <div class="rv-tv"></div>
-      <div class="rv-shelf"><span></span><span></span><span></span></div>
-      <div class="rv-console"></div>
-      <div class="rv-floor"></div>
+<!-- ============ VIDEO ============ -->
+<section class="video-sec" id="video">
+  <div class="wrap video-grid">
+    <div class="video-frame reveal" id="videoFrame">
+      <video id="comercial" controls playsinline preload="metadata" poster="video/comercial-poster.jpg">
+        <source src="video/comercial.mp4" type="video/mp4">
+        Tu navegador no puede reproducir este video.
+      </video>
     </div>
-    <div class="estilo-features">
-      <div class="feature">
-        <div class="feature-bar"></div>
-        <h3>Muros y paneles TV</h3>
-        <p>Paneles en tonos oscuros con acentos de madera que convierten la pared principal en el corazón del ambiente.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-bar"></div>
-        <h3>Iluminación indirecta cálida</h3>
-        <p>Líneas y curvas de luz LED que abrazan la madera, creando profundidad y una atmósfera acogedora.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-bar"></div>
-        <h3>Mobiliario flotante a medida</h3>
-        <p>Consolas, repisas y nichos iluminados diseñados milímetro a milímetro para tu espacio.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="estilo-grid estilo-reverse">
-    <div class="room-vignette gab-vignette" aria-hidden="true">
-      <div class="gv-ceiling"></div>
-      <div class="gv-cove"></div>
-      <div class="gv-uppers"><span></span><span></span><span></span><span></span></div>
-      <div class="gv-lightline"></div>
-      <div class="gv-backsplash"></div>
-      <div class="gv-counter"></div>
-      <div class="gv-lowers"><span></span><span></span><span></span><span></span></div>
-      <div class="gv-islandtop"></div>
-      <div class="gv-island"></div>
-    </div>
-    <div class="estilo-features">
-      <div class="feature">
-        <div class="feature-bar"></div>
-        <h3>Gabinetes que se sienten de lujo</h3>
-        <p>Puertas elegantes sin tiradores, cubiertas tipo granito y barras revestidas con listones de madera iluminados.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-bar"></div>
-        <h3>Cada centímetro aprovechado</h3>
-        <p>Diseño a medida: tus gabinetes se adaptan a tu espacio y a tu forma de usarlo, no al revés.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="estilo-grid">
-    <div class="room-vignette ban-vignette" aria-hidden="true">
-      <div class="bv-mirror"><div class="bv-mframe"></div></div>
-      <div class="bv-counter"></div>
-      <div class="bv-sink"></div>
-      <div class="bv-faucet"></div>
-      <div class="bv-vanity"><span></span><span></span></div>
-      <div class="bv-glow"></div>
-    </div>
-    <div class="estilo-features">
-      <div class="feature">
-        <div class="feature-bar"></div>
-        <h3>Baños con calidez y elegancia</h3>
-        <p>Espejos con luz propia que iluminan tu rostro de manera uniforme, perfectos para empezar el día.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-bar"></div>
-        <h3>Muebles que flotan</h3>
-        <p>Gavetas de madera resistentes a la humedad con luz inferior, que hacen sentir el baño más amplio y lujoso.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="estilo-grid estilo-reverse">
-    <div class="room-vignette per-vignette" aria-hidden="true">
-      <div class="pv-sky"></div>
-      <div class="pv-ceiling3d">
-        <span class="pv-spot" style="left:27%;top:14%"></span>
-        <span class="pv-spot" style="left:50%;top:14%"></span>
-        <span class="pv-spot" style="left:73%;top:14%"></span>
-        <span class="pv-spot" style="left:27%;top:40%"></span>
-        <span class="pv-spot" style="left:50%;top:40%"></span>
-        <span class="pv-spot" style="left:73%;top:40%"></span>
-        <span class="pv-spot" style="left:27%;top:66%"></span>
-        <span class="pv-spot" style="left:50%;top:66%"></span>
-        <span class="pv-spot" style="left:73%;top:66%"></span>
-      </div>
-      <div class="pv-strip-near"></div>
-      <div class="pv-glowwash"></div>
-      <div class="pv-floor3d"></div>
-    </div>
-    <div class="estilo-features">
-      <div class="feature">
-        <div class="feature-bar"></div>
-        <h3>Techos tipo madera con luz integrada</h3>
-        <p>Nuestra especialidad: cielos de listones que se ven y se sienten como madera real, pero de un material moderno (WPC) que no se pudre ni se deforma.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-bar"></div>
-        <h3>Pérgolas y terrazas para vivir la noche</h3>
-        <p>Focos empotrados y líneas de luz LED integradas que convierten tu terraza en el rincón favorito de la casa.</p>
-      </div>
+    <div class="reveal">
+      <p class="eyebrow" style="color:var(--arena)">Madera Viva en acción</p>
+      <h2>Mira cómo cobra vida cada proyecto</h2>
+      <div class="rule" style="background:var(--arena)"></div>
+      <p class="lead">Del diseño a la instalación, cuidamos cada corte, cada unión y cada línea de luz.</p>
+      <ul class="video-points">
+        <li><b>01</b><span>Diseño pensado para tu espacio y tu forma de vivirlo.</span></li>
+        <li><b>02</b><span>Fabricación propia con materiales resistentes.</span></li>
+        <li><b>03</b><span>Instalación limpia, puntual y con garantía.</span></li>
+      </ul>
     </div>
   </div>
 </section>
 
 <!-- ============ SERVICIOS ============ -->
-<section id="servicios">
-  <p class="section-label">Nuestros Servicios</p>
-  <h2>Todo lo que podemos hacer por tu espacio</h2>
-  <p class="estilo-intro">El muro con luz es solo un ejemplo. Trabajamos cada rincón de tu casa, por dentro y por fuera.</p>
-  <div class="cards servicios-grid">
-    <div class="card">
-      <div class="serv-icon">◆</div>
-      <h3>Muros y paneles TV</h3>
-      <p>Paredes principales con madera, paneles y luz indirecta que transforman tu sala.</p>
+<section class="servicios" id="servicios">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">Servicios</p>
+      <h2>Todo lo que tu espacio necesita</h2>
+      <div class="rule"></div>
+      <p class="lead">Trabajamos cada rincón de tu casa o negocio, por dentro y por fuera.</p>
     </div>
-    <div class="card">
-      <div class="serv-icon">◆</div>
-      <h3>Gabinetes</h3>
-      <p>Gabinetes a medida para cocina y todo el hogar, con acabados finos y diseño funcional.</p>
-    </div>
-    <div class="card">
-      <div class="serv-icon">◆</div>
-      <h3>Muebles para el baño</h3>
-      <p>Muebles elegantes y resistentes a la humedad, diseñados para aprovechar cada centímetro.</p>
-    </div>
-    <div class="card">
-      <div class="serv-icon">◆</div>
-      <h3>Techos de madera y vigas</h3>
-      <p>Techos con calidez de madera y vigas decorativas de materiales modernos que no se deforman ni requieren mantenimiento.</p>
-    </div>
-    <div class="card">
-      <div class="serv-icon">◆</div>
-      <h3>Pisos modernos</h3>
-      <p>Pisos con apariencia de madera, resistentes al agua y al uso diario — perfectos para toda la casa.</p>
-    </div>
-    <div class="card">
-      <div class="serv-icon">◆</div>
-      <h3>Pérgolas</h3>
-      <p>Espacios exteriores con sombra y estilo: pérgolas que convierten tu terraza o jardín en un lugar para disfrutar.</p>
-    </div>
-    <div class="card">
-      <div class="serv-icon">◆</div>
-      <h3>Techos estilo canadiense</h3>
-      <p>Techos con teja shingle: elegantes, duraderos y con ese acabado de cabaña moderna.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ============ PILARES EMPRESARIALES ============ -->
-<section>
-  <p class="section-label">Pilares Empresariales</p>
-  <h2>Lo que nos define</h2>
-  <div class="cards">
-    <div class="card">
-      <h3>Maestría técnica</h3>
-      <p>No creamos productos: creamos experiencias. Cada pieza refleja precisión, oficio y pasión por la madera.</p>
-    </div>
-    <div class="card">
-      <h3>Escalabilidad</h3>
-      <p>Nuestra ambición es movernos por toda Guatemala, llevando calidad y confianza a cada rincón del país.</p>
-    </div>
-    <div class="card">
-      <h3>Innovación continua</h3>
-      <p>Creamos nuevos productos y optimizamos los procesos que ya existen para entregar siempre lo mejor.</p>
-    </div>
-    <div class="card">
-      <h3>Compromiso</h3>
-      <p>Cumplimos con los tiempos de entrega y respetamos los precios acordados. Nuestra palabra es nuestro contrato.</p>
-    </div>
-    <div class="card">
-      <h3>Atención de primer nivel</h3>
-      <p>El cliente está en el centro de todo. Cada interacción debe ser una experiencia de primer nivel.</p>
+    <div class="serv-grid reveal">
+      <article class="serv destacado">
+        <span class="serv-num">01</span>
+        <h3>Cielos y paneles con luz LED</h3>
+        <p>Listones tipo madera con iluminación integrada que transforman salas, terrazas y comercios.</p>
+        <span class="badge">Nuestra especialidad</span>
+      </article>
+      <article class="serv">
+        <span class="serv-num">02</span>
+        <h3>Muros y paneles decorativos</h3>
+        <p>Paredes principales y muros de TV con textura, calidez y luz indirecta.</p>
+      </article>
+      <article class="serv">
+        <span class="serv-num">03</span>
+        <h3>Muebles a medida</h3>
+        <p>Cocinas, clósets, muebles de TV y de baño diseñados para aprovechar cada centímetro.</p>
+      </article>
+      <article class="serv">
+        <span class="serv-num">04</span>
+        <h3>WPC interior y exterior</h3>
+        <p>Look de madera que no se pudre ni se deforma: bajo mantenimiento y gran duración.</p>
+      </article>
+      <article class="serv">
+        <span class="serv-num">05</span>
+        <h3>Pérgolas y terrazas</h3>
+        <p>Exteriores con sombra, estilo y luz para disfrutar tu casa también de noche.</p>
+      </article>
+      <article class="serv">
+        <span class="serv-num">06</span>
+        <h3>Repisas y escritorios</h3>
+        <p>Soluciones prácticas y estéticas para trabajar, estudiar u organizar.</p>
+      </article>
+      <article class="serv">
+        <span class="serv-num">07</span>
+        <h3>Techos estilo canadiense</h3>
+        <p>Teja shingle elegante y duradera, con acabado de cabaña moderna.</p>
+      </article>
+      <article class="serv">
+        <span class="serv-num">08</span>
+        <h3>Pisos tipo madera</h3>
+        <p>Apariencia cálida, resistentes al agua y al uso diario.</p>
+      </article>
+      <article class="serv">
+        <span class="serv-num">09</span>
+        <h3>Remodelaciones completas</h3>
+        <p>Transformamos salas, cocinas, dormitorios, oficinas y locales comerciales.</p>
+      </article>
     </div>
   </div>
 </section>
 
-
-<!-- ============ MECANISMOS DE CONTROL ============ -->
-<section>
-  <p class="section-label">Nuestro Proceso</p>
-  <h2>De la idea a tu proyecto terminado</h2>
-  <div class="steps">
-    <div class="step">
-      <div class="step-num">1</div>
-      <h3>Agenda tu cita</h3>
-      <p>Coordinamos una visita para la toma de requerimientos y entender exactamente lo que necesitas.</p>
+<!-- ============ PROYECTOS ============ -->
+<section class="proyectos" id="proyectos">
+  <div class="wrap">
+    <div class="section-head center reveal">
+      <p class="eyebrow">Proyectos</p>
+      <h2>Espacios que ya transformamos</h2>
+      <div class="rule"></div>
+      <p class="lead">Trabajos reales de Madera Viva en hogares y comercios de Guatemala.</p>
     </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <h3>Cotización</h3>
-      <p>Recibes una propuesta clara y detallada, con precios y tiempos definidos desde el inicio.</p>
+    <div class="galeria reveal" id="galeria">
+      <!-- PROYECTOS:INICIO -->
+      <!-- PROYECTOS:FIN -->
     </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <h3>Ejecución</h3>
-      <p>Manos a la obra: fabricamos tu proyecto con maestría técnica y supervisión de calidad constante.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <h3>Entrega de proyecto</h3>
-      <p>Recibes tu proyecto en el tiempo acordado, listo para iluminar tu espacio.</p>
+    <div class="galeria-cta reveal">
+      <a href="https://www.instagram.com/maderavivagt/" target="_blank" rel="noopener" class="ig-link">
+        <img src="img/instagram.png" alt="">Más proyectos en @maderavivagt
+      </a>
     </div>
   </div>
 </section>
 
-<!-- ============ AGENDA TU CITA ============ -->
-<section id="agendar">
-  <p class="section-label">Agenda tu Cita</p>
-  <h2>Cuéntanos tu idea y te visitamos</h2>
-  <form class="cita-form" id="citaForm">
-    <div class="form-grid">
-      <div class="form-field">
-        <label for="nombre">Nombre completo</label>
-        <input type="text" id="nombre" name="nombre" required autocomplete="name" placeholder="Tu nombre y apellido">
+<!-- ============ MATERIALES ============ -->
+<section class="materiales">
+  <div class="wrap">
+    <div class="section-head center reveal">
+      <p class="eyebrow">Materiales</p>
+      <h2>Tres materiales, un mismo cuidado por el detalle</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="mat-grid reveal">
+      <div class="mat">
+        <img src="img/material-madera.jpg" alt="Textura de madera de nogal" loading="lazy">
+        <h3>Madera</h3>
+        <p>La calidez natural de siempre, para piezas con carácter.</p>
       </div>
-      <div class="form-field">
-        <label for="telefono">Número de teléfono</label>
-        <input type="tel" id="telefono" name="telefono" required autocomplete="tel" placeholder="5555-5555">
+      <div class="mat">
+        <img src="img/material-melamina.jpg" alt="Superficie de melamina color arena" loading="lazy">
+        <h3>Melamina</h3>
+        <p>Superficies limpias y resistentes para muebles funcionales.</p>
       </div>
-      <div class="form-field form-wide">
-        <label for="direccion">Dirección</label>
-        <input type="text" id="direccion" name="direccion" required autocomplete="street-address" placeholder="Dirección donde se realizará el proyecto">
-      </div>
-      <div class="form-field form-wide">
-        <label for="idea">Idea del requerimiento</label>
-        <textarea id="idea" name="idea" rows="4" required placeholder="Cuéntanos qué tienes en mente: mueble, iluminación, espacio a transformar..."></textarea>
+      <div class="mat">
+        <img src="img/material-wpc.jpg" alt="Listones de WPC tipo madera" loading="lazy">
+        <h3>WPC</h3>
+        <p>Compuesto de madera y polímero: luce como madera, dura mucho más.</p>
       </div>
     </div>
-    <button type="submit" class="cta-btn">Agendar mi cita</button>
-    <p class="form-note" id="formNote"></p>
-  </form>
+  </div>
 </section>
 
+<!-- ============ PROCESO ============ -->
+<section class="proceso" id="proceso">
+  <div class="wrap">
+    <div class="section-head center reveal">
+      <p class="eyebrow">Proceso</p>
+      <h2>De la idea a tu proyecto terminado</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="steps reveal">
+      <div class="step"><div class="step-num">1</div><h3>Visita</h3><p>Vamos a tu espacio, tomamos medidas y escuchamos lo que necesitas.</p></div>
+      <div class="step"><div class="step-num">2</div><h3>Cotización</h3><p>Recibes una propuesta clara, con precio y tiempos definidos desde el inicio.</p></div>
+      <div class="step"><div class="step-num">3</div><h3>Fabricación</h3><p>Producimos tu proyecto con supervisión de calidad en cada etapa.</p></div>
+      <div class="step"><div class="step-num">4</div><h3>Instalación</h3><p>Entregamos en el tiempo acordado, listo para disfrutar.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AGENDA TU VISITA ============ -->
+<section class="agendar" id="agendar">
+  <div class="wrap agendar-grid">
+    <div class="reveal">
+      <p class="eyebrow">Agenda tu visita</p>
+      <h2>Cuéntanos tu idea y te visitamos</h2>
+      <div class="rule"></div>
+      <div class="oferta">
+        <strong>Visita y cotización sin costo</strong>
+        <p>Sin compromiso. Te entregamos una propuesta con precio claro antes de empezar.</p>
+      </div>
+      <ul class="contacto-lista">
+        <li><span>WhatsApp</span><a href="https://wa.me/50230508989?text=Hola%20Madera%20Viva%2C%20quiero%20agendar%20una%20visita" target="_blank" rel="noopener">3050 8989</a></li>
+        <li><span>Correo</span><a href="mailto:info@maderavivagt.com">info@maderavivagt.com</a></li>
+      </ul>
+    </div>
+    <form class="cita-form reveal" id="citaForm">
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="nombre">Nombre completo</label>
+          <input type="text" id="nombre" name="nombre" required autocomplete="name" placeholder="Tu nombre y apellido">
+        </div>
+        <div class="form-field">
+          <label for="telefono">Teléfono</label>
+          <input type="tel" id="telefono" name="telefono" required autocomplete="tel" placeholder="5555-5555">
+        </div>
+        <div class="form-field form-wide">
+          <label for="direccion">Dirección</label>
+          <input type="text" id="direccion" name="direccion" required autocomplete="street-address" placeholder="Dónde se realizará el proyecto">
+        </div>
+        <div class="form-field form-wide">
+          <label for="idea">¿Qué tienes en mente?</label>
+          <textarea id="idea" name="idea" rows="4" required placeholder="Mueble, panel con luz, cocina, pérgola, espacio a transformar..."></textarea>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Agendar mi visita</button>
+      <p class="form-note" id="formNote" role="status"></p>
+    </form>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
 <footer>
-  <span class="mini-m">M</span>
-  Madera Viva · Iluminando la esencia de la madera · Guatemala
+  <div class="wrap">
+    <img src="img/logo-marfil.png" alt="Madera Viva" class="logo">
+    <p class="tagline">Diseño que transforma, detalles que iluminan.</p>
+    <div class="foot-links">
+      <a href="#servicios">Servicios</a>
+      <a href="#proyectos">Proyectos</a>
+      <a href="#agendar">Agenda tu visita</a>
+      <a href="https://wa.me/50230508989" target="_blank" rel="noopener">WhatsApp 3050 8989</a>
+      <a href="mailto:info@maderavivagt.com">info@maderavivagt.com</a>
+    </div>
+    <a href="https://www.instagram.com/maderavivagt/" target="_blank" rel="noopener" class="foot-ig" aria-label="Instagram de Madera Viva"><img src="img/instagram.png" alt=""></a>
+    <p class="copy">Madera Viva · Guatemala</p>
+  </div>
 </footer>
+
+<a href="https://wa.me/50230508989?text=Hola%20Madera%20Viva%2C%20quiero%20m%C3%A1s%20informaci%C3%B3n" class="wa-float" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">
+  <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3C8.8 3 3 8.7 3 15.8c0 2.5.7 4.9 2 6.9L3 29l6.5-2c2 1.1 4.2 1.6 6.5 1.6 7.2 0 13-5.7 13-12.8S23.2 3 16 3zm0 23.3c-2 0-4-.5-5.7-1.6l-.4-.2-3.9 1.2 1.2-3.7-.3-.4c-1.2-1.8-1.8-3.8-1.8-5.9C5.1 9.9 10 5.2 16 5.2s10.9 4.7 10.9 10.6S22 26.3 16 26.3zm6-7.9c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-1.9-1.8-2.2-.2-.3 0-.5.1-.7l.5-.6c.2-.2.2-.3.3-.6.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.9s1.2 3.3 1.4 3.6c.2.2 2.4 3.7 5.9 5.1 2.9 1.1 3.5.9 4.1.8.6-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg>
+</a>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Foto ampliada"><img alt=""></div>
 
 <script>
   const root = document.documentElement;
-  const hero = document.getElementById('hero');
-  const glow = document.getElementById('glow');
 
-  // La luz sigue al cursor: la posición del mouse actúa como fuente de luz,
-  // el resplandor detrás de la madera se desplaza en dirección opuesta (sombra proyectada).
-  hero.addEventListener('mousemove', (e) => {
-    const rect = hero.getBoundingClientRect();
-    const px = (e.clientX - rect.left) / rect.width;   // 0..1
-    const py = (e.clientY - rect.top) / rect.height;   // 0..1
-
-    // Luz ambiental sigue directamente al mouse
-    root.style.setProperty('--mx', (px * 100) + '%');
-    root.style.setProperty('--my', (py * 100) + '%');
-
-    // El halo detrás de la M se desplaza sutilmente en sentido opuesto al cursor
-    const dx = (0.5 - px) * 36;
-    const dy = (0.5 - py) * 36;
-    root.style.setProperty('--gx', dx.toFixed(1) + 'px');
-    root.style.setProperty('--gy', dy.toFixed(1) + 'px');
+  // ---- Navegación: fondo al hacer scroll + menú móvil
+  const nav = document.getElementById('nav');
+  const navToggle = document.getElementById('navToggle');
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 40);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  navToggle.addEventListener('click', () => {
+    const open = nav.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', open);
   });
+  document.querySelectorAll('#navLinks a').forEach(a => a.addEventListener('click', () => {
+    nav.classList.remove('open'); navToggle.setAttribute('aria-expanded', 'false');
+  }));
 
-  // Soporte táctil
-  hero.addEventListener('touchmove', (e) => {
-    const t = e.touches[0];
-    if (!t) return;
-    const rect = hero.getBoundingClientRect();
-    const px = (t.clientX - rect.left) / rect.width;
-    const py = (t.clientY - rect.top) / rect.height;
+  // ---- Luz del logo: sigue al cursor (o al dedo)
+  const hero = document.getElementById('inicio');
+  const moveLight = (x, y) => {
+    const r = hero.getBoundingClientRect();
+    const px = (x - r.left) / r.width, py = (y - r.top) / r.height;
     root.style.setProperty('--mx', (px * 100) + '%');
     root.style.setProperty('--my', (py * 100) + '%');
     root.style.setProperty('--gx', ((0.5 - px) * 36).toFixed(1) + 'px');
     root.style.setProperty('--gy', ((0.5 - py) * 36).toFixed(1) + 'px');
-  }, { passive: true });
+  };
+  hero.addEventListener('mousemove', e => moveLight(e.clientX, e.clientY));
+  hero.addEventListener('touchmove', e => { const t = e.touches[0]; if (t) moveLight(t.clientX, t.clientY); }, { passive: true });
 
+  // ---- Animaciones de entrada
+  const io = new IntersectionObserver(entries => entries.forEach(en => {
+    if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+  }), { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
+  // ---- Video: ajusta el marco si el video es horizontal
+  const vid = document.getElementById('comercial');
+  vid.addEventListener('loadedmetadata', () => {
+    if (vid.videoWidth > vid.videoHeight) document.getElementById('videoFrame').classList.add('landscape');
+  });
 
-  // Formulario de cita: Envío directo y seguro con Web3Forms
+  // ---- Galería con foto ampliada
+  const lb = document.getElementById('lightbox');
+  document.getElementById('galeria').addEventListener('click', e => {
+    const img = e.target.closest('figure')?.querySelector('img');
+    if (!img) return;
+    lb.querySelector('img').src = img.currentSrc || img.src;
+    lb.querySelector('img').alt = img.alt;
+    lb.classList.add('on');
+  });
+  lb.addEventListener('click', () => lb.classList.remove('on'));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') lb.classList.remove('on'); });
+
+  // ---- Formulario de cita: envío con Web3Forms
   const citaForm = document.getElementById('citaForm');
   const formNote = document.getElementById('formNote');
-  const submitBtn = citaForm.querySelector('.cta-btn');
+  const submitBtn = citaForm.querySelector('button[type="submit"]');
 
   citaForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
-    // Feedback visual de carga
     submitBtn.disabled = true;
     submitBtn.textContent = 'Enviando...';
     formNote.textContent = '';
     formNote.style.color = 'var(--muted)';
 
     const formData = new FormData(citaForm);
-    // Este placeholder será reemplazado automáticamente en el deploy por GitHub Actions usando un Secret.
-    formData.append('access_key', '__WEB3FORMS_ACCESS_KEY__'); 
+    // Este placeholder se reemplaza automáticamente en el deploy por GitHub Actions usando un Secret.
+    formData.append('access_key', '__WEB3FORMS_ACCESS_KEY__');
     formData.append('subject', `Nueva cita — ${formData.get('nombre')}`);
     formData.append('from_name', 'Madera Viva Web');
 
     try {
-      const response = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        body: formData
-      });
-
+      const response = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData });
       const result = await response.json();
-
       if (result.success) {
-        formNote.style.color = '#f0d48a'; // Color oro claro de tu paleta
-        formNote.textContent = '¡Gracias! Hemos recibido tu requerimiento. Te contactaremos pronto. 🪵✨';
+        formNote.style.color = 'var(--nogal)';
+        formNote.textContent = '¡Gracias! Recibimos tu solicitud y te contactaremos pronto.';
         citaForm.reset();
       } else {
         throw new Error(result.message);
       }
     } catch (error) {
-      formNote.style.color = '#ff6b6b';
-      formNote.textContent = 'Ocurrió un error al enviar. Por favor intenta de nuevo o contáctanos por teléfono.';
+      formNote.style.color = '#B3412E';
+      formNote.textContent = 'No pudimos enviar tu solicitud. Intenta de nuevo o escríbenos por WhatsApp al 3050 8989.';
     } finally {
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Agendar mi cita';
+      submitBtn.textContent = 'Agendar mi visita';
     }
   });
 </script>
