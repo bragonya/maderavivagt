@@ -221,7 +221,7 @@ html.motion .hero-scrim {
 html.motion .hero-ui { position: absolute; inset: 0 0 auto 0; height: 100vh; height: 100svh; min-height: 0; background: none; }
 html.motion .ln-luz .ln-in { color: rgba(240, 234, 224, .2); text-shadow: none; }
 html.motion .ln-luz .ln-in::after {
-  content: attr(data-text); position: absolute; left: 0; top: 0; white-space: nowrap;
+  content: attr(data-text); position: absolute; left: 0; top: 0; width: 100%;
   color: var(--luz-clara); opacity: var(--lit, 0);
   text-shadow: 0 0 22px rgba(255, 205, 140, .78), 0 0 70px rgba(255, 176, 96, .5);
 }
@@ -250,7 +250,7 @@ html.motion .scroll-hint::after {
 }
 
 @media (max-width: 760px) {
-  .hero-ui { padding-top: 100px; }
+  .hero-ui { padding-top: 100px; padding-bottom: 92px; }
   .hero-title { font-size: clamp(42px, 12.6vw, 76px); line-height: 1; }
   .hero-actions { width: 100%; }
   .hero-actions .btn { flex: 1 1 100%; }
@@ -325,7 +325,7 @@ html.motion .scroll-hint::after {
 
 .stops { display: grid; gap: 10px; }
 .stop { position: relative; height: 84vh; height: 84svh; overflow: hidden; display: flex; align-items: flex-end; }
-.stop-media { position: absolute; inset: 0; overflow: hidden; }
+.stop-media { position: absolute; inset: 0; overflow: hidden; isolation: isolate; }
 .stop-inner { position: absolute; inset: 0; transform-origin: 50% 55%; }
 .stop-inner img, .stop-inner video, .stop-inner canvas, .stop-inner picture { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .stop-inner canvas.seq { display: none; }
@@ -397,6 +397,14 @@ html.motion .tour-hud { display: block; position: absolute; inset: 0 0 auto 0; h
 .tour-skip svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 @media (max-width: 1024px) {
   .tour-index { display: none; }
+}
+@media (min-width: 1025px) {
+  html.motion .stop-media::after {
+    background:
+      linear-gradient(to top, rgba(12, 10, 9, .9) 0%, rgba(12, 10, 9, .55) 30%, rgba(12, 10, 9, 0) 62%),
+      linear-gradient(to bottom, rgba(12, 10, 9, .6), rgba(12, 10, 9, 0) 26%),
+      linear-gradient(to left, rgba(12, 10, 9, .62), rgba(12, 10, 9, 0) 26%);
+  }
 }
 @media (max-width: 760px) {
   .stop-copy h3 { font-size: clamp(36px, 11vw, 60px); }
@@ -548,6 +556,22 @@ html.motion .agendar-logo { display: flex; justify-content: center; margin-botto
 .video-frame video { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; background: #1d1b19; }
 .video-frame.landscape { width: 100%; }
 .video-frame.landscape video { aspect-ratio: 16 / 9; }
+.vplay, .vbar { display: none; }
+.video-frame.custom video { cursor: pointer; }
+.video-frame.custom .vplay {
+  position: absolute; left: 14px; top: 14px; z-index: 2;
+  display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px 9px 10px; border-radius: 999px; cursor: pointer;
+  border: 1px solid rgba(240, 234, 224, .42); background: rgba(21, 19, 17, .55); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  font-size: 10.5px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--marfil);
+  transition: background .3s ease, border-color .3s ease;
+}
+.video-frame.custom .vplay:hover { background: rgba(21, 19, 17, .82); border-color: var(--marfil); }
+.vplay svg { width: 20px; height: 20px; fill: currentColor; }
+.vplay .i-pause { display: none; }
+.video-frame.is-playing .vplay .i-pause { display: block; }
+.video-frame.is-playing .vplay .i-play { display: none; }
+.video-frame.custom .vbar { display: block; position: absolute; left: 0; right: 0; top: 0; height: 2px; z-index: 2; background: rgba(240, 234, 224, .16); }
+.vbar b { position: absolute; inset: 0; transform: scaleX(0); transform-origin: left center; background: var(--luz-clara); box-shadow: 0 0 10px rgba(255, 205, 140, .9); }
 
 /* Tarjeta de presentación */
 .tarjeta-wrap { position: relative; z-index: 2; width: min(440px, 100%); margin: -150px 0 0 auto; padding: 0 0 18px 18px; }
@@ -613,11 +637,12 @@ html.motion .agendar-logo { display: flex; justify-content: center; margin-botto
 /* ==========================================================================
    FOOTER
    ========================================================================== */
+.pie > .wrap { container-type: inline-size; }
 .pie { background: var(--noche); color: rgba(240, 234, 224, .72); padding: clamp(60px, 9vh, 110px) 0 34px; border-top: 1px solid rgba(213, 193, 164, .14); overflow: clip; }
 .pie-tagline { font-family: var(--serif); font-style: italic; font-size: clamp(20px, 2vw, 28px); color: var(--arena); }
 .pie-marca {
   font-family: var(--serif); font-weight: 600; text-transform: uppercase; white-space: nowrap;
-  font-size: 13.6vw; line-height: .92; letter-spacing: -.02em; margin: .08em 0 .12em -0.03em;
+  font-size: min(13vw, 176px); font-size: 14.2cqw; line-height: .92; letter-spacing: -.02em; margin: .08em 0 .12em -0.03em;
   background: url('../img/tex/burl.webp') 0% 50% / 130% auto; -webkit-background-clip: text; background-clip: text; color: transparent;
   animation: veta 36s ease-in-out infinite alternate;
 }
@@ -631,8 +656,9 @@ html.motion .agendar-logo { display: flex; justify-content: center; margin-botto
 .creditos { font-size: 11px; line-height: 1.6; color: rgba(240, 234, 224, .38); max-width: 70ch; }
 .creditos a { color: rgba(240, 234, 224, .56); text-decoration: underline; text-underline-offset: 2px; }
 @media (max-width: 760px) {
-  .pie-marca { white-space: normal; font-size: 23.5vw; line-height: .86; background-size: 220% auto; }
+  .pie-marca { white-space: normal; font-size: 22vw; font-size: 24.6cqw; line-height: .86; background-size: 220% auto; }
   .pie-marca span { display: block; }
+  .pie { padding-bottom: 96px; }
 }
 
 /* WhatsApp flotante */

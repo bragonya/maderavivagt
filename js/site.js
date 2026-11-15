@@ -59,12 +59,41 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') lb.classList.remove('on'); });
   }
 
-  // Video de Andrés: ajusta el marco si el video es horizontal
+  // Video de Andrés: ajusta el marco si el video es horizontal y usa un botón propio
   const comercial = $('#comercial');
+  const vplay = $('#vplay');
   if (comercial) {
+    const frame = $('#videoFrame');
     comercial.addEventListener('loadedmetadata', () => {
-      if (comercial.videoWidth > comercial.videoHeight) $('#videoFrame').classList.add('landscape');
+      if (comercial.videoWidth > comercial.videoHeight) frame.classList.add('landscape');
     });
+    if (vplay) {
+      const bar = $('.vbar b', frame);
+      const label = vplay.querySelector('span');
+      comercial.controls = false;
+      frame.classList.add('custom');
+      const toggle = () => {
+        if (comercial.paused) { const p = comercial.play(); if (p && p.catch) p.catch(() => {}); }
+        else comercial.pause();
+      };
+      vplay.addEventListener('click', toggle);
+      comercial.addEventListener('click', toggle);
+      const paint = () => {
+        const on = !comercial.paused && !comercial.ended;
+        frame.classList.toggle('is-playing', on);
+        vplay.setAttribute('aria-label', on ? 'Pausar video' : 'Reproducir video');
+        label.textContent = on ? 'Pausar' : 'Ver video';
+      };
+      ['play', 'pause', 'ended'].forEach((ev) => comercial.addEventListener(ev, paint));
+      comercial.addEventListener('play', () => {
+        // Un solo audio a la vez: se silencia la película si estaba sonando
+        const film = $('#pelicula'), btn = $('#filmSound');
+        if (film && !film.muted) { film.muted = true; if (btn) { btn.setAttribute('aria-pressed', 'false'); btn.querySelector('span').textContent = 'Activar sonido'; } }
+      });
+      comercial.addEventListener('timeupdate', () => {
+        if (bar && comercial.duration) bar.style.transform = 'scaleX(' + (comercial.currentTime / comercial.duration).toFixed(4) + ')';
+      });
+    }
   }
 
   // Videos de fondo: cargan y reproducen solo cuando están en pantalla
@@ -92,7 +121,11 @@
     filmSound.addEventListener('click', () => {
       const withSound = pelicula.muted;
       pelicula.muted = !withSound;
-      if (withSound) { pelicula.currentTime = 0; const p = pelicula.play(); if (p && p.catch) p.catch(() => {}); }
+      if (withSound) {
+        if (comercial && !comercial.paused) comercial.pause();
+        pelicula.currentTime = 0;
+        const p = pelicula.play(); if (p && p.catch) p.catch(() => {});
+      }
       filmSound.setAttribute('aria-pressed', withSound ? 'true' : 'false');
       filmSound.querySelector('span').textContent = withSound ? 'Silenciar' : 'Activar sonido';
     });
@@ -418,22 +451,21 @@
       behind.style.transform = 'translate3d(0,' + (46 * (1 - bh)).toFixed(1) + 'px,0)';
     }
 
-    let inView = true;
     gsap.ticker.add(() => {
       if (!ok) return;
       const dx = ptr.tx - ptr.x, dy = ptr.ty - ptr.y, da = ptr.ta - ptr.a;
       if (Math.abs(dx) + Math.abs(dy) + Math.abs(da) > 0.0015) {
         ptr.x += dx * 0.12; ptr.y += dy * 0.12; ptr.a += da * 0.07; dirty = true;
       }
-      if (dirty && inView) { draw(); sync(); dirty = false; }
+      if (!dirty) return;
+      dirty = false;
+      // Solo se dibuja mientras el hero sigue a la vista
+      if (hero.getBoundingClientRect().bottom > -80) { draw(); sync(); }
     });
 
     gsap.to(st, {
       p: 1, ease: 'none', onUpdate: () => { dirty = true; },
-      scrollTrigger: {
-        trigger: hero, start: 'top top', end: 'bottom bottom', scrub: 0.6,
-        onToggle: (self) => { inView = self.isActive || self.progress < 1; dirty = true; },
-      },
+      scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom bottom', scrub: 0.6 },
     });
 
     if (finePointer) {
@@ -703,7 +735,7 @@
 
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
-  Promise.race([Promise.all([hero ? hero.ready : null, fonts]), wait(3800)])
+  Promise.race([Promise.all([hero ? hero.ready : null, fonts]), wait(3000)])
     .catch(() => {})
     .then(() => wait(Math.max(0, 900 - (performance.now() - t0))))
     .then(() => {
