@@ -1,12 +1,11 @@
 # Origen de las imágenes y videos del sitio
 
-Las fotos de `img/hero`, `img/tour`, `img/mat`, `img/esencia` y `img/tex` son **imágenes de referencia** de Unsplash (licencia Unsplash: uso comercial libre, sin atribución obligatoria). No son proyectos de Madera Viva; conviene irlas reemplazando por fotos propias.
+Las fotos de `img/tour`, `img/mat`, `img/esencia` y `img/tex` son **imágenes de referencia** de Unsplash (licencia Unsplash: uso comercial libre, sin atribución obligatoria). No son proyectos de Madera Viva; conviene irlas reemplazando por fotos propias.
 
 Cada foto se puede abrir con `https://images.unsplash.com/<id>`.
 
 | Archivo | Uso | Id en Unsplash |
 |---|---|---|
-| `hero/wall*.webp`, `hero/glow*.webp`, `hero/poster.jpg` | Muro de listones del inicio (tono ajustado; `glow` es el mapa de luz calculado de la misma foto) | `photo-1550946236-860c29d5635c` |
 | `tour/sala*.webp` | Póster de la parada "Sala" | `photo-1632378206664-853dabd4ffb4` |
 | `tour/sala-tv*.webp` | Muros y paneles decorativos | `photo-1745429523637-60f5986cc1db` |
 | `tour/cocina*.webp` | Muebles a medida | `photo-1684928365167-e91916573122` |
@@ -27,11 +26,8 @@ Cada foto se puede abrir con `https://images.unsplash.com/<id>`.
 
 ## Videos y secuencias
 
-- `video/pelicula.mp4`: la película de marca (versión 5), recortada a 31 s. Se cortó el cierre porque esa versión muestra un número de WhatsApp distinto al del sitio (3050 8989).
-- `video/cielo-led.mp4`, `img/seq/pergola/`, `img/seq/logo/`: clips generados con Runway a partir de las fotos del proyecto; las carpetas `seq` son los cuadros que el sitio recorre con el scroll.
+- `video/hero.mp4` (escritorio) y `video/hero-v.mp4` (teléfono, recorte vertical del centro): la película de marca (versión 5), sin audio, recortada a 31 s y en bucle como fondo del inicio. Se cortó el cierre porque esa versión muestra un número de WhatsApp distinto al del sitio (3050 8989). `img/hero/poster*.jpg` es un cuadro de esa película.
+- `video/cielo-led.mp4`, `img/seq/pergola/`, `img/seq/logo/`: clips generados con Runway a partir de las fotos del proyecto; las carpetas `seq` son cuadros que el sitio reproduce en secuencia.
 - `video/comercial.mp4`: video de Andrés (ya estaba en el sitio).
 
-## Audio de la película (CC BY 4.0, hay que dar crédito; el sitio lo hace en el pie de página)
-
-- "Chill house" de Gravity Sound — https://commons.wikimedia.org/wiki/File:Chill_house_(Gravity_Sound).wav (recortada, con fundido).
-- "Deep Cinematic Impact" de MeijstroAudio — https://freesound.org/people/MeijstroAudio/sounds/377303
+El fondo del inicio va sin sonido, así que la música de la película (CC BY 4.0) no se usa en el sitio y no requiere crédito aquí. Si se vuelve a poner la película con audio, hay que acreditar "Chill house" de Gravity Sound y "Deep Cinematic Impact" de MeijstroAudio (ver `madera-viva-video/assets/audio/CREDITS.md`).

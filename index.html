@@ -11,21 +11,15 @@
 <meta property="og:url" content="https://maderavivagt.com/">
 <meta name="theme-color" content="#151311">
 <link rel="icon" type="image/png" href="img/logo.png">
-<script>document.documentElement.className += ' js';</script>
+<script>document.documentElement.className += ' js'; setTimeout(function () { document.documentElement.classList.add('ready'); }, 2500);</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="img/hero/wall.webp" media="(min-width: 761px)">
-<link rel="preload" as="image" href="img/hero/wall-m.webp" media="(max-width: 760px)">
+<link rel="preload" as="image" href="img/hero/poster.jpg" media="(min-aspect-ratio: 4/5)">
+<link rel="preload" as="image" href="img/hero/poster-v.jpg" media="(max-aspect-ratio: 4/5)">
 <link rel="stylesheet" href="css/site.css">
 </head>
 <body>
-
-<!-- Pantalla de carga: el logo se enciende mientras llega el muro -->
-<div class="loader" id="loader" aria-hidden="true">
-  <img src="img/logo-marfil.png" alt="" width="320" height="182">
-  <span class="loader-line"><i></i></span>
-</div>
 
 <div class="grain" aria-hidden="true"></div>
 <div class="led-progress" aria-hidden="true"><i id="ledProgress"></i></div>
@@ -49,22 +43,18 @@
 
 <main>
 
-<!-- ============ HERO: EL MURO SE CONSTRUYE CON EL SCROLL ============ -->
+<!-- ============ HERO: VIDEO DE FONDO; AL BAJAR SE FUNDE EN BLANCO ============ -->
 <header class="hero" id="inicio">
   <div class="hero-stage">
 
-    <!-- Lo que aparece cuando los listones se abren -->
-    <div class="hero-behind">
-      <div class="behind-in">
-        <p class="eyebrow">Quiénes somos</p>
-        <h2 class="display">Transformamos espacios con soluciones <em>cálidas</em> y <em>funcionales</em></h2>
+    <div class="hero-top">
+      <div class="hero-media" aria-hidden="true">
+        <video class="hero-video" id="heroVideo" muted loop playsinline preload="none" poster="img/hero/poster.jpg"
+          data-src="video/hero.mp4" data-src-v="video/hero-v.mp4" data-poster-v="img/hero/poster-v.jpg"></video>
       </div>
-    </div>
+      <div class="hero-scrim" aria-hidden="true"></div>
 
-    <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
-    <div class="hero-scrim" aria-hidden="true"></div>
-
-    <div class="hero-ui" id="heroUi">
+      <div class="hero-ui" id="heroUi">
       <div class="hero-copy">
         <p class="eyebrow hero-eyebrow">Madera · Melamina · WPC — Guatemala</p>
         <h1 class="hero-title">
@@ -79,12 +69,15 @@
           </div>
         </div>
       </div>
-      <ol class="hero-steps" aria-hidden="true">
-        <li class="on"><b>01</b>Diseño</li>
-        <li><b>02</b>Montaje</li>
-        <li><b>03</b>Luz</li>
-      </ol>
-      <p class="scroll-hint" aria-hidden="true"><span>Desliza para construir</span></p>
+      </div>
+    </div>
+
+    <!-- La pantalla blanca que aparece al bajar -->
+    <div class="hero-behind">
+      <div class="behind-in">
+        <p class="eyebrow">Quiénes somos</p>
+        <h2 class="display">Transformamos espacios con soluciones <em>cálidas</em> y <em>funcionales</em></h2>
+      </div>
     </div>
 
   </div>
@@ -125,8 +118,8 @@
     <p class="lead" data-reveal>Trabajamos cada rincón de tu casa o negocio, por dentro y por fuera. Recorre la casa: en cada espacio, un servicio.</p>
   </header>
 
-  <div class="tour-track" id="tourTrack" style="--n:9">
-    <div class="tour-stage">
+  <div class="tour-track" id="tourTrack">
+    <div class="tour-stage" aria-roledescription="carrusel" aria-label="Recorrido por la casa">
 
       <div class="stops">
         <article class="stop" data-room="Sala">
@@ -235,15 +228,20 @@
       <!-- Controles del recorrido (solo con movimiento activo) -->
       <div class="tour-hud" id="tourHud">
         <div class="tour-top">
-          <div class="tour-bars" id="tourBars" role="tablist" aria-label="Paradas del recorrido"></div>
+          <div class="tour-bars" id="tourBars" role="group" aria-label="Paradas del recorrido"></div>
           <div class="tour-meta">
             <span class="tour-label">El recorrido</span>
             <span class="tour-count"><b id="tourNow">01</b> / 09</span>
           </div>
         </div>
         <ol class="tour-index" id="tourIndex"></ol>
-        <a href="#materiales" class="tour-skip">Saltar recorrido <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
+        <div class="tour-ctrl">
+          <button type="button" class="tc-btn" id="tourPrev" aria-label="Espacio anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <button type="button" class="tc-btn" id="tourPause" aria-label="Pausar recorrido" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-pause" d="M8.5 5.5v13M15.5 5.5v13"/><path class="i-play" d="M8 5.5v13l11-6.5z"/></svg></button>
+          <button type="button" class="tc-btn" id="tourNext" aria-label="Siguiente espacio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
       </div>
+      <div class="tour-cursor" id="tourCursor" aria-hidden="true"><span>Siguiente</span><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
 
     </div>
   </div>
@@ -289,24 +287,6 @@
         <li class="paso"><span class="paso-n">03</span><h3>Fabricación</h3><p>Producimos tu proyecto con supervisión de calidad en cada etapa.</p></li>
         <li class="paso"><span class="paso-n">04</span><h3>Instalación</h3><p>Entregamos en el tiempo acordado, listo para disfrutar.</p></li>
       </ol>
-    </div>
-  </div>
-</section>
-
-<!-- ============ PELÍCULA ============ -->
-<section class="pelicula" id="video">
-  <div class="wrap pelicula-head">
-    <p class="eyebrow" data-reveal>Madera Viva en movimiento</p>
-    <h2 class="display" data-lines>Mira cómo cobra vida cada proyecto</h2>
-    <p class="lead" data-reveal>Del diseño a la instalación, cuidamos cada corte, cada unión y cada línea de luz.</p>
-  </div>
-  <div class="film" id="film">
-    <div class="film-frame">
-      <video id="pelicula" muted loop playsinline preload="none" poster="video/pelicula-poster.jpg" data-src="video/pelicula.mp4">Tu navegador no puede reproducir este video.</video>
-      <button class="film-sound" id="filmSound" type="button" aria-pressed="false">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path class="spk" d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z"/><path class="on" d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12"/><path class="off" d="M16 9.5l5 5M21 9.5l-5 5"/></svg>
-        <span>Activar sonido</span>
-      </button>
     </div>
   </div>
 </section>
@@ -430,7 +410,7 @@
     </div>
     <div class="pie-legal">
       <p class="copy">Madera Viva · Guatemala</p>
-      <p class="creditos">Música del video: <a href="https://commons.wikimedia.org/wiki/File:Chill_house_(Gravity_Sound).wav" target="_blank" rel="noopener">“Chill house”</a> de Gravity Sound y <a href="https://freesound.org/people/MeijstroAudio/sounds/377303" target="_blank" rel="noopener">“Deep Cinematic Impact”</a> de MeijstroAudio, licencia <a href="https://creativecommons.org/licenses/by/4.0/deed.es" target="_blank" rel="noopener">CC BY 4.0</a>, adaptadas. Fotos de referencia: Unsplash.</p>
+      <p class="creditos">Fotos de referencia: Unsplash.</p>
     </div>
   </div>
 </footer>
