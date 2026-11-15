@@ -110,11 +110,11 @@
   };
 
 
-  // Video de fondo del inicio: versión vertical en teléfonos; nada si piden menos movimiento o ahorro de datos
+  // The portrait hero is limited to phone-width screens; reduced-motion and data-saving users keep the poster.
   const heroVideo = $('#heroVideo');
-  let heroCovered = false; // la pantalla blanca ya tapó el video
+  let heroCovered = false;
   if (heroVideo) {
-    if (window.matchMedia('(max-aspect-ratio: 4/5)').matches) {
+    if (window.matchMedia('(max-width: 760px)').matches) {
       heroVideo.dataset.src = heroVideo.dataset.srcV;
       heroVideo.poster = heroVideo.dataset.posterV;
     }
@@ -281,7 +281,7 @@
   }
 
   /* ==================================================================
-     RECORRIDO — carrusel: cambia solo cada 15 s; clic o deslizar avanza
+     SERVICES — carousel advances every 15 seconds; click or swipe navigates
      ================================================================== */
   function initTour() {
     const track = $('#tourTrack');
@@ -413,7 +413,7 @@
     btnPause.addEventListener('click', () => {
       userPaused = !userPaused;
       btnPause.setAttribute('aria-pressed', userPaused ? 'true' : 'false');
-      btnPause.setAttribute('aria-label', userPaused ? 'Reanudar recorrido' : 'Pausar recorrido');
+      btnPause.setAttribute('aria-label', userPaused ? 'Reanudar servicios' : 'Pausar servicios');
     });
 
     // Clic o toque en la foto: siguiente. Deslizar: siguiente o anterior.
@@ -549,30 +549,20 @@
       });
     }
 
-    // Proceso: la línea LED avanza y enciende cada paso
+    // The process light follows scroll progress and activates each step.
     const pw = $('#pasos');
     if (pw) {
       const pasos = $$('.paso', pw);
       pw.style.setProperty('--p', '0');
+      pw.style.setProperty('--p-y', '0%');
       ScrollTrigger.create({
         trigger: pw, start: 'top 76%', end: 'bottom 60%', scrub: 0.5,
         onUpdate: (self) => {
           const p = self.progress;
           pw.style.setProperty('--p', p.toFixed(4));
+          pw.style.setProperty('--p-y', (p * 100).toFixed(2) + '%');
           pasos.forEach((el, i) => el.classList.toggle('on', p >= i / pasos.length + 0.02));
         },
-      });
-    }
-
-    // Logo: la M gira hasta quedar en su lugar
-    const logoCanvas = $('#seqLogo');
-    if (logoCanvas) {
-      const ls = new FrameSeq(logoCanvas, (small || saveData) ? 2 : 1, false);
-      const o = { u: 0 };
-      ScrollTrigger.create({ trigger: '.agendar', start: 'top 250%', once: true, onEnter: () => ls.load() });
-      gsap.to(o, {
-        u: 1, ease: 'none', onUpdate: () => ls.draw(o.u),
-        scrollTrigger: { trigger: '.agendar-logo', start: 'top 88%', end: 'center 46%', scrub: 0.6 },
       });
     }
   }

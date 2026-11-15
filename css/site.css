@@ -188,7 +188,7 @@ html.lenis, html.lenis body { height: auto; }
 .hero-behind { background: var(--marfil-claro); color: var(--carbon); padding: clamp(80px, 13vh, 150px) var(--pad) 0; }
 .behind-in { max-width: 1180px; margin: 0 auto; display: grid; gap: 26px; justify-items: center; text-align: center; }
 .behind-in .display { font-size: clamp(38px, 6.4vw, 104px); }
-@media (max-aspect-ratio: 4/5) { .hero-media { background-image: url('../img/hero/poster-v.jpg'); } }
+@media (max-width: 760px) { .hero-media { background-image: url('../img/hero/poster-v.jpg'); } }
 
 .hero-copy { position: relative; width: 100%; }
 .hero-eyebrow { color: var(--arena); }
@@ -281,7 +281,7 @@ html.motion .behind-in { margin-bottom: calc(100lvh - 100svh); }
 .mq-track i { flex: 0 0 auto; width: .78em; height: .3em; border-radius: 999px; background: var(--nogal); opacity: .8; }
 
 /* ==========================================================================
-   RECORRIDO (servicios) — carrusel a pantalla completa
+   SERVICES — full-screen carousel
    ========================================================================== */
 .tour { background: var(--noche); color: var(--marfil); }
 .tour-intro { display: grid; gap: 24px; padding-top: clamp(70px, 11vh, 140px); padding-bottom: clamp(50px, 8vh, 100px); }
@@ -306,16 +306,9 @@ html.motion .behind-in { margin-bottom: calc(100lvh - 100svh); }
 }
 .stop-shade { position: absolute; inset: 0; background: #0c0a09; opacity: 0; pointer-events: none; z-index: 1; }
 .stop-copy { position: relative; z-index: 2; width: 100%; max-width: 1020px; padding: 0 var(--pad) clamp(40px, 8vh, 92px); }
-.stop-room {
-  display: flex; align-items: center; gap: 14px;
-  font-size: 12px; font-weight: 600; letter-spacing: .3em; text-transform: uppercase; color: var(--luz);
-  text-shadow: 0 1px 10px rgba(0, 0, 0, .6);
-}
-.stop-room b { font-weight: 600; color: rgba(240, 234, 224, .8); }
-.stop-room b::after { content: ''; display: inline-block; width: 40px; height: 1.5px; background: var(--luz); vertical-align: middle; margin-left: 14px; box-shadow: 0 0 8px rgba(255, 205, 140, .8); }
 .stop-copy h3 {
   font-family: var(--serif); font-weight: 600; color: #FBF7F0;
-  font-size: clamp(42px, 6.6vw, 108px); line-height: .96; letter-spacing: -.015em; margin: .2em 0 .24em; text-wrap: balance;
+  font-size: clamp(42px, 6.6vw, 108px); line-height: .96; letter-spacing: -.015em; margin: 0 0 .24em; text-wrap: balance;
   text-shadow: 0 2px 30px rgba(0, 0, 0, .55), 0 1px 3px rgba(0, 0, 0, .4);
 }
 .stop-desc {
@@ -432,7 +425,7 @@ html.motion .tour-hud { display: block; position: absolute; inset: 0; z-index: 3
 }
 
 /* ==========================================================================
-   PROCESO
+   PROCESS
    ========================================================================== */
 .proceso { background: var(--tinta); color: var(--marfil); padding: clamp(96px, 15vh, 190px) 0; }
 .proceso .eyebrow, .agendar .eyebrow { color: var(--arena); }
@@ -463,10 +456,24 @@ html.motion .paso:not(.on) .paso-n { color: transparent; -webkit-text-stroke-col
 html.motion .paso:not(.on) h3, html.motion .paso:not(.on) p { opacity: .32; }
 @media (max-width: 860px) {
   .pasos-wrap { padding-top: 0; padding-left: 36px; }
-  .led { left: 5px; right: auto; top: 6px; bottom: 6px; width: 2px; height: auto; }
-  .led i { transform: scaleY(var(--p, 1)); transform-origin: center top; background: linear-gradient(180deg, var(--luz), var(--luz-clara)); }
-  .pasos { grid-template-columns: 1fr; gap: 52px; }
-  .paso::before { left: -37px; top: 22px; }
+  .led {
+    left: 4px; right: auto; top: 6px; bottom: 6px; width: 3px; height: auto;
+    z-index: 2; overflow: visible; border-radius: 999px;
+  }
+  .led i {
+    display: block; transform: scaleY(var(--p, 1)); transform-origin: center top;
+    background: linear-gradient(180deg, var(--luz), var(--luz-clara));
+    will-change: transform; backface-visibility: hidden;
+  }
+  .led::after {
+    content: ''; position: absolute; left: 50%; top: var(--p-y, 100%);
+    width: 12px; height: 12px; border-radius: 50%; pointer-events: none;
+    background: var(--luz-clara); transform: translate(-50%, -50%);
+    box-shadow: 0 0 0 6px rgba(255, 217, 160, .12), 0 0 18px 5px rgba(255, 200, 130, .9);
+    will-change: top;
+  }
+  .pasos { position: relative; z-index: 1; grid-template-columns: 1fr; gap: 52px; }
+  .paso::before { left: -38px; top: 22px; z-index: 3; }
   .paso h3 { margin-top: 14px; }
 }
 
@@ -513,14 +520,13 @@ html.motion .paso:not(.on) h3, html.motion .paso:not(.on) p { opacity: .32; }
    AGENDA TU VISITA
    ========================================================================== */
 .agendar { position: relative; background: var(--noche); color: var(--marfil); padding: clamp(96px, 14vh, 170px) 0 clamp(96px, 14vh, 170px); overflow: clip; }
-.agendar-logo { display: none; }
-html.motion .agendar { padding-top: clamp(30px, 6vh, 70px); }
-html.motion .agendar-logo { display: flex; justify-content: center; margin-bottom: clamp(-70px, -5vw, -24px); }
-.agendar-logo canvas {
-  width: min(760px, 108vw); max-width: none; height: auto; aspect-ratio: 16 / 9; mix-blend-mode: screen;
-  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 52%, transparent 100%);
-  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 52%, transparent 100%);
+.agendar-logo { display: flex; justify-content: center; margin-bottom: clamp(34px, 5vh, 56px); }
+.agendar-logo-card {
+  display: grid; place-items: center; width: clamp(150px, 16vw, 210px); padding: 16px 20px;
+  background: #fff; border-radius: 4px; box-shadow: 0 16px 42px rgba(0, 0, 0, .3);
 }
+.agendar-logo-card img { width: 100%; height: auto; }
+html.motion .agendar { padding-top: clamp(72px, 10vh, 110px); }
 .agendar-grid { display: grid; grid-template-columns: .92fr 1.08fr; gap: clamp(40px, 6vw, 100px); align-items: start; margin-top: clamp(50px, 9vh, 100px); }
 .agendar-persona { position: relative; }
 .video-frame { position: relative; width: min(340px, 74%); border-radius: 6px; overflow: hidden; background: #1d1b19; box-shadow: 0 30px 80px rgba(0, 0, 0, .5); }
