@@ -318,7 +318,8 @@
     });
 
     // Parada con video (cielo LED) y parada con secuencia de cuadros (pérgola)
-    const video = $('video', stops[0]);
+    const video = $('.stop video', track);
+    const videoStop = video ? stops.indexOf(video.closest('.stop')) : -1;
     const seqCanvas = $('#seqTerraza');
     const seq = seqCanvas ? new FrameSeq(seqCanvas, (small || saveData) ? 2 : 1) : null;
     const seqStop = seqCanvas ? stops.indexOf(seqCanvas.closest('.stop')) : -1;
@@ -326,7 +327,7 @@
 
     function syncMedia() {
       if (video) {
-        if (inView && (cur === 0 || from === 0)) {
+        if (inView && (cur === videoStop || from === videoStop)) {
           if (!video.getAttribute('src') && video.dataset.src) video.src = video.dataset.src;
           const p = video.play(); if (p && p.catch) p.catch(() => {});
         } else video.pause();

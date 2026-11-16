@@ -33,9 +33,9 @@
     <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span></button>
     <ul class="nav-links" id="navLinks">
       <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#empresas">Empresas</a></li>
       <li><a href="#materiales">Materiales</a></li>
       <li><a href="#proceso">Proceso</a></li>
-      <li><a href="#empresas">Empresas</a></li>
       <li><a href="#proyectos">Proyectos</a></li>
       <li><a href="#agendar" class="nav-cta">Agenda tu visita</a></li>
     </ul>
@@ -123,7 +123,18 @@
     <div class="tour-stage" aria-roledescription="carrusel" aria-label="Nuestros servicios">
 
       <div class="stops">
-        <article class="stop" data-room="Sala">
+        <article class="stop" data-room="Negocios">
+          <div class="stop-media"><div class="stop-inner">
+            <picture><source media="(orientation: portrait)" srcset="img/tour/recepcion-v.webp"><img src="img/tour/recepcion.webp" alt="Recepción con muro de listones de madera y lámparas colgantes" loading="lazy" width="1920" height="1200"></picture>
+          </div><div class="stop-shade"></div></div>
+          <div class="stop-copy">
+            <h3>Hoteles, oficinas y comercios</h3>
+            <p class="stop-desc">Recepciones, lobbies, muros de listones y mobiliario para negocios que quieren dar una buena primera impresión.</p>
+            <a href="#empresas" class="btn btn-luz stop-cta"><span>Soluciones para empresas</span><i class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></a>
+          </div>
+        </article>
+
+        <article class="stop" data-room="Cielos LED">
           <div class="stop-media"><div class="stop-inner">
             <video muted loop playsinline preload="none" poster="img/tour/sala.webp" data-src="video/cielo-led.mp4" aria-label="Cielo de madera con una línea de luz LED"></video>
           </div><div class="stop-shade"></div></div>
@@ -134,7 +145,7 @@
           </div>
         </article>
 
-        <article class="stop" data-room="Sala de TV">
+        <article class="stop" data-room="Muros">
           <div class="stop-media"><div class="stop-inner">
             <picture><source media="(orientation: portrait)" srcset="img/tour/sala-tv-v.webp"><img src="img/tour/sala-tv.webp" alt="Muro de TV con paneles de madera y luz indirecta" loading="lazy" width="1920" height="1200"></picture>
           </div><div class="stop-shade"></div></div>
@@ -144,7 +155,7 @@
           </div>
         </article>
 
-        <article class="stop" data-room="Cocina">
+        <article class="stop" data-room="Muebles">
           <div class="stop-media"><div class="stop-inner">
             <picture><source media="(orientation: portrait)" srcset="img/tour/cocina-v.webp"><img src="img/tour/cocina.webp" alt="Cocina a medida con isla y luz bajo los gabinetes" loading="lazy" width="1920" height="1200"></picture>
           </div><div class="stop-shade"></div></div>
@@ -154,7 +165,7 @@
           </div>
         </article>
 
-        <article class="stop" data-room="Estudio">
+        <article class="stop" data-room="Repisas">
           <div class="stop-media"><div class="stop-inner">
             <picture><source media="(orientation: portrait)" srcset="img/tour/estudio-v.webp"><img src="img/tour/estudio.webp" alt="Estudio con escritorio flotante y repisas iluminadas" loading="lazy" width="1920" height="1200"></picture>
           </div><div class="stop-shade"></div></div>
@@ -164,7 +175,7 @@
           </div>
         </article>
 
-        <article class="stop" data-room="Habitación">
+        <article class="stop" data-room="Pisos">
           <div class="stop-media"><div class="stop-inner">
             <picture><source media="(orientation: portrait)" srcset="img/tour/pisos-v.webp"><img src="img/tour/pisos.webp" alt="Habitación con piso tipo madera en tono oscuro" loading="lazy" width="1920" height="1200"></picture>
           </div><div class="stop-shade"></div></div>
@@ -174,7 +185,7 @@
           </div>
         </article>
 
-        <article class="stop" data-room="Terraza">
+        <article class="stop" data-room="Pérgolas">
           <div class="stop-media"><div class="stop-inner">
             <picture><source media="(orientation: portrait)" srcset="img/tour/terraza-v.webp"><img src="img/tour/terraza.webp" alt="Pérgola de madera con líneas de luz LED de noche" loading="lazy" width="1920" height="1200"></picture>
             <canvas class="seq" id="seqTerraza" data-seq="img/seq/pergola/" data-count="61" aria-hidden="true"></canvas>
@@ -185,7 +196,7 @@
           </div>
         </article>
 
-        <article class="stop" data-room="Fachada">
+        <article class="stop" data-room="WPC">
           <div class="stop-media"><div class="stop-inner">
             <picture><source media="(orientation: portrait)" srcset="img/tour/fachada-v.webp"><img src="img/tour/fachada.webp" alt="Fachada moderna con listones tipo madera" loading="lazy" width="1920" height="1200"></picture>
           </div><div class="stop-shade"></div></div>
@@ -195,26 +206,17 @@
           </div>
         </article>
 
-        <article class="stop" data-room="Techo">
+        <article class="stop" data-room="Techos">
           <div class="stop-media"><div class="stop-inner">
             <picture><source media="(orientation: portrait)" srcset="img/tour/techo-v.webp"><img src="img/tour/techo.webp" alt="Techos con teja shingle estilo canadiense" loading="lazy" width="1920" height="1200"></picture>
           </div><div class="stop-shade"></div></div>
           <div class="stop-copy">
             <h3>Techos estilo canadiense</h3>
             <p class="stop-desc">Teja shingle elegante y duradera, con acabado de cabaña moderna.</p>
-          </div>
-        </article>
-
-        <article class="stop" data-room="Toda la casa">
-          <div class="stop-media"><div class="stop-inner">
-            <picture><source media="(orientation: portrait)" srcset="img/tour/casa-v.webp"><img src="img/tour/casa.webp" alt="Sala remodelada con paneles de madera y librero a medida" loading="lazy" width="1920" height="1200"></picture>
-          </div><div class="stop-shade"></div></div>
-          <div class="stop-copy">
-            <h3>Remodelaciones completas</h3>
-            <p class="stop-desc">Transformamos salas, cocinas, dormitorios, oficinas y locales comerciales.</p>
             <a href="#agendar" class="btn btn-luz stop-cta"><span>Cotiza tu proyecto</span><i class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></a>
           </div>
         </article>
+
       </div>
 
       <!-- Service navigation controls (motion mode only) -->
@@ -238,49 +240,6 @@
     </div>
   </div>
   <p class="nota-ref wrap">Imágenes de referencia para ilustrar cada servicio.</p>
-</section>
-
-<!-- ============ MATERIALES ============ -->
-<section class="materiales" id="materiales">
-  <div class="wrap">
-    <header class="sec-head">
-      <p class="eyebrow" data-reveal>Materiales</p>
-      <h2 class="display" data-lines>Tres materiales, un mismo cuidado por el detalle</h2>
-    </header>
-    <div class="mats">
-      <article class="mat" data-clip>
-        <div class="mat-img"><img src="img/mat/madera.webp" alt="Textura de madera de nogal" loading="lazy" width="1000" height="1400" data-parallax="7"></div>
-        <div class="mat-info"><span class="mat-n">01</span><h3>Madera</h3><p>La calidez natural de siempre, para piezas con carácter.</p></div>
-      </article>
-      <article class="mat" data-clip>
-        <div class="mat-img"><img src="img/mat/melamina.webp" alt="Nicho de melamina oscura con luz integrada" loading="lazy" width="1000" height="1400" data-parallax="7"></div>
-        <div class="mat-info"><span class="mat-n">02</span><h3>Melamina</h3><p>Superficies limpias y resistentes para muebles funcionales.</p></div>
-      </article>
-      <article class="mat" data-clip>
-        <div class="mat-img"><img src="img/mat/wpc.webp" alt="Revestimiento exterior de listones de WPC" loading="lazy" width="1000" height="1400" data-parallax="7"></div>
-        <div class="mat-info"><span class="mat-n">03</span><h3>WPC</h3><p>Compuesto de madera y polímero: luce como madera, dura mucho más.</p></div>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- ============ PROCESO ============ -->
-<section class="proceso" id="proceso">
-  <div class="wrap">
-    <header class="sec-head">
-      <p class="eyebrow" data-reveal>Proceso</p>
-      <h2 class="display" data-lines>De la idea a tu proyecto terminado</h2>
-    </header>
-    <div class="pasos-wrap" id="pasos">
-      <div class="led" aria-hidden="true"><i></i></div>
-      <ol class="pasos">
-        <li class="paso"><span class="paso-n">01</span><h3>Visita</h3><p>Vamos a tu espacio, tomamos medidas y escuchamos lo que necesitas.</p></li>
-        <li class="paso"><span class="paso-n">02</span><h3>Cotización</h3><p>Recibes una propuesta clara, con precio y tiempos definidos desde el inicio.</p></li>
-        <li class="paso"><span class="paso-n">03</span><h3>Fabricación</h3><p>Producimos tu proyecto con supervisión de calidad en cada etapa.</p></li>
-        <li class="paso"><span class="paso-n">04</span><h3>Instalación</h3><p>Entregamos en el tiempo acordado, listo para disfrutar.</p></li>
-      </ol>
-    </div>
-  </div>
 </section>
 
 <!-- ============ PARA EMPRESAS ============ -->
@@ -338,13 +297,55 @@
   </div>
 </section>
 
+<!-- ============ MATERIALES ============ -->
+<section class="materiales" id="materiales">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow" data-reveal>Materiales</p>
+      <h2 class="display" data-lines>Tres materiales, un mismo cuidado por el detalle</h2>
+    </header>
+    <div class="mats">
+      <article class="mat" data-clip>
+        <div class="mat-img"><img src="img/mat/madera.webp" alt="Textura de madera de nogal" loading="lazy" width="1000" height="1400" data-parallax="7"></div>
+        <div class="mat-info"><span class="mat-n">01</span><h3>Madera</h3><p>La calidez natural de siempre, para piezas con carácter.</p></div>
+      </article>
+      <article class="mat" data-clip>
+        <div class="mat-img"><img src="img/mat/melamina.webp" alt="Nicho de melamina oscura con luz integrada" loading="lazy" width="1000" height="1400" data-parallax="7"></div>
+        <div class="mat-info"><span class="mat-n">02</span><h3>Melamina</h3><p>Superficies limpias y resistentes para muebles funcionales.</p></div>
+      </article>
+      <article class="mat" data-clip>
+        <div class="mat-img"><img src="img/mat/wpc.webp" alt="Revestimiento exterior de listones de WPC" loading="lazy" width="1000" height="1400" data-parallax="7"></div>
+        <div class="mat-info"><span class="mat-n">03</span><h3>WPC</h3><p>Compuesto de madera y polímero: luce como madera, dura mucho más.</p></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROCESO ============ -->
+<section class="proceso" id="proceso">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow" data-reveal>Proceso</p>
+      <h2 class="display" data-lines>De la idea a tu proyecto terminado</h2>
+    </header>
+    <div class="pasos-wrap" id="pasos">
+      <div class="led" aria-hidden="true"><i></i></div>
+      <ol class="pasos">
+        <li class="paso"><span class="paso-n">01</span><h3>Visita</h3><p>Vamos a tu espacio, tomamos medidas y escuchamos lo que necesitas.</p></li>
+        <li class="paso"><span class="paso-n">02</span><h3>Cotización</h3><p>Recibes una propuesta clara, con precio y tiempos definidos desde el inicio.</p></li>
+        <li class="paso"><span class="paso-n">03</span><h3>Fabricación</h3><p>Producimos tu proyecto con supervisión de calidad en cada etapa.</p></li>
+        <li class="paso"><span class="paso-n">04</span><h3>Instalación</h3><p>Entregamos en el tiempo acordado, listo para disfrutar.</p></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
 <!-- ============ PROYECTOS ============ -->
 <section class="proyectos" id="proyectos">
   <div class="wrap">
     <header class="sec-head center">
       <p class="eyebrow" data-reveal>Proyectos</p>
       <h2 class="display" data-lines>Espacios que ya transformamos</h2>
-      <p class="lead" data-reveal>Trabajos reales de Madera Viva en hogares y comercios de Guatemala.</p>
     </header>
     <div class="galeria" id="galeria">
       <!-- PROYECTOS:INICIO -->
@@ -448,9 +449,9 @@
     <div class="pie-fila">
       <div class="foot-links">
         <a href="#servicios">Servicios</a>
+        <a href="#empresas">Empresas</a>
         <a href="#materiales">Materiales</a>
         <a href="#proceso">Proceso</a>
-        <a href="#empresas">Empresas</a>
         <a href="#proyectos">Proyectos</a>
         <a href="#agendar">Agenda tu visita</a>
       </div>
@@ -462,7 +463,6 @@
     </div>
     <div class="pie-legal">
       <p class="copy">Madera Viva · Guatemala</p>
-      <p class="creditos">Fotos de referencia: Unsplash.</p>
     </div>
   </div>
 </footer>
