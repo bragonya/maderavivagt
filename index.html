@@ -33,6 +33,7 @@
     <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span></button>
     <ul class="nav-links" id="navLinks">
       <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#empresas">Empresas</a></li>
       <li><a href="#materiales">Materiales</a></li>
       <li><a href="#proceso">Proceso</a></li>
       <li><a href="#proyectos">Proyectos</a></li>
@@ -122,7 +123,18 @@
     <div class="tour-stage" aria-roledescription="carrusel" aria-label="Nuestros servicios">
 
       <div class="stops">
-        <article class="stop" data-room="Sala">
+        <article class="stop" data-room="Negocios">
+          <div class="stop-media"><div class="stop-inner">
+            <picture><source media="(orientation: portrait)" srcset="img/tour/recepcion-v.webp"><img src="img/tour/recepcion.webp" alt="Recepción con muro de listones de madera y lámparas colgantes" loading="lazy" width="1920" height="1200"></picture>
+          </div><div class="stop-shade"></div></div>
+          <div class="stop-copy">
+            <h3>Hoteles, oficinas y comercios</h3>
+            <p class="stop-desc">Recepciones, lobbies, muros de listones y mobiliario para negocios que quieren dar una buena primera impresión.</p>
+            <a href="#empresas" class="btn btn-luz stop-cta"><span>Soluciones para empresas</span><i class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></a>
+          </div>
+        </article>
+
+        <article class="stop" data-room="Cielos LED">
           <div class="stop-media"><div class="stop-inner">
             <video muted loop playsinline preload="none" poster="img/tour/sala.webp" data-src="video/cielo-led.mp4" aria-label="Cielo de madera con una línea de luz LED"></video>
           </div><div class="stop-shade"></div></div>
@@ -133,7 +145,7 @@
           </div>
         </article>
 
-        <article class="stop" data-room="Sala de TV">
+        <article class="stop" data-room="Muros">
           <div class="stop-media"><div class="stop-inner">
             <picture><source media="(orientation: portrait)" srcset="img/tour/sala-tv-v.webp"><img src="img/tour/sala-tv.webp" alt="Muro de TV con paneles de madera y luz indirecta" loading="lazy" width="1920" height="1200"></picture>
           </div><div class="stop-shade"></div></div>
@@ -143,7 +155,7 @@
           </div>
         </article>
 
-        <article class="stop" data-room="Cocina">
+        <article class="stop" data-room="Muebles">
           <div class="stop-media"><div class="stop-inner">
             <picture><source media="(orientation: portrait)" srcset="img/tour/cocina-v.webp"><img src="img/tour/cocina.webp" alt="Cocina a medida con isla y luz bajo los gabinetes" loading="lazy" width="1920" height="1200"></picture>
           </div><div class="stop-shade"></div></div>
@@ -153,7 +165,7 @@
           </div>
         </article>
 
-        <article class="stop" data-room="Estudio">
+        <article class="stop" data-room="Repisas">
           <div class="stop-media"><div class="stop-inner">
             <picture><source media="(orientation: portrait)" srcset="img/tour/estudio-v.webp"><img src="img/tour/estudio.webp" alt="Estudio con escritorio flotante y repisas iluminadas" loading="lazy" width="1920" height="1200"></picture>
           </div><div class="stop-shade"></div></div>
@@ -163,7 +175,7 @@
           </div>
         </article>
 
-        <article class="stop" data-room="Habitación">
+        <article class="stop" data-room="Pisos">
           <div class="stop-media"><div class="stop-inner">
             <picture><source media="(orientation: portrait)" srcset="img/tour/pisos-v.webp"><img src="img/tour/pisos.webp" alt="Habitación con piso tipo madera en tono oscuro" loading="lazy" width="1920" height="1200"></picture>
           </div><div class="stop-shade"></div></div>
@@ -173,7 +185,7 @@
           </div>
         </article>
 
-        <article class="stop" data-room="Terraza">
+        <article class="stop" data-room="Pérgolas">
           <div class="stop-media"><div class="stop-inner">
             <picture><source media="(orientation: portrait)" srcset="img/tour/terraza-v.webp"><img src="img/tour/terraza.webp" alt="Pérgola de madera con líneas de luz LED de noche" loading="lazy" width="1920" height="1200"></picture>
             <canvas class="seq" id="seqTerraza" data-seq="img/seq/pergola/" data-count="61" aria-hidden="true"></canvas>
@@ -184,7 +196,7 @@
           </div>
         </article>
 
-        <article class="stop" data-room="Fachada">
+        <article class="stop" data-room="WPC">
           <div class="stop-media"><div class="stop-inner">
             <picture><source media="(orientation: portrait)" srcset="img/tour/fachada-v.webp"><img src="img/tour/fachada.webp" alt="Fachada moderna con listones tipo madera" loading="lazy" width="1920" height="1200"></picture>
           </div><div class="stop-shade"></div></div>
@@ -194,26 +206,17 @@
           </div>
         </article>
 
-        <article class="stop" data-room="Techo">
+        <article class="stop" data-room="Techos">
           <div class="stop-media"><div class="stop-inner">
             <picture><source media="(orientation: portrait)" srcset="img/tour/techo-v.webp"><img src="img/tour/techo.webp" alt="Techos con teja shingle estilo canadiense" loading="lazy" width="1920" height="1200"></picture>
           </div><div class="stop-shade"></div></div>
           <div class="stop-copy">
             <h3>Techos estilo canadiense</h3>
             <p class="stop-desc">Teja shingle elegante y duradera, con acabado de cabaña moderna.</p>
-          </div>
-        </article>
-
-        <article class="stop" data-room="Toda la casa">
-          <div class="stop-media"><div class="stop-inner">
-            <picture><source media="(orientation: portrait)" srcset="img/tour/casa-v.webp"><img src="img/tour/casa.webp" alt="Sala remodelada con paneles de madera y librero a medida" loading="lazy" width="1920" height="1200"></picture>
-          </div><div class="stop-shade"></div></div>
-          <div class="stop-copy">
-            <h3>Remodelaciones completas</h3>
-            <p class="stop-desc">Transformamos salas, cocinas, dormitorios, oficinas y locales comerciales.</p>
             <a href="#agendar" class="btn btn-luz stop-cta"><span>Cotiza tu proyecto</span><i class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></a>
           </div>
         </article>
+
       </div>
 
       <!-- Service navigation controls (motion mode only) -->
@@ -237,6 +240,61 @@
     </div>
   </div>
   <p class="nota-ref wrap">Imágenes de referencia para ilustrar cada servicio.</p>
+</section>
+
+<!-- ============ PARA EMPRESAS ============ -->
+<section class="empresas" id="empresas">
+  <div class="wrap">
+    <div class="emp-grid">
+      <header class="sec-head emp-head">
+        <p class="eyebrow" data-reveal>Para empresas</p>
+        <h2 class="display" data-lines>Su proveedor de acabados en <em>madera</em></h2>
+        <p class="lead" data-reveal>Diseñamos, fabricamos en nuestro taller e instalamos los espacios de hoteles, comercios y oficinas. Ustedes atienden su negocio; nosotros nos encargamos del proyecto de principio a fin.</p>
+        <div class="emp-actions" data-reveal>
+          <a href="https://wa.me/50230508989?text=Hola%20Andr%C3%A9s%2C%20le%20escribo%20de%20parte%20de%20una%20empresa%20y%20quisiera%20coordinar%20una%20visita%20t%C3%A9cnica" target="_blank" rel="noopener" class="btn btn-luz"><span>Coordinar visita técnica</span><i class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></a>
+          <a href="mailto:andres@maderavivagt.com?subject=Proyecto%20para%20empresa" class="emp-mail">andres@maderavivagt.com</a>
+        </div>
+      </header>
+
+      <ol class="sectores">
+        <li class="sector" data-reveal>
+          <span class="sector-n">01</span>
+          <div>
+            <h3>Hoteles</h3>
+            <p>Lobbies y recepciones, habitaciones, barras y terrazas que dan una buena primera impresión a sus huéspedes.</p>
+          </div>
+        </li>
+        <li class="sector" data-reveal>
+          <span class="sector-n">02</span>
+          <div>
+            <h3>Centros comerciales y locales</h3>
+            <p>Cielos y muros con luz LED, fachadas en WPC, mobiliario y áreas comunes que resisten el uso diario.</p>
+          </div>
+        </li>
+        <li class="sector" data-reveal>
+          <span class="sector-n">03</span>
+          <div>
+            <h3>Oficinas corporativas</h3>
+            <p>Recepciones, salas de reuniones, muros decorativos y muebles a medida para cada puesto de trabajo.</p>
+          </div>
+        </li>
+        <li class="sector" data-reveal>
+          <span class="sector-n">04</span>
+          <div>
+            <h3>Arquitectos, interioristas y constructoras</h3>
+            <p>Ustedes diseñan, nosotros fabricamos e instalamos. Somos su taller aliado para la carpintería y los acabados de sus obras.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+
+    <ul class="garantias">
+      <li data-reveal><strong>Visita técnica sin costo</strong><span>Medimos el espacio y revisamos el proyecto con su equipo.</span></li>
+      <li data-reveal><strong>Precio y tiempos claros</strong><span>Una propuesta con precio cerrado y fechas de entrega antes de empezar.</span></li>
+      <li data-reveal><strong>Con factura</strong><span>Facturamos a nombre de su empresa.</span></li>
+      <li data-reveal><strong>Mantenimiento y restauración</strong><span>Puertas, muebles, decks y pérgolas listos antes de la temporada alta.</span></li>
+    </ul>
+  </div>
 </section>
 
 <!-- ============ MATERIALES ============ -->
@@ -288,7 +346,6 @@
     <header class="sec-head center">
       <p class="eyebrow" data-reveal>Proyectos</p>
       <h2 class="display" data-lines>Espacios que ya transformamos</h2>
-      <p class="lead" data-reveal>Trabajos reales de Madera Viva en hogares y comercios de Guatemala.</p>
     </header>
     <div class="galeria" id="galeria">
       <!-- PROYECTOS:INICIO -->
@@ -362,6 +419,10 @@
               <input type="tel" id="telefono" name="telefono" required autocomplete="tel" placeholder="5555-5555">
             </div>
             <div class="form-field form-wide">
+              <label for="empresa">Empresa <span class="opcional">(opcional)</span></label>
+              <input type="text" id="empresa" name="empresa" autocomplete="organization" placeholder="Hotel, local, oficina...">
+            </div>
+            <div class="form-field form-wide">
               <label for="direccion">Dirección</label>
               <input type="text" id="direccion" name="direccion" required autocomplete="street-address" placeholder="Dónde se realizará el proyecto">
             </div>
@@ -388,6 +449,7 @@
     <div class="pie-fila">
       <div class="foot-links">
         <a href="#servicios">Servicios</a>
+        <a href="#empresas">Empresas</a>
         <a href="#materiales">Materiales</a>
         <a href="#proceso">Proceso</a>
         <a href="#proyectos">Proyectos</a>
@@ -401,7 +463,6 @@
     </div>
     <div class="pie-legal">
       <p class="copy">Madera Viva · Guatemala</p>
-      <p class="creditos">Fotos de referencia: Unsplash.</p>
     </div>
   </div>
 </footer>
@@ -435,7 +496,8 @@
       const formData = new FormData(citaForm);
       // Este placeholder se reemplaza automáticamente en el deploy por GitHub Actions usando un Secret.
       formData.append('access_key', '__WEB3FORMS_ACCESS_KEY__');
-      formData.append('subject', `Nueva cita — ${formData.get('nombre')}`);
+      const empresa = (formData.get('empresa') || '').trim();
+      formData.append('subject', `Nueva cita — ${formData.get('nombre')}${empresa ? ' · ' + empresa : ''}`);
       formData.append('from_name', 'Madera Viva Web');
 
       try {

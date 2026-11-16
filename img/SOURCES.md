@@ -14,7 +14,8 @@ Cada foto se puede abrir con `https://images.unsplash.com/<id>`.
 | `tour/terraza*.webp` | Pérgolas y terrazas | `photo-1703807511309-410dcd7a4235` |
 | `tour/fachada*.webp` | WPC interior y exterior | `photo-1790214120456-b29088d82600` |
 | `tour/techo*.webp` | Techos estilo canadiense | `photo-1710139323182-69622cad5c3b` |
-| `tour/casa*.webp` | Remodelaciones completas | `photo-1760072513367-55182245e76c` |
+| `tour/recepcion*.webp` | Hoteles, oficinas y comercios | `photo-1758448500688-3ababa93fd67` |
+| `tour/casa*.webp` | (sin uso; era Remodelaciones completas) | `photo-1760072513367-55182245e76c` |
 | `mat/madera.webp` | Material: madera | `photo-1724918108497-160360dbedfe` |
 | `mat/melamina.webp` | Material: melamina | `photo-1771862956454-ad43adc3c19e` |
 | `mat/wpc.webp` | Material: WPC | `photo-1549317762-7643065a9c9f` |
