@@ -11,21 +11,15 @@
 <meta property="og:url" content="https://maderavivagt.com/">
 <meta name="theme-color" content="#151311">
 <link rel="icon" type="image/png" href="img/logo.png">
-<script>document.documentElement.className += ' js';</script>
+<script>document.documentElement.className += ' js'; setTimeout(function () { document.documentElement.classList.add('ready'); }, 2500);</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="img/hero/wall.webp" media="(min-width: 761px)">
-<link rel="preload" as="image" href="img/hero/wall-m.webp" media="(max-width: 760px)">
+<link rel="preload" as="image" href="img/hero/poster.jpg" media="(min-aspect-ratio: 4/5)">
+<link rel="preload" as="image" href="img/hero/poster-v.jpg" media="(max-aspect-ratio: 4/5)">
 <link rel="stylesheet" href="css/site.css">
 </head>
 <body>
-
-<!-- Pantalla de carga: el logo se enciende mientras llega el muro -->
-<div class="loader" id="loader" aria-hidden="true">
-  <img src="img/logo-marfil.png" alt="" width="320" height="182">
-  <span class="loader-line"><i></i></span>
-</div>
 
 <div class="grain" aria-hidden="true"></div>
 <div class="led-progress" aria-hidden="true"><i id="ledProgress"></i></div>
@@ -49,22 +43,18 @@
 
 <main>
 
-<!-- ============ HERO: EL MURO SE CONSTRUYE CON EL SCROLL ============ -->
+<!-- ============ HERO: VIDEO DE FONDO; AL BAJAR SE FUNDE EN BLANCO ============ -->
 <header class="hero" id="inicio">
   <div class="hero-stage">
 
-    <!-- Lo que aparece cuando los listones se abren -->
-    <div class="hero-behind">
-      <div class="behind-in">
-        <p class="eyebrow">Quiénes somos</p>
-        <h2 class="display">Transformamos espacios con soluciones <em>cálidas</em> y <em>funcionales</em></h2>
+    <div class="hero-top">
+      <div class="hero-media" aria-hidden="true">
+        <video class="hero-video" id="heroVideo" muted loop playsinline preload="none" poster="img/hero/poster.jpg"
+          data-src="video/hero.mp4" data-src-v="video/hero-v.mp4" data-poster-v="img/hero/poster-v.jpg"></video>
       </div>
-    </div>
+      <div class="hero-scrim" aria-hidden="true"></div>
 
-    <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
-    <div class="hero-scrim" aria-hidden="true"></div>
-
-    <div class="hero-ui" id="heroUi">
+      <div class="hero-ui" id="heroUi">
       <div class="hero-copy">
         <p class="eyebrow hero-eyebrow">Madera · Melamina · WPC — Guatemala</p>
         <h1 class="hero-title">
@@ -75,16 +65,19 @@
           <p class="hero-sub">Diseñamos, fabricamos e instalamos proyectos a medida para casas y comercios en Guatemala.</p>
           <div class="hero-actions">
             <a href="#agendar" class="btn btn-luz"><span>Agenda tu visita sin costo</span><i class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></a>
-            <a href="#servicios" class="btn btn-linea"><span>Recorre la casa</span></a>
+            <a href="#servicios" class="btn btn-linea"><span>Conoce nuestros servicios</span></a>
           </div>
         </div>
       </div>
-      <ol class="hero-steps" aria-hidden="true">
-        <li class="on"><b>01</b>Diseño</li>
-        <li><b>02</b>Montaje</li>
-        <li><b>03</b>Luz</li>
-      </ol>
-      <p class="scroll-hint" aria-hidden="true"><span>Desliza para construir</span></p>
+      </div>
+    </div>
+
+    <!-- La pantalla blanca que aparece al bajar -->
+    <div class="hero-behind">
+      <div class="behind-in">
+        <p class="eyebrow">Quiénes somos</p>
+        <h2 class="display">Transformamos espacios con soluciones <em>cálidas</em> y <em>funcionales</em></h2>
+      </div>
     </div>
 
   </div>
@@ -117,16 +110,16 @@
   <div class="mq-row" data-dir="1"><div class="mq-track"><span class="tex">Muebles a medida</span><i></i><span>Pisos</span><i></i><span class="tex">Techos</span><i></i><span>Escritorios</span><i></i><span class="tex">WPC</span><i></i><span>Terrazas</span><i></i></div></div>
 </div>
 
-<!-- ============ SERVICIOS: RECORRIDO POR LA CASA ============ -->
+<!-- ============ SERVICES ============ -->
 <section class="tour" id="servicios">
   <header class="tour-intro wrap">
-    <p class="eyebrow" data-reveal>Servicios · El recorrido</p>
+    <p class="eyebrow" data-reveal>Nuestros servicios</p>
     <h2 class="display" data-lines>Todo lo que tu espacio necesita</h2>
-    <p class="lead" data-reveal>Trabajamos cada rincón de tu casa o negocio, por dentro y por fuera. Recorre la casa: en cada espacio, un servicio.</p>
+    <p class="lead" data-reveal>Trabajamos cada rincón de tu casa o negocio, por dentro y por fuera. Conoce todas las soluciones que podemos crear para tu espacio.</p>
   </header>
 
-  <div class="tour-track" id="tourTrack" style="--n:9">
-    <div class="tour-stage">
+  <div class="tour-track" id="tourTrack">
+    <div class="tour-stage" aria-roledescription="carrusel" aria-label="Nuestros servicios">
 
       <div class="stops">
         <article class="stop" data-room="Sala">
@@ -134,7 +127,6 @@
             <video muted loop playsinline preload="none" poster="img/tour/sala.webp" data-src="video/cielo-led.mp4" aria-label="Cielo de madera con una línea de luz LED"></video>
           </div><div class="stop-shade"></div></div>
           <div class="stop-copy">
-            <p class="stop-room"><b>01</b><span>Sala</span></p>
             <h3>Cielos y paneles con luz LED</h3>
             <p class="stop-desc">Listones tipo madera con iluminación integrada que transforman salas, terrazas y comercios.</p>
             <span class="badge">Nuestra especialidad</span>
@@ -146,7 +138,6 @@
             <picture><source media="(orientation: portrait)" srcset="img/tour/sala-tv-v.webp"><img src="img/tour/sala-tv.webp" alt="Muro de TV con paneles de madera y luz indirecta" loading="lazy" width="1920" height="1200"></picture>
           </div><div class="stop-shade"></div></div>
           <div class="stop-copy">
-            <p class="stop-room"><b>02</b><span>Sala de TV</span></p>
             <h3>Muros y paneles decorativos</h3>
             <p class="stop-desc">Paredes principales y muros de TV con textura, calidez y luz indirecta.</p>
           </div>
@@ -157,7 +148,6 @@
             <picture><source media="(orientation: portrait)" srcset="img/tour/cocina-v.webp"><img src="img/tour/cocina.webp" alt="Cocina a medida con isla y luz bajo los gabinetes" loading="lazy" width="1920" height="1200"></picture>
           </div><div class="stop-shade"></div></div>
           <div class="stop-copy">
-            <p class="stop-room"><b>03</b><span>Cocina</span></p>
             <h3>Muebles a medida</h3>
             <p class="stop-desc">Cocinas, clósets, muebles de TV y de baño diseñados para aprovechar cada centímetro.</p>
           </div>
@@ -168,7 +158,6 @@
             <picture><source media="(orientation: portrait)" srcset="img/tour/estudio-v.webp"><img src="img/tour/estudio.webp" alt="Estudio con escritorio flotante y repisas iluminadas" loading="lazy" width="1920" height="1200"></picture>
           </div><div class="stop-shade"></div></div>
           <div class="stop-copy">
-            <p class="stop-room"><b>04</b><span>Estudio</span></p>
             <h3>Repisas y escritorios</h3>
             <p class="stop-desc">Soluciones prácticas y estéticas para trabajar, estudiar u organizar.</p>
           </div>
@@ -179,7 +168,6 @@
             <picture><source media="(orientation: portrait)" srcset="img/tour/pisos-v.webp"><img src="img/tour/pisos.webp" alt="Habitación con piso tipo madera en tono oscuro" loading="lazy" width="1920" height="1200"></picture>
           </div><div class="stop-shade"></div></div>
           <div class="stop-copy">
-            <p class="stop-room"><b>05</b><span>Habitación</span></p>
             <h3>Pisos tipo madera</h3>
             <p class="stop-desc">Apariencia cálida, resistentes al agua y al uso diario.</p>
           </div>
@@ -191,7 +179,6 @@
             <canvas class="seq" id="seqTerraza" data-seq="img/seq/pergola/" data-count="61" aria-hidden="true"></canvas>
           </div><div class="stop-shade"></div></div>
           <div class="stop-copy">
-            <p class="stop-room"><b>06</b><span>Terraza</span></p>
             <h3>Pérgolas y terrazas</h3>
             <p class="stop-desc">Exteriores con sombra, estilo y luz para disfrutar tu casa también de noche.</p>
           </div>
@@ -202,7 +189,6 @@
             <picture><source media="(orientation: portrait)" srcset="img/tour/fachada-v.webp"><img src="img/tour/fachada.webp" alt="Fachada moderna con listones tipo madera" loading="lazy" width="1920" height="1200"></picture>
           </div><div class="stop-shade"></div></div>
           <div class="stop-copy">
-            <p class="stop-room"><b>07</b><span>Fachada</span></p>
             <h3>WPC interior y exterior</h3>
             <p class="stop-desc">Look de madera que no se pudre ni se deforma: bajo mantenimiento y gran duración.</p>
           </div>
@@ -213,7 +199,6 @@
             <picture><source media="(orientation: portrait)" srcset="img/tour/techo-v.webp"><img src="img/tour/techo.webp" alt="Techos con teja shingle estilo canadiense" loading="lazy" width="1920" height="1200"></picture>
           </div><div class="stop-shade"></div></div>
           <div class="stop-copy">
-            <p class="stop-room"><b>08</b><span>Techo</span></p>
             <h3>Techos estilo canadiense</h3>
             <p class="stop-desc">Teja shingle elegante y duradera, con acabado de cabaña moderna.</p>
           </div>
@@ -224,7 +209,6 @@
             <picture><source media="(orientation: portrait)" srcset="img/tour/casa-v.webp"><img src="img/tour/casa.webp" alt="Sala remodelada con paneles de madera y librero a medida" loading="lazy" width="1920" height="1200"></picture>
           </div><div class="stop-shade"></div></div>
           <div class="stop-copy">
-            <p class="stop-room"><b>09</b><span>Toda la casa</span></p>
             <h3>Remodelaciones completas</h3>
             <p class="stop-desc">Transformamos salas, cocinas, dormitorios, oficinas y locales comerciales.</p>
             <a href="#agendar" class="btn btn-luz stop-cta"><span>Cotiza tu proyecto</span><i class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></a>
@@ -232,18 +216,23 @@
         </article>
       </div>
 
-      <!-- Controles del recorrido (solo con movimiento activo) -->
+      <!-- Service navigation controls (motion mode only) -->
       <div class="tour-hud" id="tourHud">
         <div class="tour-top">
-          <div class="tour-bars" id="tourBars" role="tablist" aria-label="Paradas del recorrido"></div>
+          <div class="tour-bars" id="tourBars" role="group" aria-label="Nuestros servicios"></div>
           <div class="tour-meta">
-            <span class="tour-label">El recorrido</span>
+            <span class="tour-label">Nuestros servicios</span>
             <span class="tour-count"><b id="tourNow">01</b> / 09</span>
           </div>
         </div>
         <ol class="tour-index" id="tourIndex"></ol>
-        <a href="#materiales" class="tour-skip">Saltar recorrido <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
+        <div class="tour-ctrl">
+          <button type="button" class="tc-btn" id="tourPrev" aria-label="Servicio anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <button type="button" class="tc-btn" id="tourPause" aria-label="Pausar servicios" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-pause" d="M8.5 5.5v13M15.5 5.5v13"/><path class="i-play" d="M8 5.5v13l11-6.5z"/></svg></button>
+          <button type="button" class="tc-btn" id="tourNext" aria-label="Siguiente servicio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
       </div>
+      <div class="tour-cursor" id="tourCursor" aria-hidden="true"><span>Siguiente</span><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
 
     </div>
   </div>
@@ -293,24 +282,6 @@
   </div>
 </section>
 
-<!-- ============ PELÍCULA ============ -->
-<section class="pelicula" id="video">
-  <div class="wrap pelicula-head">
-    <p class="eyebrow" data-reveal>Madera Viva en movimiento</p>
-    <h2 class="display" data-lines>Mira cómo cobra vida cada proyecto</h2>
-    <p class="lead" data-reveal>Del diseño a la instalación, cuidamos cada corte, cada unión y cada línea de luz.</p>
-  </div>
-  <div class="film" id="film">
-    <div class="film-frame">
-      <video id="pelicula" muted loop playsinline preload="none" poster="video/pelicula-poster.jpg" data-src="video/pelicula.mp4">Tu navegador no puede reproducir este video.</video>
-      <button class="film-sound" id="filmSound" type="button" aria-pressed="false">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path class="spk" d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z"/><path class="on" d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12"/><path class="off" d="M16 9.5l5 5M21 9.5l-5 5"/></svg>
-        <span>Activar sonido</span>
-      </button>
-    </div>
-  </div>
-</section>
-
 <!-- ============ PROYECTOS ============ -->
 <section class="proyectos" id="proyectos">
   <div class="wrap">
@@ -336,8 +307,8 @@
 
 <!-- ============ AGENDA TU VISITA ============ -->
 <section class="agendar" id="agendar">
-  <div class="agendar-logo" aria-hidden="true">
-    <canvas class="seq" id="seqLogo" data-seq="img/seq/logo/" data-count="61" width="960" height="540"></canvas>
+  <div class="agendar-logo" data-reveal>
+    <span class="agendar-logo-card"><img src="img/logo.png" alt="Madera Viva" width="320" height="182"></span>
   </div>
   <div class="wrap">
     <header class="sec-head center">
@@ -430,7 +401,7 @@
     </div>
     <div class="pie-legal">
       <p class="copy">Madera Viva · Guatemala</p>
-      <p class="creditos">Música del video: <a href="https://commons.wikimedia.org/wiki/File:Chill_house_(Gravity_Sound).wav" target="_blank" rel="noopener">“Chill house”</a> de Gravity Sound y <a href="https://freesound.org/people/MeijstroAudio/sounds/377303" target="_blank" rel="noopener">“Deep Cinematic Impact”</a> de MeijstroAudio, licencia <a href="https://creativecommons.org/licenses/by/4.0/deed.es" target="_blank" rel="noopener">CC BY 4.0</a>, adaptadas. Fotos de referencia: Unsplash.</p>
+      <p class="creditos">Fotos de referencia: Unsplash.</p>
     </div>
   </div>
 </footer>

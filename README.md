@@ -4,7 +4,7 @@ Sitio de Madera Viva (maderavivagt.com). HTML, CSS y JavaScript sin paso de comp
 
 - `index.html` — contenido de la página. El formulario usa Web3Forms; la llave se inyecta en el deploy (`__WEB3FORMS_ACCESS_KEY__`), por eso el formulario solo envía en el sitio publicado desde `main`.
 - `css/site.css` — estilos. Tiene dos modos: base (todo visible, sin animación) y `html.motion` (escenas guiadas por el scroll).
-- `js/site.js` — animaciones: el muro del inicio que se arma y se enciende, el recorrido por la casa, etc.
+- `js/site.js` — animaciones: el video de fondo del inicio que se funde en blanco al bajar, el carrusel del recorrido (cambia cada 15 s; clic o deslizar avanza), etc.
 - `js/vendor/` — GSAP 3.15 (ScrollTrigger, SplitText) y Lenis 1.3, copiados aquí para no depender de un CDN.
 - `img/SOURCES.md` — de dónde sale cada foto y video, y los créditos de audio.
 

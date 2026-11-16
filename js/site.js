@@ -85,11 +85,6 @@
         label.textContent = on ? 'Pausar' : 'Ver video';
       };
       ['play', 'pause', 'ended'].forEach((ev) => comercial.addEventListener(ev, paint));
-      comercial.addEventListener('play', () => {
-        // Un solo audio a la vez: se silencia la película si estaba sonando
-        const film = $('#pelicula'), btn = $('#filmSound');
-        if (film && !film.muted) { film.muted = true; if (btn) { btn.setAttribute('aria-pressed', 'false'); btn.querySelector('span').textContent = 'Activar sonido'; } }
-      });
       comercial.addEventListener('timeupdate', () => {
         if (bar && comercial.duration) bar.style.transform = 'scaleX(' + (comercial.currentTime / comercial.duration).toFixed(4) + ')';
       });
@@ -114,31 +109,24 @@
     io.observe(video);
   };
 
-  const pelicula = $('#pelicula');
-  const filmSound = $('#filmSound');
-  lazyVideo(pelicula);
-  if (pelicula && filmSound) {
-    filmSound.addEventListener('click', () => {
-      const withSound = pelicula.muted;
-      pelicula.muted = !withSound;
-      if (withSound) {
-        if (comercial && !comercial.paused) comercial.pause();
-        pelicula.currentTime = 0;
-        const p = pelicula.play(); if (p && p.catch) p.catch(() => {});
-      }
-      filmSound.setAttribute('aria-pressed', withSound ? 'true' : 'false');
-      filmSound.querySelector('span').textContent = withSound ? 'Silenciar' : 'Activar sonido';
-    });
-  }
 
-  const loader = $('#loader');
-  const hideLoader = () => loader && loader.classList.add('is-out');
+  // The portrait hero is limited to phone-width screens; reduced-motion and data-saving users keep the poster.
+  const heroVideo = $('#heroVideo');
+  let heroCovered = false;
+  if (heroVideo) {
+    if (window.matchMedia('(max-width: 760px)').matches) {
+      heroVideo.dataset.src = heroVideo.dataset.srcV;
+      heroVideo.poster = heroVideo.dataset.posterV;
+    }
+    heroVideo.addEventListener('playing', () => heroVideo.classList.add('is-playing'));
+    if (!reduced && !saveData) { heroVideo.preload = 'auto'; lazyVideo(heroVideo, () => !heroCovered); }
+  }
 
   /* ------------------------------------------------------------------
      Versión estática
      ------------------------------------------------------------------ */
   if (!MOTION) {
-    hideLoader();
+    root.classList.add('ready');
     lazyVideo($('.stop video'));
     const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 40);
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -242,268 +230,58 @@
   }
 
   /* ==================================================================
-     HERO — el muro se arma listón por listón y luego se enciende
+     HERO — video de fondo; al bajar, la pantalla blanca entra de una vez
      ================================================================== */
   function initHero() {
     const hero = $('#inicio');
-    const stage = $('.hero-stage', hero);
-    const cv = $('#heroCanvas');
-    const ctx = cv.getContext('2d');
+    const media = $('.hero-media', hero);
     const ui = $('#heroUi');
-    const scrim = $('.hero-scrim', hero);
+    const behind = $('.hero-behind', hero);
+    const behindIn = $('.behind-in', hero);
     const title = $('.hero-title', hero);
-    const steps = $$('.hero-steps li', hero);
-    const hint = $('.scroll-hint', hero);
-    const behind = $('.behind-in', hero);
+    const lines = $$('.ln-in', title);
+    const fades = [$('.hero-eyebrow', hero), $('.hero-sub', hero), $('.hero-actions', hero)];
 
-    // Centro de cada hueco entre listones en la foto (fracción del ancho), medido de la imagen.
-    const GAPS = [0.0316, 0.0869, 0.1412, 0.1955, 0.25, 0.3051, 0.3596, 0.4148, 0.4713, 0.5268, 0.5828, 0.6381, 0.6934, 0.7482, 0.8031, 0.8578, 0.9121, 0.9664];
-    const PITCH = 0.0549;
-    const AR = 2560 / 1707;
-    // Tramos del scroll (0–1): montaje · luz · pausa · apertura
-    const P_BUILD = 0.46, P_L0 = 0.46, P_L1 = 0.66, P_OPEN = 0.76;
+    gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: {
+        trigger: hero, start: 'top top', end: 'bottom bottom', scrub: 0.5,
+        onUpdate: (self) => {
+          ui.style.pointerEvents = self.progress > 0.18 ? 'none' : '';
+          const c = self.progress > 0.8;
+          if (c !== heroCovered) { heroCovered = c; syncHeroVideo(); }
+        },
+      },
+    })
+      .to(ui, { opacity: 0, y: -70, duration: 0.3 }, 0)
+      .to(media, { scale: 1.1, duration: 0.7 }, 0)
+      .to(behind, { opacity: 1, duration: 0.4 }, 0.14)
+      .fromTo(behindIn, { opacity: 0, y: 56 }, { opacity: 1, y: 0, duration: 0.36 }, 0.38)
+      .to({}, { duration: 0.26 });
 
-    const wall = new Image(), glow = new Image();
-    wall.decoding = glow.decoding = 'async';
-    wall.src = 'img/hero/wall' + (small ? '-m' : '') + '.webp';
-    glow.src = 'img/hero/glow' + (small ? '-m' : '') + '.webp';
-
-    const st = { intro: 0, p: 0 };
-    const ptr = { x: 0.5, y: 0.3, tx: 0.5, ty: 0.3, a: 0, ta: 0 };
-    let Wd = 0, Hd = 0, dpr = 1, slats = [], dark = null, lit = null, bg = null;
-    let ok = false, dirty = true, lastW = 0;
-
-    const flick = (u) => (u <= 0 ? 0
-      : u < 0.1 ? (u / 0.1) * 0.55
-      : u < 0.18 ? 0.55 - ((u - 0.1) / 0.08) * 0.45
-      : u < 0.26 ? 0.1 + ((u - 0.18) / 0.08) * 0.5
-      : u < 0.32 ? 0.6 - ((u - 0.26) / 0.06) * 0.3
-      : 0.3 + smooth((u - 0.32) / 0.68) * 0.7);
-
-    function layout() {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const W = stage.clientWidth, H = stage.clientHeight;
-      lastW = W;
-      Wd = Math.round(W * dpr); Hd = Math.round(H * dpr);
-      cv.width = Wd; cv.height = Hd;
-
-      // Cuántos listones caben: en pantallas angostas se muestra solo una parte de la foto.
-      const n = clamp(W / 76, 8, 40);
-      let f = Math.min(1, n * PITCH);
-      let iw = Wd / f, ih = iw / AR;
-      if (f >= 1 && ih < Hd) { ih = Hd; iw = ih * AR; f = Wd / iw; }
-      ih = Math.ceil(ih);
-      const x0 = (1 - f) / 2;
-
-      const paint = (img) => {
-        const c = document.createElement('canvas');
-        c.width = Wd; c.height = Hd;
-        const g = c.getContext('2d');
-        const dx = -x0 * iw;
-        if (ih >= Hd) {
-          g.drawImage(img, dx, (Hd - ih) / 2, iw, ih);
-        } else {
-          // La foto no alcanza de alto: se repite en espejo para que no se note la unión.
-          let y = 0, flip = false;
-          while (y < Hd) {
-            if (!flip) g.drawImage(img, dx, y, iw, ih);
-            else { g.save(); g.translate(0, y + ih); g.scale(1, -1); g.drawImage(img, dx, 0, iw, ih); g.restore(); }
-            y += ih - 1; flip = !flip;
-          }
-        }
-        return c;
-      };
-
-      const wallC = paint(wall);
-      // Muro apagado
-      dark = document.createElement('canvas'); dark.width = Wd; dark.height = Hd;
-      let g = dark.getContext('2d');
-      g.drawImage(wallC, 0, 0);
-      g.fillStyle = 'rgba(9,7,6,.7)'; g.fillRect(0, 0, Wd, Hd);
-      // Muro encendido: la luz sale por los huecos reales de la foto
-      const glowC = paint(glow);
-      g = glowC.getContext('2d');
-      const fall = g.createLinearGradient(0, 0, 0, Hd);
-      fall.addColorStop(0, 'rgba(0,0,0,0)');
-      fall.addColorStop(0.5, 'rgba(0,0,0,.5)');
-      fall.addColorStop(1, 'rgba(0,0,0,.2)');
-      g.fillStyle = fall; g.fillRect(0, 0, Wd, Hd);
-      lit = document.createElement('canvas'); lit.width = Wd; lit.height = Hd;
-      g = lit.getContext('2d');
-      g.drawImage(wallC, 0, 0);
-      g.fillStyle = 'rgba(9,7,6,.3)'; g.fillRect(0, 0, Wd, Hd);
-      g.globalCompositeOperation = 'screen';
-      g.drawImage(glowC, 0, 0);
-
-      // Cada listón = el tramo de foto entre dos huecos
-      const xs = [0];
-      GAPS.forEach((gp) => { const x = Math.round((gp - x0) * iw); if (x > 14 && x < Wd - 14) xs.push(x); });
-      xs.push(Wd);
-      slats = [];
-      for (let i = 0; i < xs.length - 1; i++) slats.push({ x: xs[i], w: xs[i + 1] - xs[i], c: (xs[i] + xs[i + 1]) / 2 / Wd });
-
-      bg = ctx.createLinearGradient(0, 0, 0, Hd);
-      bg.addColorStop(0, '#1d1a17'); bg.addColorStop(1, '#0f0d0b');
-      dirty = true;
+    function syncHeroVideo() {
+      if (!heroVideo) return;
+      if (heroCovered) heroVideo.pause();
+      else if (heroVideo._inView && heroVideo.getAttribute('src')) { const p = heroVideo.play(); if (p && p.catch) p.catch(() => {}); }
     }
-
-    // Trazos del diseño sobre el muro vacío
-    function guides() {
-      const gi = clamp(st.intro * 1.5);
-      if (gi <= 0) return;
-      const N = slats.length;
-      ctx.save();
-      ctx.lineWidth = Math.max(1, dpr * 0.75);
-      ctx.strokeStyle = 'rgba(213,193,164,.2)';
-      ctx.setLineDash([5 * dpr, 9 * dpr]);
-      ctx.beginPath();
-      for (let i = 1; i < N; i++) {
-        const k = clamp(gi * 1.6 - (i / N) * 0.6);
-        if (k <= 0) continue;
-        const x = slats[i].x + 0.5;
-        ctx.moveTo(x, 0); ctx.lineTo(x, Hd * k);
-      }
-      ctx.stroke();
-      ctx.setLineDash([]);
-      const y = Math.round(Hd * 0.5) + 0.5;
-      ctx.strokeStyle = 'rgba(213,193,164,.28)';
-      ctx.beginPath();
-      ctx.moveTo(0, y); ctx.lineTo(Wd * clamp(gi * 1.2), y);
-      const m = 5 * dpr;
-      for (let i = 1; i < N; i++) {
-        const x = slats[i].x + 0.5;
-        if (x > Wd * clamp(gi * 1.2)) break;
-        ctx.moveTo(x - m, y); ctx.lineTo(x + m, y); ctx.moveTo(x, y - m); ctx.lineTo(x, y + m);
-      }
-      ctx.stroke();
-      ctx.restore();
-    }
-
-    function draw() {
-      const p = st.p;
-      const b = clamp(st.intro * 0.24 + 0.76 * clamp(p / P_BUILD));
-      const l = clamp((p - P_L0) / (P_L1 - P_L0));
-      const o = clamp((p - P_OPEN) / (1 - P_OPEN));
-
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
-      ctx.clearRect(0, 0, Wd, Hd);
-      if (o <= 0) {
-        ctx.fillStyle = bg; ctx.fillRect(0, 0, Wd, Hd);
-        if (b < 1) guides();
-      }
-
-      const N = slats.length, win = 0.24;
-      for (let i = 0; i < N; i++) {
-        const s = slats[i];
-        const t = clamp((b - (i / (N - 1)) * (1 - win)) / win);
-        if (t <= 0) continue;
-        const e = 1 - Math.pow(1 - t, 4);
-        const y = Math.round((1 - e) * (i % 2 ? 1 : -1) * Hd * 1.03);
-        const d = Math.abs(s.c - 0.5) * 2;
-        let dw = s.w, dx = s.x;
-        if (o > 0) {
-          const th = smooth(clamp((o - d * 0.42) / 0.58));
-          dw = s.w * Math.cos(th * Math.PI / 2);
-          dx = s.x + (s.w - dw) / 2;
-          if (dw < 1) continue;
-        }
-        if (t < 1) { ctx.fillStyle = 'rgba(0,0,0,' + (0.5 * (1 - e)).toFixed(3) + ')'; ctx.fillRect(dx + 10 * dpr, y, dw, Hd); }
-        ctx.drawImage(dark, s.x, 0, s.w, Hd, dx, y, dw, Hd);
-        if (l > 0) {
-          const li = flick(clamp((l - d * 0.45) / 0.55));
-          if (li > 0) { ctx.globalAlpha = li; ctx.drawImage(lit, s.x, 0, s.w, Hd, dx, y, dw, Hd); ctx.globalAlpha = 1; }
-        }
-        if (o > 0) { ctx.fillStyle = 'rgba(12,9,6,' + (0.62 * (1 - dw / s.w)).toFixed(3) + ')'; ctx.fillRect(dx, 0, dw, Hd); }
-      }
-
-      // Luz que sigue al cursor
-      if (ptr.a > 0.01 && o < 1) {
-        const mx = ptr.x * Wd, my = ptr.y * Hd, R = Math.max(Wd, Hd) * 0.32;
-        const a = 0.36 * ptr.a * (1 - 0.7 * l) * (1 - o);
-        const g = ctx.createRadialGradient(mx, my, 0, mx, my, R);
-        g.addColorStop(0, 'rgba(255,214,160,' + a.toFixed(3) + ')');
-        g.addColorStop(0.45, 'rgba(255,190,120,' + (a * 0.3).toFixed(3) + ')');
-        g.addColorStop(1, 'rgba(255,190,120,0)');
-        ctx.globalCompositeOperation = 'screen';
-        ctx.fillStyle = g; ctx.fillRect(0, 0, Wd, Hd);
-        ctx.globalCompositeOperation = 'source-over';
-      }
-    }
-
-    // Texto y capas HTML que acompañan al canvas
-    let stepNow = -1;
-    function sync() {
-      const p = st.p;
-      const l = clamp((p - P_L0) / (P_L1 - P_L0));
-      const o = clamp((p - P_OPEN) / (1 - P_OPEN));
-      hero.style.setProperty('--lit', flick(clamp((l - 0.12) / 0.7)).toFixed(3));
-      const out = clamp((p - 0.7) / 0.07);
-      ui.style.opacity = (1 - out).toFixed(3);
-      ui.style.transform = 'translate3d(0,' + (-46 * out).toFixed(1) + 'px,0)';
-      ui.style.pointerEvents = out > 0.5 ? 'none' : '';
-      scrim.style.opacity = (1 - clamp((p - 0.71) / 0.07)).toFixed(3);
-      hint.style.opacity = (clamp(st.intro * 2 - 1) * (1 - clamp(p / 0.03))).toFixed(3);
-      const step = p < 0.015 ? 0 : p < P_L0 ? 1 : 2;
-      if (step !== stepNow) { stepNow = step; steps.forEach((li, i) => li.classList.toggle('on', i === step)); }
-      const bh = smooth(clamp((o - 0.3) / 0.55));
-      behind.style.opacity = bh.toFixed(3);
-      behind.style.transform = 'translate3d(0,' + (46 * (1 - bh)).toFixed(1) + 'px,0)';
-    }
-
-    gsap.ticker.add(() => {
-      if (!ok) return;
-      const dx = ptr.tx - ptr.x, dy = ptr.ty - ptr.y, da = ptr.ta - ptr.a;
-      if (Math.abs(dx) + Math.abs(dy) + Math.abs(da) > 0.0015) {
-        ptr.x += dx * 0.12; ptr.y += dy * 0.12; ptr.a += da * 0.07; dirty = true;
-      }
-      if (!dirty) return;
-      dirty = false;
-      // Solo se dibuja mientras el hero sigue a la vista
-      if (hero.getBoundingClientRect().bottom > -80) { draw(); sync(); }
-    });
-
-    gsap.to(st, {
-      p: 1, ease: 'none', onUpdate: () => { dirty = true; },
-      scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom bottom', scrub: 0.6 },
-    });
-
-    if (finePointer) {
-      hero.addEventListener('pointermove', (e) => {
-        const r = stage.getBoundingClientRect();
-        ptr.tx = (e.clientX - r.left) / r.width; ptr.ty = (e.clientY - r.top) / r.height; ptr.ta = 1;
-      });
-      hero.addEventListener('pointerleave', () => { ptr.ta = 0; });
-    }
-
-    let rt = 0;
-    window.addEventListener('resize', () => {
-      clearTimeout(rt);
-      rt = setTimeout(() => { if (ok && (stage.clientWidth !== lastW || finePointer)) layout(); }, 160);
-    });
-
-    const loaded = (im) => new Promise((res) => { if (im.complete && im.naturalWidth) res(); else { im.onload = res; im.onerror = res; } });
-    const ready = Promise.all([loaded(wall), loaded(glow)]).then(() => {
-      if (!wall.naturalWidth || !glow.naturalWidth) throw new Error('hero');
-      layout(); ok = true; draw(); sync();
-    });
 
     return {
-      ready,
       intro() {
-        gsap.to(st, { intro: 1, duration: 2.6, ease: 'power2.out', onUpdate: () => { dirty = true; } });
-        gsap.from($$('.ln-in', title), {
-          yPercent: 118, duration: 1.6, ease: 'expo.out', stagger: 0.14, delay: 0.15,
+        // Primero se quita el ocultado del CSS; si GSAP lo leyera, quedaría como un desplazamiento fijo
+        root.classList.add('ready');
+        gsap.set(lines, { y: 0, yPercent: 118 });
+        gsap.set(fades, { opacity: 0, y: 26 });
+        gsap.to(lines, {
+          yPercent: 0, duration: 1.5, ease: 'expo.out', stagger: 0.12, delay: 0.05,
           onComplete: () => title.classList.add('is-in'),
         });
-        gsap.from([$('.hero-eyebrow', hero), $('.hero-sub', hero), $('.hero-actions', hero)], { opacity: 0, y: 26, duration: 1.3, ease: 'power3.out', stagger: 0.12, delay: 0.55 });
-        gsap.from($('.hero-steps', hero), { opacity: 0, duration: 1.4, delay: 0.9 });
+        gsap.to(fades, { opacity: 1, y: 0, duration: 1.2, ease: 'power3.out', stagger: 0.1, delay: 0.35, clearProps: 'transform' });
       },
     };
   }
 
   /* ==================================================================
-     RECORRIDO — cada parada es un espacio de la casa
+     SERVICES — carousel advances every 15 seconds; click or swipe navigates
      ================================================================== */
   function initTour() {
     const track = $('#tourTrack');
@@ -515,90 +293,174 @@
     const inner = stops.map((s) => $('.stop-inner', s));
     const shade = stops.map((s) => $('.stop-shade', s));
     const bars = $('#tourBars'), index = $('#tourIndex'), now = $('#tourNow');
-    track.style.setProperty('--n', N);
+    const btnPrev = $('#tourPrev'), btnNext = $('#tourNext'), btnPause = $('#tourPause');
+    const cursor = $('#tourCursor');
+    const DUR = 15;     // segundos en cada espacio
+    const TRANS = 1.35; // segundos de la transición
 
-    const state = { q: 0 };
-    let active = -1, shown = [], stageOn = false;
+    const st = { r: 1 };
+    let cur = 0, from = -1, fromKb = 0, elapsed = 0, active = -1, tween = null;
+    let inView = false, userPaused = false;
 
-    const go = (i) => {
-      const t = ScrollTrigger.getById('tour');
-      if (t) scrollToY(t.start + (t.end - t.start) * ((i + 0.03) / N), { duration: 1.3 });
-    };
+    // Barras de avance e índice de espacios
     const barEls = [], idxEls = [];
     stops.forEach((s, i) => {
       const room = s.dataset.room;
       const b = document.createElement('button');
-      b.type = 'button'; b.setAttribute('aria-label', (i + 1) + '. ' + room);
-      b.addEventListener('click', () => go(i));
+      b.type = 'button'; b.setAttribute('aria-label', 'Ir a ' + room);
+      b.addEventListener('click', () => show(i));
       bars.appendChild(b); barEls.push(b);
       const li = document.createElement('li');
       const bt = document.createElement('button');
       bt.type = 'button'; bt.textContent = room;
-      bt.addEventListener('click', () => go(i));
+      bt.addEventListener('click', () => show(i));
       li.appendChild(bt); index.appendChild(li); idxEls.push(li);
     });
 
-    // Parada con video (cielo LED) y parada con secuencia guiada por scroll (pérgola)
+    // Parada con video (cielo LED) y parada con secuencia de cuadros (pérgola)
     const video = $('video', stops[0]);
-    const playVideo = () => {
-      if (!video) return;
-      if (stageOn && active <= 1) {
-        if (!video.getAttribute('src') && video.dataset.src) video.src = video.dataset.src;
-        const p = video.play(); if (p && p.catch) p.catch(() => {});
-      } else video.pause();
-    };
     const seqCanvas = $('#seqTerraza');
     const seq = seqCanvas ? new FrameSeq(seqCanvas, (small || saveData) ? 2 : 1) : null;
     const seqStop = seqCanvas ? stops.indexOf(seqCanvas.closest('.stop')) : -1;
+    const near = (k) => Math.min(Math.abs(k - cur), N - Math.abs(k - cur)) <= 1;
+
+    function syncMedia() {
+      if (video) {
+        if (inView && (cur === 0 || from === 0)) {
+          if (!video.getAttribute('src') && video.dataset.src) video.src = video.dataset.src;
+          const p = video.play(); if (p && p.catch) p.catch(() => {});
+        } else video.pause();
+      }
+      if (seq && near(seqStop)) seq.load();
+    }
+
+    function setOn(list) {
+      stops.forEach((s, k) => s.classList.toggle('is-on', list.indexOf(k) >= 0));
+    }
 
     function render() {
-      const q = clamp(state.q, 0, N - 0.0001);
-      const i = Math.floor(q), f = q - i;
-      // La siguiente parada entra por una "puerta" que se abre al final de cada tramo
-      const r = i < N - 1 ? smooth(clamp((f - 0.58) / 0.42)) : 0;
-      const want = r > 0 ? [i, i + 1] : [i];
-      shown.forEach((k) => { if (want.indexOf(k) < 0) stops[k].classList.remove('is-on'); });
-      want.forEach((k) => stops[k].classList.add('is-on'));
-      shown = want;
-
-      media[i].style.clipPath = 'none';
-      inner[i].style.transform = 'scale(' + (1.02 + 0.1 * f + 0.1 * r).toFixed(4) + ')';
-      shade[i].style.opacity = (0.5 * r).toFixed(3);
-      if (r > 0) {
-        const k = i + 1, W = stage.clientWidth;
+      const r = st.r;
+      if (from >= 0) {
+        media[from].style.clipPath = 'none';
+        inner[from].style.transform = 'scale(' + (1.02 + 0.1 * fromKb + 0.08 * r).toFixed(4) + ')';
+        shade[from].style.opacity = (0.55 * r).toFixed(3);
+        // El siguiente espacio entra por una "puerta" en arco que se abre
+        const W = stage.clientWidth;
         const side = 50 * (1 - r), top = 18 * (1 - r);
         const rad = Math.min((W * r) / 2, W * 0.6 * (1 - r));
-        media[k].style.clipPath = 'inset(' + top.toFixed(2) + '% ' + side.toFixed(2) + '% 0% ' + side.toFixed(2) + '% round ' + rad.toFixed(1) + 'px ' + rad.toFixed(1) + 'px 0px 0px)';
-        inner[k].style.transform = 'scale(' + (1.02 + 0.24 * (1 - r)).toFixed(4) + ')';
-        shade[k].style.opacity = '0';
+        media[cur].style.clipPath = 'inset(' + top.toFixed(2) + '% ' + side.toFixed(2) + '% 0% ' + side.toFixed(2) + '% round ' + rad.toFixed(1) + 'px ' + rad.toFixed(1) + 'px 0px 0px)';
+        inner[cur].style.transform = 'scale(' + (1.02 + 0.24 * (1 - r)).toFixed(4) + ')';
+        shade[cur].style.opacity = '0';
+      } else {
+        media[cur].style.clipPath = 'none';
+        inner[cur].style.transform = 'scale(' + (1.02 + 0.1 * clamp(elapsed / DUR)).toFixed(4) + ')';
+        shade[cur].style.opacity = '0';
       }
 
-      const a = r > 0.5 ? i + 1 : i;
+      const a = from >= 0 && r < 0.5 ? from : cur;
       if (a !== active) {
         if (active >= 0) { stops[active].classList.remove('is-active'); idxEls[active].classList.remove('on'); }
         active = a;
         stops[a].classList.add('is-active'); idxEls[a].classList.add('on');
+        stops.forEach((s, k) => { s.inert = k !== a; });
         now.textContent = String(a + 1).padStart(2, '0');
-        playVideo();
-        if (seq && Math.abs(a - seqStop) <= 2) seq.load();
       }
-      for (let k = 0; k < N; k++) barEls[k].style.setProperty('--f', clamp(q - k).toFixed(3));
-      if (seq && Math.abs(q - seqStop) < 1.6) seq.draw(clamp((q - (seqStop - 0.42)) / 1.42));
+      const f = from >= 0 ? 0 : clamp(elapsed / DUR);
+      for (let k = 0; k < N; k++) barEls[k].style.setProperty('--f', (k < cur ? 1 : k === cur ? f : 0).toFixed(3));
+      if (seq && cur === seqStop) seq.draw(from < 0 ? clamp(elapsed / 7) : 0);
     }
 
-    gsap.to(state, {
-      q: N, ease: 'none', onUpdate: render,
-      scrollTrigger: {
-        id: 'tour', trigger: track, start: 'top top', end: 'bottom bottom', scrub: 0.5,
-        onToggle: (self) => { stageOn = self.isActive; playVideo(); },
-      },
+    function show(k) {
+      k = ((k % N) + N) % N;
+      if (tween) tween.progress(1);
+      if (k === cur) { elapsed = 0; render(); return; }
+      fromKb = clamp(elapsed / DUR);
+      from = cur; cur = k; elapsed = 0; st.r = 0;
+      setOn([from, cur]);
+      syncMedia();
+      tween = gsap.to(st, {
+        r: 1, duration: TRANS, ease: 'power3.inOut', onUpdate: render,
+        onComplete: () => {
+          media[from].style.clipPath = 'none';
+          from = -1; tween = null;
+          setOn([cur]); render(); syncMedia();
+        },
+      });
+    }
+    const next = () => show(cur + 1);
+    const prev = () => show(cur - 1);
+
+    // Reloj del avance automático
+    gsap.ticker.add((time, dt) => {
+      if (!inView || from >= 0) return;
+      if (!userPaused && !document.hidden) {
+        elapsed += Math.min(dt, 100) / 1000;
+        if (elapsed >= DUR) { next(); return; }
+        render();
+      }
     });
-    ScrollTrigger.create({
-      trigger: track, start: 'top bottom', end: 'bottom top',
-      onToggle: (self) => { stageOn = self.isActive; playVideo(); if (self.isActive && seq) seq.size(); },
+
+    // Solo corre cuando el carrusel se ve casi completo
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver((entries) => {
+        entries.forEach((en) => { inView = en.intersectionRatio >= 0.55; syncMedia(); });
+      }, { threshold: [0, 0.55, 1] }).observe(stage);
+    } else inView = true;
+
+    // Botones
+    btnNext.addEventListener('click', next);
+    btnPrev.addEventListener('click', prev);
+    btnPause.addEventListener('click', () => {
+      userPaused = !userPaused;
+      btnPause.setAttribute('aria-pressed', userPaused ? 'true' : 'false');
+      btnPause.setAttribute('aria-label', userPaused ? 'Reanudar servicios' : 'Pausar servicios');
     });
+
+    // Clic o toque en la foto: siguiente. Deslizar: siguiente o anterior.
+    let down = null;
+    const isControl = (el) => el && el.closest('a, button, .tour-hud');
+    stage.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 || isControl(e.target)) { down = null; return; }
+      down = { x: e.clientX, y: e.clientY };
+    });
+    stage.addEventListener('pointercancel', () => { down = null; });
+    stage.addEventListener('pointerup', (e) => {
+      if (!down) return;
+      const dx = e.clientX - down.x, dy = e.clientY - down.y;
+      down = null;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.2) { dx < 0 ? next() : prev(); }
+      else if (Math.abs(dx) < 10 && Math.abs(dy) < 10) next();
+    });
+
+    // Flechas del teclado mientras el carrusel está a la vista
+    document.addEventListener('keydown', (e) => {
+      if (!inView || e.altKey || e.ctrlKey || e.metaKey || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+      if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+    });
+
+    // Etiqueta "Siguiente" que sigue al cursor
+    if (cursor && finePointer) {
+      let cx = 0, cy = 0, tx = 0, ty = 0, on = false;
+      stage.addEventListener('pointermove', (e) => {
+        const rct = stage.getBoundingClientRect();
+        tx = e.clientX - rct.left + 18; ty = e.clientY - rct.top + 18;
+        const over = !isControl(e.target);
+        if (over && !on) { cx = tx; cy = ty; }
+        on = over; cursor.classList.toggle('is-on', on);
+      });
+      stage.addEventListener('pointerleave', () => { on = false; cursor.classList.remove('is-on'); });
+      gsap.ticker.add(() => {
+        if (!on) return;
+        cx += (tx - cx) * 0.25; cy += (ty - cy) * 0.25;
+        cursor.style.transform = 'translate3d(' + cx.toFixed(1) + 'px,' + cy.toFixed(1) + 'px,0)';
+      });
+    }
+
     if (seq) window.addEventListener('resize', () => seq.size());
+    setOn([0]);
     render();
+    if (seq) { seq.size(); }
   }
 
   /* ==================================================================
@@ -687,39 +549,20 @@
       });
     }
 
-    // Proceso: la línea LED avanza y enciende cada paso
+    // The process light follows scroll progress and activates each step.
     const pw = $('#pasos');
     if (pw) {
       const pasos = $$('.paso', pw);
       pw.style.setProperty('--p', '0');
+      pw.style.setProperty('--p-y', '0%');
       ScrollTrigger.create({
         trigger: pw, start: 'top 76%', end: 'bottom 60%', scrub: 0.5,
         onUpdate: (self) => {
           const p = self.progress;
           pw.style.setProperty('--p', p.toFixed(4));
+          pw.style.setProperty('--p-y', (p * 100).toFixed(2) + '%');
           pasos.forEach((el, i) => el.classList.toggle('on', p >= i / pasos.length + 0.02));
         },
-      });
-    }
-
-    // Película: el marco crece hasta llenar la pantalla
-    const film = $('#film');
-    if (film) {
-      gsap.fromTo($('.film-frame', film), { '--s': small ? 0.84 : 0.68, '--r': '28px' }, {
-        '--s': 1, '--r': '0px', ease: 'none',
-        scrollTrigger: { trigger: film, start: 'top 94%', end: 'center 54%', scrub: 0.5 },
-      });
-    }
-
-    // Logo: la M gira hasta quedar en su lugar
-    const logoCanvas = $('#seqLogo');
-    if (logoCanvas) {
-      const ls = new FrameSeq(logoCanvas, (small || saveData) ? 2 : 1, false);
-      const o = { u: 0 };
-      ScrollTrigger.create({ trigger: '.agendar', start: 'top 250%', once: true, onEnter: () => ls.load() });
-      gsap.to(o, {
-        u: 1, ease: 'none', onUpdate: () => ls.draw(o.u),
-        scrollTrigger: { trigger: '.agendar-logo', start: 'top 88%', end: 'center 46%', scrub: 0.6 },
       });
     }
   }
@@ -727,21 +570,18 @@
   /* ==================================================================
      Arranque
      ================================================================== */
-  const t0 = performance.now();
   let hero = null;
-  try { hero = initHero(); } catch (err) { hero = null; }
+  try { hero = initHero(); } catch (err) { hero = null; root.classList.add('ready'); }
   initTour();
   initSections();
 
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
-  Promise.race([Promise.all([hero ? hero.ready : null, fonts]), wait(3000)])
+  Promise.race([fonts, wait(700)])
     .catch(() => {})
-    .then(() => wait(Math.max(0, 900 - (performance.now() - t0))))
     .then(() => {
       ScrollTrigger.refresh();
-      hideLoader();
-      if (hero) hero.intro();
+      if (hero) hero.intro(); else root.classList.add('ready');
     });
   window.addEventListener('load', () => ScrollTrigger.refresh());
 })();
