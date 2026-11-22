@@ -586,6 +586,16 @@
     }, 150);
   });
 
+  // Tocar una portada abre la revista ahí mismo, sin desplazar la página (el desplazamiento hasta la
+  // portada es solo para los enlaces que llegan de afuera: #revista-… o /catalogo/<revista>/).
+  document.addEventListener("click", (e) => {
+    const card = e.target.closest(".revista[data-revista]");
+    if (!card || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    if (abierta || ocupado) return;
+    abrir(card.dataset.revista, 1);
+  });
+
   addEventListener("hashchange", rutaHash);
   if (/^#revista-/.test(location.hash)) {
     const iniciar = () => setTimeout(rutaHash, 350);
