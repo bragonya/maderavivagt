@@ -488,7 +488,8 @@
     libro.innerHTML = "";
     hojas = [];
     if (tarjeta) { tarjeta.style.visibility = ""; tarjeta.focus({ preventScroll: true }); }
-    history.replaceState(null, "", location.pathname + location.search);
+    // Al cerrar, la dirección vuelve a la sección del catálogo si la página lo indica (en el sitio, #catalogo).
+    history.replaceState(null, "", location.pathname + location.search + (window.MV.hashAlCerrar || ""));
     ocupado = false;
   }
 

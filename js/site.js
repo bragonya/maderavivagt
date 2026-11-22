@@ -177,6 +177,8 @@
     e.preventDefault();
     setMenu(false);
     scrollToY(target, { duration: 1.8 });
+    // La barra de direcciones muestra la sección (p. ej. maderavivagt.com/#catalogo) para poder copiarla y compartirla.
+    history.replaceState(null, '', id === '#inicio' ? location.pathname + location.search : id);
   });
 
   // Barra de navegación: se esconde al bajar, vuelve al subir. Línea de luz = avance.

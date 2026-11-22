@@ -16,7 +16,7 @@
     catch { const t = document.createElement("textarea"); t.value = url; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); }
     if (boton) { const txt = boton.textContent; boton.textContent = "¡Enlace copiado!"; setTimeout(() => (boton.textContent = txt), 1800); }
   };
-  window.MV = Object.assign(window.MV || {}, { ESTILO, esc, enlace, copiar });
+  window.MV = Object.assign(window.MV || {}, { ESTILO, esc, enlace, copiar, hashAlCerrar: "#catalogo" });
 
   const cont = document.getElementById("revistas");
   if (!C || !cont) return;
