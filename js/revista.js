@@ -282,7 +282,7 @@
       <span class="libro-titulo"></span>
       <div class="libro-top-acc">
         <a class="libro-btn libro-wa" href="#" target="_blank" rel="noopener"><span class="largo">Cotizar por WhatsApp</span><span class="corto">Cotizar</span></a>
-        <button type="button" class="libro-btn libro-copiar">Copiar enlace</button>
+        <button type="button" class="libro-btn libro-copiar"><span class="txt">Copiar enlace</span><span class="que"> de la revista</span><span class="ok">¡Enlace copiado!</span></button>
         <button type="button" class="libro-btn libro-cerrar" aria-label="Cerrar la revista">✕</button>
       </div>
     </div>
@@ -298,6 +298,7 @@
   const $prev = capa.querySelector(".libro-prev");
   const $next = capa.querySelector(".libro-next");
   const $wa = capa.querySelector(".libro-wa");
+  const $copiar = capa.querySelector(".libro-copiar");
 
   let rev = null, prep = null, paginas = [], hojas = [], actual = 0, modo = "doble", abierta = false, tarjeta = null, ocupado = false;
 
@@ -390,13 +391,22 @@
     return i >= 0 && i < rev.disenos.length ? i : -1;
   }
   // El enlace de la barra sigue a la página: así "Copiar enlace" comparte el diseño que está a la vista.
+  // Enlace para compartir lo que está a la vista: el sitio da enlaces limpios (/catalogo/<revista>/<diseño>/)
+  // con su propia vista previa; si no, el de esta página con #revista-…
+  function enlaceActual() {
+    const i = disenoVisible();
+    const slug = i >= 0 ? rev.disenos[i].slug : "";
+    return window.MV.enlace ? window.MV.enlace(rev.id, slug) : location.origin + location.pathname + "#revista-" + rev.id + (slug ? "/" + slug : "");
+  }
+
   // El botón de WhatsApp cotiza el diseño a la vista (o la revista) y manda su enlace.
   function marcarEnlace() {
     if (!abierta || !rev) return;
     const i = disenoVisible();
     const hash = "#revista-" + rev.id + (i >= 0 ? "/" + rev.disenos[i].slug : "");
     history.replaceState(null, "", hash);
-    const url = location.origin + location.pathname + hash;
+    $copiar.querySelector(".que").textContent = i >= 0 ? " del diseño" : " de la revista";
+    const url = enlaceActual();
     const msj = i >= 0
       ? `Hola Madera Viva, me interesa el diseño «${rev.disenos[i].nombre}» del catálogo: ${url}`
       : `Hola Madera Viva, vi la revista «${rev.titulo}» del catálogo y quiero cotizar: ${url}`;
@@ -526,10 +536,14 @@
 
   // ---------- Eventos ----------
   capa.querySelector(".libro-cerrar").addEventListener("click", cerrar);
-  capa.querySelector(".libro-copiar").addEventListener("click", (e) => {
+  $copiar.addEventListener("click", async () => {
     if (!rev) return;
-    const i = disenoVisible();
-    window.MV.copiar(rev.id, e.currentTarget, i >= 0 ? rev.disenos[i].slug : "");
+    const url = enlaceActual();
+    try { await navigator.clipboard.writeText(url); }
+    catch { const t = document.createElement("textarea"); t.value = url; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); }
+    $copiar.classList.add("copiado");
+    clearTimeout($copiar._t);
+    $copiar._t = setTimeout(() => $copiar.classList.remove("copiado"), 1800);
   });
   $prev.addEventListener("click", ant);
   $next.addEventListener("click", sig);

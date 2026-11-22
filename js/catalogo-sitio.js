@@ -1,12 +1,15 @@
 // Catálogo en la portada: pinta las portadas de las revistas (datos en js/catalogo-data.js).
-// Tocar una portada abre la revista (js/revista.js). Enlaces directos:
+// Tocar una portada abre la revista (js/revista.js). Enlaces directos (también funcionan dentro de la página):
 //   #revista-<id>                 abre la revista
 //   #revista-<id>/<diseño>        la abre en ese diseño (p. ej. #revista-muros/comedor-con-molduras-en-color)
 (function () {
   const C = window.CATALOGO;
   const ESTILO = { antigua: "Colonial", robson: "Contemporáneo", fusion: "Colonial moderno" };
   const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-  const enlace = (id, slug) => location.origin + location.pathname + "#revista-" + id + (slug ? "/" + slug : "");
+  // Enlaces limpios para compartir (páginas con vista previa en /catalogo/, generadas por sincronizar-sitio.cjs):
+  //   /catalogo/<revista>/            abre la revista
+  //   /catalogo/<revista>/<diseño>/   la abre en ese diseño
+  const enlace = (id, slug) => location.origin + "/catalogo/" + id + "/" + (slug ? slug + "/" : "");
   const copiar = async (id, boton, slug) => {
     const url = enlace(id, slug);
     try { await navigator.clipboard.writeText(url); }
