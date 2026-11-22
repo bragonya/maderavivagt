@@ -28,6 +28,8 @@ html.libro-on, html.libro-on body { overflow: hidden; }
 .libro-wa { display: inline-flex; align-items: center; text-decoration: none; background: var(--nogal); border-color: var(--nogal); }
 .libro-wa:hover { background: #6E4F38; }
 .libro-wa .corto { display: none; }
+.libro-copiar .ok, .libro-copiar.copiado .txt, .libro-copiar.copiado .que { display: none; }
+.libro-copiar.copiado .ok { display: inline; }
 .libro-ctrl {
   position: absolute; top: 50%; z-index: 5; transform: translateY(-50%);
   width: 54px; height: 54px; border-radius: 50%; cursor: pointer;
@@ -53,6 +55,7 @@ html.libro-on, html.libro-on body { overflow: hidden; }
 @media (max-width: 520px) {
   .libro-wa .largo { display: none; }
   .libro-wa .corto { display: inline; }
+  .libro-copiar .que { display: none; }
   .simple .libro-titulo b { display: block; margin: 0 0 2px; font-size: 13px; }
 }
 
