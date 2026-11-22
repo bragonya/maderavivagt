@@ -152,12 +152,27 @@
     gsap.ticker.lagSmoothing(0);
   }
 
-  // Anclas
+  // Catálogo: con la revista abierta el scroll suave se detiene, y los enlaces #revista-… bajan con Lenis.
+  window.MV = Object.assign(window.MV || {}, {
+    scrollA: (el) => scrollToY(el, { duration: 1.4, offset: -Math.max(0, (window.innerHeight - el.offsetHeight) / 2) }),
+  });
+  if (lenis) {
+    let libroOn = false;
+    new MutationObserver(() => {
+      const on = root.classList.contains('libro-on');
+      if (on !== libroOn) { libroOn = on; on ? lenis.stop() : lenis.start(); }
+    })
+      .observe(root, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  // Anclas (los enlaces #revista-… los atiende el catálogo)
   document.addEventListener('click', (e) => {
     const a = e.target.closest('a[href^="#"]');
     if (!a) return;
     const id = a.getAttribute('href');
-    const target = id.length > 1 && $(id);
+    if (id.startsWith('#revista-')) return;
+    let target = null;
+    try { target = id.length > 1 && $(id); } catch (err) { target = null; }
     if (!target) return;
     e.preventDefault();
     setMenu(false);

@@ -1,0 +1,84 @@
+/* ==========================================================================
+   Catálogo en la portada: reemplaza "Servicios" y "Para empresas".
+   Las portadas abren la revista (visor en css/revista.css + js/revista.js,
+   copiados desde el repo del catálogo con herramientas/sincronizar-sitio.cjs).
+   ========================================================================== */
+:root {
+  --antigua: #9C5B43;   /* Colonial */
+  --robson: #43504f;    /* Contemporáneo */
+  --fusion: #8B6549;    /* Colonial moderno */
+}
+
+.catalogo { position: relative; background: var(--marfil); color: var(--carbon); padding: clamp(96px, 15vh, 180px) 0 clamp(70px, 10vh, 120px); }
+.catalogo .lead { color: var(--texto); }
+/* Enlaces viejos (#servicios, #empresas) caen en el catálogo */
+.ancla-vieja { position: absolute; top: 0; left: 0; }
+
+/* Estilos: Colonial, Contemporáneo, Colonial moderno */
+.cat-estilos { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  font: 600 10.5px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase;
+  padding: 6px 10px 6px 9px; border-radius: 99px; color: #fff;
+}
+.chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .7; }
+.chip.antigua { background: var(--antigua); }
+.chip.robson { background: var(--robson); }
+.chip.fusion { background: var(--fusion); }
+
+/* ---------- Portadas ---------- */
+.revistas { display: flex; flex-wrap: wrap; justify-content: center; gap: 44px 36px; max-width: 1120px; margin: clamp(48px, 7vh, 80px) auto 0; perspective: 1400px; }
+.revistas .revista { width: calc((100% - 72px) / 3); }
+.revista {
+  position: relative; display: block; aspect-ratio: 3 / 4; text-decoration: none; color: var(--marfil);
+  border-radius: 2px 6px 6px 2px; overflow: hidden; background: var(--carbon);
+  box-shadow: 0 1px 2px rgba(0,0,0,.2), 0 18px 40px -18px rgba(41,39,36,.55);
+  transform-origin: left center; transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s;
+}
+.revista::before { /* lomo */
+  content: ""; position: absolute; inset: 0 auto 0 0; width: 14px; z-index: 3;
+  background: linear-gradient(90deg, rgba(0,0,0,.35), rgba(255,255,255,.12) 40%, rgba(0,0,0,.08));
+}
+.revista:hover { transform: rotateY(-14deg) translateX(6px); box-shadow: 0 1px 2px rgba(0,0,0,.2), 30px 30px 50px -20px rgba(41,39,36,.6); }
+.revista img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; transition: transform 1.2s; }
+.revista:hover img { transform: scale(1.04); }
+.revista::after { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(41,39,36,.6) 0%, rgba(41,39,36,0) 22%, rgba(41,39,36,0) 36%, rgba(41,39,36,.62) 58%, rgba(41,39,36,.94) 100%); }
+.revista .cab, .revista .pie-port { position: absolute; left: 24px; right: 18px; z-index: 2; }
+.revista .cab { top: 16px; display: flex; flex-direction: column; gap: 6px; }
+.revista .marca { font: 600 clamp(17px, 1.7vw, 23px)/1 var(--serif); letter-spacing: .3em; text-transform: uppercase; border-bottom: 1px solid rgba(240,234,224,.45); padding-bottom: 8px; }
+.revista .nro { font-size: 9.5px; letter-spacing: .2em; text-transform: uppercase; opacity: .85; }
+.revista .pie-port { bottom: 18px; }
+.revista h3 { font: 500 31px/1 var(--serif); margin: 0 0 6px; text-shadow: 0 1px 14px rgba(0,0,0,.35); }
+.revista .lema { font: italic 400 16px/1.25 var(--serif); color: var(--arena); margin: 0 0 12px; }
+.revista ul { list-style: none; margin: 0; padding: 10px 0 0; border-top: 1px solid rgba(240,234,224,.35); font-size: 10.5px; line-height: 1.5; letter-spacing: .1em; text-transform: uppercase; opacity: .9; }
+.revista li { margin: 3px 0; }
+.revista .abrir { position: absolute; z-index: 2; right: 18px; top: 62px; font-size: 9.5px; letter-spacing: .18em; text-transform: uppercase; opacity: 0; transition: opacity .4s; }
+.revista:hover .abrir { opacity: .9; }
+.catalogo .nota-ref { text-align: center; margin-top: clamp(40px, 6vh, 64px); color: var(--muted); }
+
+/* Aparición suave de las portadas */
+.aparece { opacity: 0; transform: translateY(22px); transition: opacity .9s ease, transform .9s cubic-bezier(.2,.7,.2,1); }
+.aparece.visible { opacity: 1; transform: none; }
+
+@media (max-width: 900px) {
+  .revistas { gap: 28px 20px; }
+  .revistas .revista { width: calc((100% - 20px) / 2); }
+}
+@media (max-width: 720px) {
+  .revistas { gap: 22px 16px; }
+  .revistas .revista { width: calc((100% - 16px) / 2); }
+  .revista h3 { font-size: 22px; }
+  .revista ul, .revista .nro { display: none; }
+  .revista .marca { font-size: 12px; letter-spacing: .22em; padding-bottom: 6px; }
+  .revista .cab, .revista .pie-port { left: 20px; right: 12px; }
+  .revista .pie-port { bottom: 14px; }
+  .revista .lema { font-size: 13.5px; margin: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aparece { opacity: 1; transform: none; transition: none; }
+  .revista, .revista img { transition: none; }
+}
+
+/* Con la revista abierta, el resto de la página no estorba */
+html.libro-on .nav { transform: translateY(-110%); }
+html.libro-on .wa-float, html.libro-on .led-progress { display: none; }
