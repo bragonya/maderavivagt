@@ -414,7 +414,11 @@ window.CATALOGO = {
     {
      "id": "B5",
      "img": "img/ref/B5.jpg",
-     "encaje": "entera",
+     "lado": "der",
+     "zona": "arriba",
+     "foco": "92% 50%",
+     "ancho": 64,
+     "alto": 47,
      "estilo": "robson",
      "familia": "Niños",
      "nombre": "Litera Altillo con Escritorio",

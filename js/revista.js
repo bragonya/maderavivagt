@@ -175,7 +175,7 @@
       const foco = d.foco || "50% 50%";
       if (pr.modo === "pano") {
         const texto = `
-          <div class="ft-bloque"${d.alto ? ` style="max-height:${d.alto}%"` : ""}>
+          <div class="ft-bloque"${d.alto || d.ancho ? ` style="${d.alto ? `max-height:${d.alto}%;` : ""}${d.ancho ? `width:${d.ancho}%;` : ""}"` : ""}>
             ${sup(r, d)}
             <h3 class="ft-nom">${titular(d.nombre)}</h3>
             <p class="ft-valor">${esc(d.valor)}</p>
