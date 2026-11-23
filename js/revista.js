@@ -82,7 +82,7 @@
       alfa = (0.42 - Lp) / Math.max(Lv - Lp, 0.001);
     }
     const minimo = Math.min(0.88, 0.25 + Z.desv * 2 + Z.grad * 4); // fotos cargadas piden más velo
-    alfa = Math.min(0.94, Math.max(minimo, alfa));
+    alfa = Math.min(0.94, Math.max(minimo, alfa, pref.velo || 0)); // d.velo: velo mínimo para fondos muy cargados
     return { tono, rgb: rgb.join(","), alfa: alfa.toFixed(2) };
   }
 
@@ -175,7 +175,7 @@
       const foco = d.foco || "50% 50%";
       if (pr.modo === "pano") {
         const texto = `
-          <div class="ft-bloque"${d.alto ? ` style="max-height:${d.alto}%"` : ""}>
+          <div class="ft-bloque"${d.alto || d.ancho ? ` style="${d.alto ? `max-height:${d.alto}%;` : ""}${d.ancho ? `width:${d.ancho}%;` : ""}"` : ""}>
             ${sup(r, d)}
             <h3 class="ft-nom">${titular(d.nombre)}</h3>
             <p class="ft-valor">${esc(d.valor)}</p>
@@ -184,7 +184,7 @@
         for (const mitad of ["izq", "der"]) {
           const conTexto = mitad === pr.lado;
           P.push(`
-            <div class="pg pg-ft pg-pano mitad-${mitad} ${conTexto ? `con-texto z-${pr.zona} t-${pr.tono}` : "t-claro"}" style="--velo:${pr.rgb || "20,16,12"};--alfa:${pr.alfa || 0.6}">
+            <div class="pg pg-ft pg-pano mitad-${mitad} ${conTexto ? `con-texto z-${pr.zona} t-${pr.tono}${d.velo ? " velo-amplio" : ""}` : "t-claro"}" style="--velo:${pr.rgb || "20,16,12"};--alfa:${pr.alfa || 0.6}">
               <div class="pano"><img src="${d.img}" alt="${esc(d.nombre)}" style="object-position:${foco}"></div>
               <div class="velo"></div>
               ${conTexto ? texto : ""}
