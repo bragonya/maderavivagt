@@ -468,6 +468,7 @@ window.CATALOGO = {
      "img": "img/ref/J2.jpg",
      "lado": "der",
      "zona": "arriba",
+     "velo": 0.86,
      "estilo": "fusion",
      "familia": "Juegos",
      "nombre": "Columpio Familiar con Techo",
