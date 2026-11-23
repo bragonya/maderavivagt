@@ -30,12 +30,15 @@ window.CATALOGO = {
     {
      "id": "C4",
      "img": "img/ref/C4.jpg",
+     "lado": "izq",
+     "zona": "arriba",
+     "velo": 0.86,
      "estilo": "antigua",
      "familia": "Cocinas",
      "nombre": "Cocina de Finca",
-     "desc": "Mesa de madera maciza como isla, repisas abiertas, ollas a la vista y lámpara de fibra natural.",
+     "desc": "Gabinetes de madera con puertas de tablero, repisa abierta para las ollas y barra de madera para desayunar.",
      "materiales": "Madera maciza, melamina hidrófuga, repisas de madera",
-     "valor": "La cocina de la abuela, con el orden de hoy: una mesa de madera maciza al centro, repisas abiertas donde todo queda a mano y ollas colgadas que dan ambiente. La madera maciza se puede lijar y volver a aceitar cuando el uso la marca, así que mejora con los años.",
+     "valor": "La cocina de la abuela, con el orden de hoy: gabinetes de madera con puertas de tablero, una repisa donde las ollas quedan a mano y una barra para el desayuno. La madera maciza se puede lijar y volver a aceitar cuando el uso la marca, así que mejora con los años.",
      "slug": "cocina-de-finca"
     },
     {
@@ -78,14 +81,16 @@ window.CATALOGO = {
     {
      "id": "C8",
      "img": "img/ref/C8.jpg",
-     "pliego": "par",
-     "foco": "45% 50%",
+     "lado": "der",
+     "zona": "arriba",
+     "alto": 42,
+     "velo": 0.86,
      "estilo": "robson",
      "familia": "Closets",
      "nombre": "Closet Empotrado con Espejos",
-     "desc": "Closet de piso a techo en madera, con espejos en las puertas, gavetas y maleteros arriba.",
+     "desc": "Closet de madera a la medida con módulos abiertos, gavetas, canastas arriba y puerta corrediza de espejo.",
      "materiales": "Melamina tipo madera, espejo, herrajes de cierre suave",
-     "valor": "Un closet que aprovecha toda la pared, del piso hasta el techo: arriba guarda maletas y ropa de temporada, y abajo, todo lo de cada día. Los espejos en las puertas le ahorran comprar uno aparte y hacen que la habitación se vea más amplia; la melamina resiste rayones y se limpia con un paño.",
+     "valor": "Un closet que aprovecha toda la pared, del piso hasta el techo: arriba guarda maletas y ropa de temporada, y abajo, todo lo de cada día. La puerta de espejo le ahorra comprar uno aparte y hace que la habitación se vea más amplia.",
      "slug": "closet-empotrado-con-espejos"
     },
     {
@@ -115,12 +120,12 @@ window.CATALOGO = {
     {
      "id": "C2",
      "img": "img/ref/C2.jpg",
-     "pliego": "par",
-     "foco": "45% 50%",
+     "lado": "izq",
+     "zona": "abajo",
      "estilo": "antigua",
      "familia": "Sala",
      "nombre": "Sala con Vigas",
-     "desc": "Vigas y cielo de madera para un aire de casa de campo o colonial.",
+     "desc": "Vigas de madera rústica a la vista para un aire de casa de campo o colonial.",
      "materiales": "Vigas de pino o WPC",
      "valor": "La calidez de una casa de campo colonial sin salir de la ciudad: vigas de madera que hacen que su sala se sienta acogedora y con historia. Son livianas y se fijan sin obra pesada.",
      "slug": "sala-con-vigas"
