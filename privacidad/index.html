@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Política de privacidad — Madera Viva</title>
+<meta name="description" content="Qué datos recoge Madera Viva, para qué los usa, con quién los comparte y cómo pedir que los eliminemos.">
+<link rel="canonical" href="https://maderavivagt.com/privacidad/">
+<meta property="og:title" content="Política de privacidad — Madera Viva">
+<meta property="og:url" content="https://maderavivagt.com/privacidad/">
+<meta name="theme-color" content="#151311">
+<link rel="icon" type="image/png" href="/img/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --nogal: #8B6549;
+    --arena: #D5C1A4;
+    --marfil: #F0EAE0;
+    --marfil-claro: #F7F3EC;
+    --carbon: #292724;
+    --noche: #151311;
+    --texto: #4A4540;
+    --muted: #6B635B;
+    --linea: #E0D3C0;
+    --serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    --sans: 'Montserrat', Arial, Helvetica, sans-serif;
+    --pad: clamp(16px, 4.2vw, 64px);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body { background: var(--marfil-claro); color: var(--texto); font: 15px/1.75 var(--sans); }
+  a { color: var(--nogal); text-underline-offset: 3px; }
+  a:hover { color: var(--carbon); }
+
+  .barra { background: var(--noche); }
+  .barra-in { max-width: 1360px; margin: 0 auto; padding: 0 var(--pad); height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .barra img { height: 42px; width: auto; display: block; }
+  .barra a.volver { color: var(--marfil); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; border: 1px solid rgba(240, 234, 224, .4); padding: 10px 18px; border-radius: 999px; white-space: nowrap; }
+  .barra a.volver:hover { background: var(--arena); border-color: var(--arena); color: var(--carbon); }
+
+  main { max-width: 760px; margin: 0 auto; padding: clamp(48px, 8vh, 96px) var(--pad) clamp(64px, 10vh, 120px); }
+  .eyebrow { font-size: 11px; letter-spacing: .28em; text-transform: uppercase; color: var(--nogal); font-weight: 600; }
+  h1 { font-family: var(--serif); font-weight: 500; color: var(--carbon); font-size: clamp(40px, 6vw, 64px); line-height: 1.02; margin: 14px 0 18px; }
+  .fecha { color: var(--muted); font-size: 13px; }
+  .intro { font-size: 17px; margin-top: 28px; padding-bottom: 32px; border-bottom: 1px solid var(--linea); }
+
+  .indice { margin: 32px 0 8px; padding: 22px 24px; background: var(--marfil); border-radius: 14px; }
+  .indice p { font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 8px; }
+  .indice ol { padding-left: 20px; columns: 2 240px; column-gap: 32px; font-size: 14px; }
+  .indice a { text-decoration: none; }
+  .indice a:hover { text-decoration: underline; }
+
+  section { padding-top: 40px; scroll-margin-top: 16px; }
+  h2 { font-family: var(--serif); font-weight: 600; color: var(--carbon); font-size: clamp(26px, 3.4vw, 32px); line-height: 1.15; margin-bottom: 12px; }
+  h3 { font-size: 14px; font-weight: 600; color: var(--carbon); margin: 20px 0 4px; }
+  section p + p, section p + ul, section ul + p { margin-top: 12px; }
+  ul { padding-left: 20px; }
+  li + li { margin-top: 6px; }
+  strong { color: var(--carbon); font-weight: 600; }
+
+  .destacado { margin-top: 16px; padding: 20px 22px; border-left: 3px solid var(--nogal); background: #fff; border-radius: 0 12px 12px 0; }
+
+  .tabla { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 14px; }
+  .tabla th, .tabla td { text-align: left; vertical-align: top; padding: 12px 10px 12px 0; border-bottom: 1px solid var(--linea); }
+  .tabla th { width: 34%; color: var(--carbon); font-weight: 600; }
+
+  .pie { background: var(--noche); color: rgba(240, 234, 224, .62); padding: 40px var(--pad) 48px; font-size: 13px; }
+  .pie-in { max-width: 1360px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px 40px; }
+  .pie a { color: rgba(240, 234, 224, .86); text-decoration: none; }
+  .pie a:hover { color: #FFF1DA; }
+  .pie-contacto { display: flex; flex-wrap: wrap; gap: 10px 26px; }
+
+  @media (max-width: 560px) {
+    .tabla th, .tabla td { display: block; width: 100%; padding: 0; border: 0; }
+    .tabla th { padding-top: 14px; }
+    .tabla td { padding: 2px 0 14px; border-bottom: 1px solid var(--linea); }
+  }
+</style>
+</head>
+<body>
+
+<header class="barra">
+  <div class="barra-in">
+    <a href="/" aria-label="Madera Viva, inicio"><img src="/img/logo-marfil.png" alt="Madera Viva" width="320" height="182"></a>
+    <a href="/" class="volver">Volver al sitio</a>
+  </div>
+</header>
+
+<main>
+  <p class="eyebrow">Madera Viva · Guatemala</p>
+  <h1>Política de privacidad</h1>
+  <p class="fecha">Última actualización: 24 de noviembre de 2026</p>
+
+  <p class="intro">En Madera Viva diseñamos, fabricamos e instalamos proyectos en madera, melamina y WPC. Para cotizarte y visitarte necesitamos algunos datos tuyos. Aquí te explicamos cuáles, para qué los usamos y cómo puedes pedir que los borremos. No vendemos tus datos a nadie.</p>
+
+  <nav class="indice" aria-label="Contenido">
+    <p>Contenido</p>
+    <ol>
+      <li><a href="#responsable">Quién es responsable</a></li>
+      <li><a href="#datos">Qué datos recogemos</a></li>
+      <li><a href="#uso">Para qué los usamos</a></li>
+      <li><a href="#compartir">Con quién los compartimos</a></li>
+      <li><a href="#meta">Facebook, Instagram y WhatsApp</a></li>
+      <li><a href="#conservacion">Cuánto tiempo los guardamos</a></li>
+      <li><a href="#derechos">Tus derechos</a></li>
+      <li><a href="#eliminar-datos">Cómo eliminar tus datos</a></li>
+      <li><a href="#seguridad">Seguridad</a></li>
+      <li><a href="#cambios">Cambios y contacto</a></li>
+    </ol>
+  </nav>
+
+  <section id="responsable">
+    <h2>1. Quién es responsable</h2>
+    <p>El responsable de tus datos es <strong>Madera Viva</strong>, con operación en Ciudad de Guatemala, Antigua Guatemala y Jutiapa, Guatemala.</p>
+    <ul>
+      <li>Correo: <a href="mailto:andres@maderavivagt.com">andres@maderavivagt.com</a></li>
+      <li>WhatsApp: <a href="https://wa.me/50230508989" target="_blank" rel="noopener">+502 3050 8989</a></li>
+      <li>Sitio web: <a href="https://maderavivagt.com/">maderavivagt.com</a></li>
+    </ul>
+  </section>
+
+  <section id="datos">
+    <h2>2. Qué datos recogemos</h2>
+
+    <h3>Cuando agendas una visita en el sitio</h3>
+    <p>El formulario «Agenda tu visita» pide tu nombre, teléfono, empresa (opcional), la dirección donde se hará el proyecto y una descripción de lo que tienes en mente.</p>
+
+    <h3>Cuando nos escribes</h3>
+    <p>Si nos contactas por WhatsApp, Instagram, Facebook o correo, recibimos tu nombre o usuario, tu número o correo, el contenido de los mensajes y las fotos, planos o medidas que decidas enviarnos.</p>
+
+    <h3>Cuando te visitamos o hacemos tu proyecto</h3>
+    <p>Durante la visita técnica tomamos medidas y fotos del espacio para preparar la propuesta. Si contratas, también guardamos los datos necesarios para la cotización, la factura y la garantía.</p>
+
+    <h3>Contactos de empresas</h3>
+    <p>Para ofrecer nuestros servicios a negocios (por ejemplo hoteles, restaurantes u oficinas) usamos datos de contacto comerciales que esas empresas publican, como su correo o teléfono en su sitio web, en Google Maps o en su perfil público de Instagram. Si recibes un mensaje nuestro y no quieres recibir más, respóndelo o escríbenos y te sacamos de la lista.</p>
+
+    <h3>Al navegar el sitio</h3>
+    <p>El sitio <strong>no usa cookies propias ni herramientas de analítica o seguimiento</strong>. Las tipografías se cargan desde Google Fonts, por lo que Google recibe tu dirección IP al abrir la página. El servicio que aloja el sitio (GitHub Pages) puede registrar datos técnicos como la IP y el navegador por motivos de seguridad.</p>
+  </section>
+
+  <section id="uso">
+    <h2>3. Para qué los usamos</h2>
+    <ul>
+      <li>Responder tus mensajes y agendar la <strong>visita técnica sin costo</strong>.</li>
+      <li>Preparar tu cotización, propuesta o render.</li>
+      <li>Darte seguimiento sobre tu solicitud.</li>
+      <li>Fabricar, instalar y dar garantía a tu proyecto, y emitir la factura.</li>
+      <li>Medir y mejorar nuestros anuncios en Facebook e Instagram (ver punto 5).</li>
+    </ul>
+    <p>Usamos tus datos porque tú nos los das para pedir una cotización o un servicio, o porque necesitamos cumplir lo que acordamos contigo. No los usamos para nada distinto sin avisarte.</p>
+  </section>
+
+  <section id="compartir">
+    <h2>4. Con quién los compartimos</h2>
+    <p>Solo con los servicios que necesitamos para trabajar, y únicamente lo indispensable:</p>
+    <table class="tabla">
+      <tr><th>Web3Forms</th><td>Recibe el formulario del sitio y nos lo envía por correo.</td></tr>
+      <tr><th>Nuestro proveedor de correo</th><td>Guarda los correos que intercambiamos contigo.</td></tr>
+      <tr><th>Meta (WhatsApp, Facebook, Instagram)</th><td>Transporta los mensajes y muestra nuestros anuncios.</td></tr>
+      <tr><th>Herramientas de envío de correo</th><td>Nos ayudan a enviar propuestas a empresas.</td></tr>
+      <tr><th>GitHub Pages y Google Fonts</th><td>Alojan el sitio y sirven las tipografías.</td></tr>
+    </table>
+    <p>También podríamos compartir datos si una autoridad competente lo exige conforme a la ley. <strong>Nunca vendemos ni alquilamos tus datos.</strong></p>
+  </section>
+
+  <section id="meta">
+    <h2>5. Facebook, Instagram y WhatsApp</h2>
+    <p>Anunciamos nuestros servicios en Facebook e Instagram. Si nos escribes desde un anuncio, Meta nos indica que la conversación empezó en ese anuncio, para saber cuál funciona mejor.</p>
+    <p>Para mostrar anuncios a quienes ya conocen nuestro trabajo usamos públicos de Meta formados por personas que interactuaron con nuestra página de Facebook o nuestra cuenta de Instagram. <strong>Meta crea y administra esos públicos; nosotros no vemos quiénes los forman</strong>, solo estadísticas generales como alcance, clics y mensajes recibidos.</p>
+    <p>Tenemos una app en la plataforma para desarrolladores de Meta que solo usamos para administrar nuestra propia página, nuestra cuenta de Instagram y nuestros anuncios. Esa app <strong>no ofrece inicio de sesión a usuarios</strong> ni recoge datos de quienes visitan este sitio.</p>
+    <p>El uso que Meta hace de tus datos se rige por su propia <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener">política de privacidad</a>, y puedes ajustar los anuncios que ves en la configuración de tu cuenta de Facebook o Instagram.</p>
+  </section>
+
+  <section id="conservacion">
+    <h2>6. Cuánto tiempo los guardamos</h2>
+    <ul>
+      <li><strong>Solicitudes y cotizaciones que no se concretan:</strong> hasta 2 años desde nuestro último contacto.</li>
+      <li><strong>Clientes:</strong> mientras dure el proyecto y su garantía, y lo que exija la ley tributaria para facturas y registros contables.</li>
+      <li><strong>Contactos de empresas:</strong> hasta que nos pidan no volver a escribirles.</li>
+    </ul>
+    <p>Pasado ese tiempo los borramos o los dejamos de forma anónima.</p>
+  </section>
+
+  <section id="derechos">
+    <h2>7. Tus derechos</h2>
+    <p>En cualquier momento puedes pedirnos:</p>
+    <ul>
+      <li>Saber qué datos tuyos tenemos.</li>
+      <li>Corregirlos si están mal.</li>
+      <li>Eliminarlos.</li>
+      <li>Que dejemos de escribirte o de enviarte propuestas.</li>
+    </ul>
+    <p>No te cobramos nada por atender estas solicitudes.</p>
+  </section>
+
+  <section id="eliminar-datos">
+    <h2>8. Cómo eliminar tus datos</h2>
+    <div class="destacado">
+      <p>Escríbenos a <a href="mailto:andres@maderavivagt.com?subject=Eliminar%20mis%20datos">andres@maderavivagt.com</a> con el asunto <strong>«Eliminar mis datos»</strong>, o envía ese mismo mensaje por <a href="https://wa.me/50230508989?text=Eliminar%20mis%20datos" target="_blank" rel="noopener">WhatsApp al 3050 8989</a>.</p>
+      <p>Indícanos el nombre, teléfono o correo con el que nos contactaste. Borraremos tus datos de nuestros registros y del formulario, y te confirmaremos en un plazo máximo de <strong>30 días</strong>. Solo conservaremos lo que la ley nos obligue a guardar, como las facturas emitidas.</p>
+    </div>
+    <p>Los mensajes que nos enviaste por WhatsApp, Facebook o Instagram también quedan en tu propia aplicación; para borrarlos de tu lado usa las opciones de esa aplicación.</p>
+  </section>
+
+  <section id="seguridad">
+    <h2>9. Seguridad</h2>
+    <p>Solo el equipo de Madera Viva que atiende tu proyecto accede a tus datos. Usamos servicios con conexión cifrada (HTTPS) y cuentas protegidas con contraseña. Ningún sistema es infalible, pero si detectamos un problema que afecte tus datos te avisaremos.</p>
+    <p>Nuestros servicios están dirigidos a personas adultas; no recogemos a propósito datos de menores de edad.</p>
+  </section>
+
+  <section id="cambios">
+    <h2>10. Cambios y contacto</h2>
+    <p>Si cambiamos esta política, publicaremos la nueva versión en esta misma página con la fecha de actualización.</p>
+    <p>¿Dudas sobre tus datos? Escríbenos a <a href="mailto:andres@maderavivagt.com">andres@maderavivagt.com</a> o por <a href="https://wa.me/50230508989" target="_blank" rel="noopener">WhatsApp al 3050 8989</a>.</p>
+  </section>
+</main>
+
+<footer class="pie">
+  <div class="pie-in">
+    <span>Madera Viva · Guatemala</span>
+    <div class="pie-contacto">
+      <a href="/">Inicio</a>
+      <a href="https://wa.me/50230508989" target="_blank" rel="noopener">WhatsApp 3050 8989</a>
+      <a href="mailto:andres@maderavivagt.com">andres@maderavivagt.com</a>
+      <a href="https://www.instagram.com/maderavivagt/" target="_blank" rel="noopener">@maderavivagt</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
