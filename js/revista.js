@@ -18,11 +18,16 @@
   // ---------- Análisis de la foto ----------
   const lin = (v) => { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
   const lum = (r, g, b) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+  // Solo se guardan los resultados (proporción y análisis), no las fotos: retenerlas llenaba la memoria del celular.
   const cache = new Map();
-  const cargar = (src) => {
-    if (!cache.has("img|" + src)) cache.set("img|" + src, new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; }));
-    return cache.get("img|" + src);
+  const cargar = (src) => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+  const proporcion = (src) => {
+    if (!cache.has("prop|" + src)) cache.set("prop|" + src, cargar(src).then((i) => i.naturalWidth / i.naturalHeight));
+    return cache.get("prop|" + src);
   };
+  // Fondo desenfocado ya hecho (img/ref/borroso/, lo genera sincronizar-sitio.cjs). Si falta, se usa la foto con blur de CSS.
+  const borrosa = (src) => src.replace(/^img\/ref\/([^/]+)$/, "img/ref/borroso/$1");
+  const fondoBorroso = (src, extra = "") => `<img class="pg-fondo borroso" src="${borrosa(src)}" alt=""${extra} onerror="this.onerror=null;this.src='${src}';this.classList.add('css')">`;
 
   // Regiones (en fracciones del lienzo) donde puede ir el texto.
   const REG_PAGINA = { arriba: [0, 0, 1, 0.45], abajo: [0, 0.55, 1, 1] };
@@ -91,9 +96,9 @@
     const prep = { disenos: {} };
     await Promise.all(r.disenos.map(async (d) => {
       try {
-        const img = await cargar(d.img);
         // Panorámica solo donde se verificó a mano que el texto cae en zona vacía (d.lado); si no, foto limpia + página de texto.
-        const modo = d.pliego || (d.lado && img.naturalWidth / img.naturalHeight >= 1.25 ? "pano" : "par");
+        // Las que no tienen d.lado no se cargan aquí: van en par.
+        const modo = d.pliego || (d.lado && (await proporcion(d.img)) >= 1.25 ? "pano" : "par");
         if (modo === "par") { prep.disenos[d.id] = { modo }; return; }
         const st = await analizar(d.img, d.foco, ASPECTO * 2, REG_PANO);
         const clave = d.lado && d.zona ? `${d.lado}-${d.zona}` : Object.keys(st).reduce((a, k) => (st[k].ruido < st[a].ruido ? k : a));
@@ -155,7 +160,7 @@
 
     P.push(`
       <div class="pg pg-ft pg-indice t-claro">
-        <img class="pg-fondo borroso" src="${r.portada}" alt="">
+        ${fondoBorroso(r.portada)}
         <div class="ft-bloque">
           <p class="ft-sup">Contenido</p>
           <h2 class="ft-nom">En esta <em>edición</em></h2>
@@ -196,7 +201,7 @@
         // encaje "entera": la foto completa sobre su propio fondo desenfocado (para fotos anchas que no aguantan recorte).
         const foto = () => d.encaje === "entera" ? `
           <div class="pg pg-ft pg-solo pg-entera t-claro">
-            <img class="pg-fondo borroso" src="${d.img}" alt="">
+            ${fondoBorroso(d.img)}
             <img class="foto-entera" src="${d.img}" alt="${esc(d.nombre)}">
             <div class="velo"></div>
             ${pie(esc(d.nombre))}
@@ -208,7 +213,7 @@
           </div>`;
         const texto = () => `
           <div class="pg pg-ft pg-par t-claro">
-            <img class="pg-fondo borroso" src="${d.img}" alt="" style="object-position:${foco}">
+            ${fondoBorroso(d.img, ` style="object-position:${foco}"`)}
             <div class="ft-bloque">
               ${sup(r, d)}
               <h3 class="ft-nom grande">${titular(d.nombre)}</h3>
@@ -226,7 +231,7 @@
     const ultima = r.disenos[r.disenos.length - 1];
     P.push(`
       <div class="pg pg-ft pg-cta t-claro">
-        <img class="pg-fondo borroso" src="${ultima.img}" alt="">
+        ${fondoBorroso(ultima.img)}
         <div class="ft-bloque">
           <p class="ft-sup">¿Cuál va en su espacio?</p>
           <h2 class="ft-nom grande">Lo visitamos, medimos y le proponemos el estilo <em>sin costo.</em></h2>
@@ -301,47 +306,99 @@
   const $copiar = capa.querySelector(".libro-copiar");
 
   let rev = null, prep = null, paginas = [], hojas = [], actual = 0, modo = "doble", abierta = false, tarjeta = null, ocupado = false;
+  // Celular y tableta (menos de 900 px): también a dos páginas, como la revista impresa; tocar una página la acerca
+  // para leerla (zoom: "izq", "der" o "centro" en las portadas) y al deslizar se pasa a la siguiente.
+  let compacto = false, escala = 1, anchoPag = 0, zoom = null, podar = 0;
 
   function medir() {
-    modo = innerWidth >= 900 ? "doble" : "simple";
-    capa.classList.toggle("simple", modo === "simple");
-    let pw, ph;
-    if (modo === "doble") {
-      const w = innerWidth - 220, h = innerHeight - 140;
-      ph = Math.min(h, (w / 2) / ASPECTO); pw = ph * ASPECTO;
-    } else {
-      const w = innerWidth - 28, h = innerHeight - 150;
-      pw = Math.min(w, h * ASPECTO); ph = pw / ASPECTO;
-    }
+    modo = "doble";
+    compacto = innerWidth < 900;
+    capa.classList.toggle("compacto", compacto);
+    const w = compacto ? innerWidth - 16 : innerWidth - 220, h = innerHeight - (compacto ? 150 : 140);
+    const ph = Math.min(h, (w / 2) / ASPECTO), pw = ph * ASPECTO;
+    anchoPag = pw;
+    // Cuánto se acerca una página al tocarla: que llene el ancho sin pasarse del alto disponible.
+    escala = compacto ? Math.min((innerWidth - 12) / pw, (innerHeight - 124) / ph) : 1;
     capa.style.setProperty("--pw", pw + "px");
     capa.style.setProperty("--ph", ph + "px");
-    escena.style.width = (modo === "doble" ? pw * 2 : pw) + "px";
+    escena.style.width = pw * 2 + "px";
     escena.style.height = ph + "px";
-    libro.style.fontSize = pw * (modo === "doble" ? 0.033 : 0.037) + "px";
+    libro.style.fontSize = pw * 0.033 + "px";
   }
+  const puedeAcercar = () => compacto && escala >= 1.3;
 
+  // Solo se arman las páginas cercanas a la que está a la vista; las demás quedan vacías y ocultas.
+  // Armar la revista completa (20+ páginas, cada una en su capa 3D) hacía que el celular se quedara sin memoria.
   function hoja(frente, reverso) {
     const h = document.createElement("div");
-    h.className = "hoja";
-    h.innerHTML = `<div class="cara frente">${frente}</div><div class="cara reverso">${reverso}</div>`;
+    h.className = "hoja lejos";
+    h.innerHTML = `<div class="cara frente"></div><div class="cara reverso"></div>`;
+    h._html = [frente, reverso];
     return h;
+  }
+  function llenar(h) {
+    if (h._lleno) return;
+    h._lleno = true; h._ajustada = false;
+    h.children[0].innerHTML = h._html[0];
+    h.children[1].innerHTML = h._html[1];
+  }
+  function vaciar(h) {
+    if (!h._lleno) return;
+    h._lleno = false;
+    h.children[0].innerHTML = h.children[1].innerHTML = "";
+  }
+  // vistas: hojas que se ven ahora (la de la izquierda y la de la derecha) más las que van a girar.
+  function sincronizar(extra = []) {
+    const ver = new Set([actual - 1, actual, ...extra]);
+    // Las que todavía están girando (pasos seguidos) siguen a la vista con sus vecinas hasta que terminan.
+    hojas.forEach((h, i) => { if (h.classList.contains("girando")) { ver.add(i - 1); ver.add(i); ver.add(i + 1); } });
+    const listas = new Set();
+    ver.forEach((i) => { listas.add(i - 1); listas.add(i); listas.add(i + 1); }); // las vecinas cargan sus fotos por adelantado
+    hojas.forEach((h, i) => {
+      if (listas.has(i)) llenar(h); else vaciar(h);
+      if (ver.has(i)) {
+        h.classList.remove("lejos");
+        if (!h._ajustada) { h._ajustada = true; ajustarTextos(h); }
+      } else h.classList.add("lejos");
+    });
   }
 
   function construir(pIndex) {
     medir();
+    zoom = null; aplicarZoom(true);
     paginas = pagsDe(rev, prep);
     libro.innerHTML = "";
     hojas = [];
-    if (modo === "doble") {
-      for (let k = 0; k < paginas.length / 2; k++) hojas.push(hoja(paginas[2 * k], paginas[2 * k + 1]));
-      actual = Math.ceil(pIndex / 2);
-    } else {
-      paginas.forEach((p) => hojas.push(hoja(p, `<div class="pg pg-blanca"></div>`)));
-      actual = pIndex;
-    }
+    for (let k = 0; k < paginas.length / 2; k++) hojas.push(hoja(paginas[2 * k], paginas[2 * k + 1]));
+    actual = Math.ceil(pIndex / 2);
     hojas.forEach((h, i) => { h.classList.toggle("volteada", i < actual); libro.appendChild(h); });
+    sincronizar();
     ordenar(); posicion(); ui();
-    ajustarTextos(libro);
+  }
+
+  // Acercar una página (celular). La escena se agranda y se corre para que esa página llene el ancho.
+  function aplicarZoom(sinAnim) {
+    capa.classList.toggle("con-zoom", !!zoom);
+    if (sinAnim) escena.style.transition = "none";
+    const dx = zoom === "izq" ? escala * anchoPag / 2 : zoom === "der" ? -escala * anchoPag / 2 : 0;
+    escena.style.transform = zoom ? `translateX(${dx}px) scale(${escala})` : "";
+    if (sinAnim) { void escena.offsetWidth; escena.style.transition = ""; }
+  }
+  const ladoDe = (n) => (n === 0 || n === hojas.length ? "centro" : null);
+  function acercar(lado) { zoom = ladoDe(actual) || lado; aplicarZoom(); ui(); }
+  function alejar() { zoom = null; aplicarZoom(); ui(); }
+  // Con una página acercada, "siguiente" pasa a la de al lado y, al llegar a la derecha, voltea la hoja.
+  function avanzar() {
+    if (!zoom) return sig();
+    if (zoom === "izq") { zoom = "der"; aplicarZoom(); ui(); return; }
+    if (actual >= maxActual()) return;
+    sig(); zoom = ladoDe(actual) || "izq"; aplicarZoom(); ui();
+  }
+  function retroceder() {
+    if (!zoom) return ant();
+    if (zoom === "der") { zoom = "izq"; aplicarZoom(); ui(); return; }
+    if (actual <= 0) return;
+    ant(); zoom = ladoDe(actual) || "der"; aplicarZoom(); ui();
   }
 
   const maxActual = () => (modo === "doble" ? hojas.length : hojas.length - 1);
@@ -361,6 +418,7 @@
 
   function voltear(i, adelante) {
     const h = hojas[i];
+    if (!h) return;
     h.classList.add("girando");
     h.style.zIndex = 500 + (adelante ? i : hojas.length - i);
     h.classList.toggle("volteada", adelante);
@@ -372,16 +430,32 @@
     n = Math.max(0, Math.min(n, maxActual()));
     if (n === actual) return;
     const adelante = n > actual;
-    const seq = [];
+    let seq = [];
     if (adelante) for (let i = actual; i < n; i++) seq.push(i);
     else for (let i = actual - 1; i >= n; i--) seq.push(i);
+    // En un salto largo (desde el índice, o un enlace) las hojas del medio pasan sin animación: solo se ven girar las dos últimas.
+    if (seq.length > 2) {
+      seq.slice(0, -2).forEach((i) => { hojas[i].classList.add("sin-trans"); hojas[i].classList.toggle("volteada", adelante); });
+      seq = seq.slice(-2);
+    }
+    const extra = [];
+    for (let i = Math.min(...seq) - 1; i <= Math.max(...seq) + 1; i++) extra.push(i);
     actual = n;
+    sincronizar(extra);
+    ordenar();
+    void libro.offsetWidth; // que las hojas recién mostradas tengan estilo antes de girar
+    libro.querySelectorAll(".sin-trans").forEach((h) => h.classList.remove("sin-trans"));
     seq.forEach((i, j) => setTimeout(() => voltear(i, adelante), reducir ? 0 : j * 110));
+    clearTimeout(podar);
+    podar = setTimeout(() => sincronizar(), DUR + 80 + seq.length * 110);
     posicion(); ui();
   }
   const sig = () => irA(actual + 1);
   const ant = () => irA(actual - 1);
-  const irPagina = (p) => irA(modo === "doble" ? Math.ceil(p / 2) : p);
+  function irPagina(p) {
+    irA(Math.ceil(p / 2));
+    if (zoom) { zoom = ladoDe(actual) || (p % 2 ? "izq" : "der"); aplicarZoom(); ui(); }
+  }
   const irDiseno = (i) => irPagina(3 + 2 * i);
 
   // Diseño que se ve ahora (cada diseño ocupa las páginas 3+2i y 4+2i), o -1.
@@ -420,8 +494,9 @@
     let txt;
     if (p === 0) txt = "Portada · toque para abrir";
     else if ((modo === "doble" && actual === hojas.length) || (modo === "simple" && p === paginas.length - 1)) txt = "Contraportada";
-    else if (modo === "doble") txt = `Páginas ${p}–${Math.min(p + 1, interiores)} de ${interiores}`;
-    else txt = `Página ${p} de ${interiores}`;
+    else if (zoom === "izq" || zoom === "der") txt = `Página ${zoom === "izq" ? p : p + 1} de ${interiores}`;
+    else if (puedeAcercar()) txt = `Páginas ${p}–${Math.min(p + 1, interiores)} · toque para leer`;
+    else txt = `Páginas ${p}–${Math.min(p + 1, interiores)} de ${interiores}`;
     $pag.textContent = txt;
     $prev.disabled = actual === 0;
     $next.disabled = actual === maxActual();
@@ -464,7 +539,8 @@
       capa.classList.add("visible");
       await espera(250);
     }
-    escena.style.transition = "";
+    escena.style.transition = escena.style.transformOrigin = "";
+    escena.style.transform = "";
     libro.classList.remove("sin-anim");
     abierta = true;
     ocupado = false;
@@ -484,6 +560,8 @@
     await espera(460);
     capa.hidden = true;
     escena.style.transition = escena.style.transform = "";
+    zoom = null; capa.classList.remove("con-zoom");
+    clearTimeout(podar);
     document.documentElement.classList.remove("libro-on");
     libro.innerHTML = "";
     hojas = [];
@@ -546,32 +624,45 @@
     clearTimeout($copiar._t);
     $copiar._t = setTimeout(() => $copiar.classList.remove("copiado"), 1800);
   });
-  $prev.addEventListener("click", ant);
-  $next.addEventListener("click", sig);
+  $prev.addEventListener("click", retroceder);
+  $next.addEventListener("click", avanzar);
 
+  // Deslizar en cualquier parte de la pantalla (menos la barra y los botones) pasa la página.
   let toque = null, arrastre = false;
-  escena.addEventListener("pointerdown", (e) => { toque = { x: e.clientX, y: e.clientY }; arrastre = false; });
-  escena.addEventListener("pointerup", (e) => {
+  capa.addEventListener("pointerdown", (e) => {
+    toque = e.target.closest(".libro-top, .libro-ctrl") ? null : { x: e.clientX, y: e.clientY };
+    arrastre = false;
+  });
+  capa.addEventListener("pointercancel", () => { toque = null; });
+  capa.addEventListener("dragstart", (e) => e.preventDefault()); // arrastrar una foto cancelaba el deslizamiento
+  capa.addEventListener("pointerup", (e) => {
     if (!toque) return;
     const dx = e.clientX - toque.x, dy = e.clientY - toque.y;
     toque = null;
-    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) { arrastre = true; dx < 0 ? sig() : ant(); }
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) { arrastre = true; dx < 0 ? avanzar() : retroceder(); }
   });
   escena.addEventListener("click", (e) => {
     if (arrastre) { arrastre = false; return; }
+    // Celular: con la revista a dos páginas, el primer toque acerca la página tocada (salvo la portada, que abre el libro).
+    if (puedeAcercar() && !zoom && actual > 0) {
+      const r = escena.getBoundingClientRect();
+      acercar(e.clientX < r.left + r.width / 2 ? "izq" : "der");
+      return;
+    }
     const ir = e.target.closest("[data-ir]");
     if (ir) { irDiseno(+ir.dataset.ir); return; }
     const otra = e.target.closest("[data-revista-ir]");
     if (otra) { location.hash = "#revista-" + otra.dataset.revistaIr; return; }
     if (e.target.closest("a, button")) return;
+    if (zoom) { alejar(); return; } // otro toque vuelve a las dos páginas
     const h = e.target.closest(".hoja");
     if (h) h.classList.contains("volteada") ? ant() : sig();
   });
 
   document.addEventListener("keydown", (e) => {
     if (!abierta) return;
-    if (e.key === "ArrowRight") sig();
-    else if (e.key === "ArrowLeft") ant();
+    if (e.key === "ArrowRight") avanzar();
+    else if (e.key === "ArrowLeft") retroceder();
     else if (e.key === "Escape") cerrar();
   });
 
