@@ -8,6 +8,7 @@
   const trackCustom = (eventName, parameters) => {
     if (typeof window.fbq === 'function') window.fbq('trackCustom', eventName, parameters || {});
   };
+  window.mvMetaPixel = { track, trackCustom };
   const sourceName = (element) => {
     const region = element.closest('[id]');
     return region ? region.id : 'page';

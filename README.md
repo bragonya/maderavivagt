@@ -18,3 +18,4 @@ Para agregar fotos de proyectos reales, pon `<figure>` dentro de `#galeria`, ent
 The homepage includes Meta Pixel `1509813702210954` in the document head. The Pixel ID is public by design and does not belong in GitHub Secrets.
 
 The implementation also tracks WhatsApp and email contacts, appointment-intent clicks, successful appointment form submissions (`Lead`), commercial-video playback, Instagram outbound clicks, and first views of key sections.
+Catalog events use Meta's `ViewContent` standard event for each visible design, with `content_ids`, `content_name`, `content_category`, `catalog_id`, `design_id`, and `design_slug`. Custom events record magazine opens (`CatalogMagazineView`), design views (`CatalogDesignView`), WhatsApp quote intent (`CatalogQuoteIntent`), and copied catalog links (`CatalogShare`). This makes the most-viewed catalog designs comparable in Meta Events Manager.
