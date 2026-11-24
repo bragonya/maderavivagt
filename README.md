@@ -13,3 +13,8 @@ Para verlo en tu máquina basta un servidor estático, por ejemplo `npx serve .`
 Pruebas rápidas: `?estatico` muestra la versión sin animaciones; `?sinlenis` desactiva el scroll suave.
 
 Para agregar fotos de proyectos reales, pon `<figure>` dentro de `#galeria`, entre los comentarios `PROYECTOS:INICIO` y `PROYECTOS:FIN` de `index.html` (clases opcionales `alto` y `ancho`).
+## Meta Pixel
+
+The homepage includes Meta Pixel `1509813702210954` in the document head. The Pixel ID is public by design and does not belong in GitHub Secrets.
+
+The implementation also tracks WhatsApp and email contacts, appointment-intent clicks, successful appointment form submissions (`Lead`), commercial-video playback, Instagram outbound clicks, and first views of key sections.
