@@ -306,6 +306,7 @@
   const $copiar = capa.querySelector(".libro-copiar");
 
   let rev = null, prep = null, paginas = [], hojas = [], actual = 0, modo = "doble", abierta = false, tarjeta = null, ocupado = false;
+  let ultimaVistaCatalogo = "";
   // Celular y tableta (menos de 900 px): también a dos páginas, como la revista impresa. Tocar la página derecha
   // avanza y la izquierda regresa (igual que en la computadora); pellizcar con dos dedos agranda.
   // zoom: "libre" (pellizco) o "izq"/"der"/"centro" (una página a lo ancho, al pasar con las flechas estando agrandada).
@@ -511,6 +512,32 @@
     const i = modo === "doble" ? actual - 2 : Math.floor((actual - 3) / 2);
     return i >= 0 && i < rev.disenos.length ? i : -1;
   }
+
+  function parametrosCatalogo() {
+    if (!rev) return null;
+    const i = disenoVisible();
+    const d = i >= 0 ? rev.disenos[i] : null;
+    return {
+      content_type: d ? "product" : "product_group",
+      content_ids: [d ? `${rev.id}:${d.slug}` : rev.id],
+      content_name: d ? d.nombre : rev.titulo,
+      content_category: rev.titulo,
+      catalog_id: rev.id,
+      ...(d ? { design_id: d.id, design_slug: d.slug } : {}),
+    };
+  }
+
+  function trackCatalogView() {
+    if (!abierta || !rev || !window.mvMetaPixel) return;
+    const i = disenoVisible();
+    const key = i >= 0 ? `${rev.id}:${rev.disenos[i].slug}` : `magazine:${rev.id}`;
+    if (key === ultimaVistaCatalogo) return;
+    ultimaVistaCatalogo = key;
+    const params = parametrosCatalogo();
+    window.mvMetaPixel.track("ViewContent", params);
+    window.mvMetaPixel.trackCustom(i >= 0 ? "CatalogDesignView" : "CatalogMagazineView", params);
+  }
+
   // El enlace de la barra sigue a la página: así "Copiar enlace" comparte el diseño que está a la vista.
   // Enlace para compartir lo que está a la vista: el sitio da enlaces limpios (/catalogo/<revista>/<diseño>/)
   // con su propia vista previa; si no, el de esta página con #revista-…
@@ -549,6 +576,7 @@
     $prev.disabled = actual === 0;
     $next.disabled = actual === maxActual();
     marcarEnlace();
+    trackCatalogView();
   }
 
   // ---------- Abrir y cerrar ----------
@@ -559,6 +587,7 @@
     if (!r || ocupado) return;
     ocupado = true;
     rev = r;
+    ultimaVistaCatalogo = "";
     tarjeta = document.querySelector(`.revista[data-revista="${id}"]`);
     $titulo.innerHTML = `<b>Nº ${r.n}</b> ${esc(r.titulo)}`;
     capa.hidden = false;
@@ -664,8 +693,13 @@
 
   // ---------- Eventos ----------
   capa.querySelector(".libro-cerrar").addEventListener("click", cerrar);
+  $wa.addEventListener("click", () => {
+    if (rev && window.mvMetaPixel) window.mvMetaPixel.trackCustom("CatalogQuoteIntent", parametrosCatalogo());
+  });
   $copiar.addEventListener("click", async () => {
     if (!rev) return;
+    const params = parametrosCatalogo();
+    if (window.mvMetaPixel) window.mvMetaPixel.trackCustom("CatalogShare", params);
     const url = enlaceActual();
     try { await navigator.clipboard.writeText(url); }
     catch { const t = document.createElement("textarea"); t.value = url; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); }
