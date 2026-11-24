@@ -6,6 +6,7 @@ html.libro-on, html.libro-on body { overflow: hidden; }
   background: radial-gradient(ellipse at 50% 45%, #3b342d 0%, #1b1917 72%);
   opacity: 0; transition: opacity .45s ease;
   -webkit-user-select: none; user-select: none;
+  touch-action: pinch-zoom; /* el dedo que desliza pasa la página; pellizcar sigue acercando */
 }
 .libro-capa.visible { opacity: 1; }
 .libro-capa[hidden] { display: none; }
@@ -44,27 +45,31 @@ html.libro-on, html.libro-on body { overflow: hidden; }
   position: absolute; bottom: 20px; left: 0; right: 0; text-align: center; z-index: 5;
   color: rgba(240,234,224,.68); font: 500 10.5px/1 var(--sans); letter-spacing: .2em; text-transform: uppercase;
 }
-.simple .libro-ctrl { top: auto; bottom: 12px; transform: none; width: 44px; height: 44px; font-size: 26px; }
-.simple .libro-prev { left: 14px; }
-.simple .libro-next { right: 14px; }
-.simple .libro-pie { bottom: 28px; }
-.simple .libro-top { padding: 12px 14px; }
-.simple .libro-titulo { font-size: 17px; }
-.simple .libro-copiar, .simple .libro-wa { padding: 9px 11px; }
-.simple .libro-top-acc { gap: 6px; }
+/* Celular y tableta (.compacto): botones abajo y barra más chica */
+.compacto .libro-ctrl { top: auto; bottom: 12px; transform: none; width: 44px; height: 44px; font-size: 26px; }
+.compacto .libro-prev { left: 14px; }
+.compacto .libro-next { right: 14px; }
+.compacto .libro-pie { bottom: 28px; left: 64px; right: 64px; letter-spacing: .14em; line-height: 1.3; }
+.compacto .libro-top { padding: 12px 14px; z-index: 6; }
+.compacto .libro-titulo { font-size: 17px; }
+.compacto .libro-copiar, .compacto .libro-wa { padding: 9px 11px; }
+.compacto .libro-top-acc { gap: 6px; }
 @media (max-width: 520px) {
   .libro-wa .largo { display: none; }
   .libro-wa .corto { display: inline; }
   .libro-copiar .que { display: none; }
-  .simple .libro-titulo b { display: block; margin: 0 0 2px; font-size: 13px; }
+  .compacto .libro-titulo b { display: block; margin: 0 0 2px; font-size: 13px; }
 }
 
 /* ---------- Libro y hojas ---------- */
-.libro-escena { position: relative; }
+.libro-escena { position: relative; transition: transform .5s cubic-bezier(.3,.7,.2,1); }
 .libro { position: absolute; inset: 0; transition: transform .9s cubic-bezier(.645,.045,.355,1); }
 .libro.cerrado-frente { transform: translateX(calc(var(--pw) * -.5)); }
 .libro.cerrado-atras { transform: translateX(calc(var(--pw) * .5)); }
-.libro.sin-anim, .libro.sin-anim .hoja { transition: none !important; }
+.libro.sin-anim, .libro.sin-anim .hoja, .hoja.sin-trans { transition: none !important; }
+/* Hojas lejos de la vista: vacías y fuera del dibujo (ahorran memoria en el celular) */
+.hoja.lejos { display: none; }
+.libro img { -webkit-user-drag: none; -webkit-touch-callout: none; }
 
 .hoja {
   position: absolute; top: 0; left: 50%; width: 50%; height: 100%;
@@ -99,7 +104,9 @@ html.libro-on, html.libro-on body { overflow: hidden; }
 /* ---------- Páginas (todo en em: escala con el tamaño de la página) ---------- */
 .pg { position: absolute; inset: 0; overflow: hidden; color: var(--marfil); font-family: var(--sans); }
 .pg-fondo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.pg-fondo.borroso { filter: blur(1.2em) brightness(.4) saturate(.85); transform: scale(1.2); }
+/* Fondo desenfocado: viene ya hecho (img/ref/borroso/). El blur de CSS solo queda de respaldo (.css): en celulares gasta mucha memoria. */
+.pg-fondo.borroso { transform: scale(1.12); }
+.pg-fondo.borroso.css { filter: blur(1.2em) brightness(.4) saturate(.85); transform: scale(1.2); }
 .pg-blanca { background: linear-gradient(90deg, #e9e2d6, #f3eee5 30%); }
 .libro .chip { font-size: .54em; padding: .62em 1em .62em .9em; }
 .libro .chip.mini { font-size: .46em; }
@@ -228,8 +235,6 @@ html.libro-on, html.libro-on body { overflow: hidden; }
 
 /* Par: foto limpia en una página, texto en la otra */
 .pg-solo .velo { background: linear-gradient(0deg, rgba(0,0,0,.42) 0%, rgba(0,0,0,0) 12%); }
-.pg-par .pg-fondo.borroso { filter: blur(1.4em) brightness(.36) saturate(.9); transform: scale(1.25); }
-.pg-entera .pg-fondo.borroso { filter: blur(1.4em) brightness(.5) saturate(.9); transform: scale(1.25); }
 .foto-entera { position: absolute; left: 7%; width: 86%; top: 50%; transform: translateY(-50%); height: auto; z-index: 1; box-shadow: 0 .9em 2.6em rgba(0,0,0,.45); }
 .pg-par .ft-bloque { left: 0; right: 0; top: 2.6em; bottom: 3.5em; }
 .pg-par .ft-bloque > :last-child { margin-bottom: auto; }
