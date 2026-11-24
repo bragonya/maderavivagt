@@ -6,7 +6,7 @@ html.libro-on, html.libro-on body { overflow: hidden; }
   background: radial-gradient(ellipse at 50% 45%, #3b342d 0%, #1b1917 72%);
   opacity: 0; transition: opacity .45s ease;
   -webkit-user-select: none; user-select: none;
-  touch-action: pinch-zoom; /* el dedo que desliza pasa la página; pellizcar sigue acercando */
+  touch-action: none; /* los gestos los maneja el visor: deslizar pasa la página, pellizcar agranda la revista */
 }
 .libro-capa.visible { opacity: 1; }
 .libro-capa[hidden] { display: none; }
@@ -63,6 +63,11 @@ html.libro-on, html.libro-on body { overflow: hidden; }
 
 /* ---------- Libro y hojas ---------- */
 .libro-escena { position: relative; transition: transform .5s cubic-bezier(.3,.7,.2,1); }
+.gesto .libro-escena { transition: none; } /* mientras los dedos mueven la revista, sin retraso */
+/* Con la revista agrandada, la barra y los botones quedan sobre un degradado para que se lean encima de la foto */
+.libro-top { transition: background .3s ease; }
+.con-zoom .libro-top { background: linear-gradient(180deg, rgba(20,18,16,.85) 40%, rgba(20,18,16,0)); }
+.con-zoom::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 96px; z-index: 4; pointer-events: none; background: linear-gradient(0deg, rgba(20,18,16,.85) 35%, rgba(20,18,16,0)); }
 .libro { position: absolute; inset: 0; transition: transform .9s cubic-bezier(.645,.045,.355,1); }
 .libro.cerrado-frente { transform: translateX(calc(var(--pw) * -.5)); }
 .libro.cerrado-atras { transform: translateX(calc(var(--pw) * .5)); }
