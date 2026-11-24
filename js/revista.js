@@ -371,7 +371,7 @@
     hojas = [];
     for (let k = 0; k < paginas.length / 2; k++) hojas.push(hoja(paginas[2 * k], paginas[2 * k + 1]));
     actual = Math.ceil(pIndex / 2);
-    hojas.forEach((h, i) => { h.classList.toggle("volteada", i < actual); libro.appendChild(h); });
+    hojas.forEach((h, i) => { h.classList.toggle("volteada", i < actual); marcarCara(h, i < actual); libro.appendChild(h); });
     sincronizar();
     ordenar(); posicion(); ui();
   }
@@ -416,9 +416,19 @@
     libro.classList.toggle("cerrado-atras", modo === "doble" && actual === hojas.length);
   }
 
+  // La cara que no mira al lector se oculta con visibility, sin depender de backface-visibility:
+  // Safari en iPhone no siempre la oculta y se veía al revés, encimada sobre la página.
+  // Al girar, el cambio de cara ocurre a la mitad, cuando la hoja está de canto.
+  function marcarCara(h, volteada) {
+    h.classList.toggle("ver-reverso", volteada);
+    h.classList.toggle("ver-frente", !volteada);
+  }
+
   function voltear(i, adelante) {
     const h = hojas[i];
     if (!h) return;
+    clearTimeout(h._c);
+    h._c = setTimeout(() => marcarCara(h, adelante), DUR / 2);
     h.classList.add("girando");
     h.style.zIndex = 500 + (adelante ? i : hojas.length - i);
     h.classList.toggle("volteada", adelante);
@@ -435,7 +445,7 @@
     else for (let i = actual - 1; i >= n; i--) seq.push(i);
     // En un salto largo (desde el índice, o un enlace) las hojas del medio pasan sin animación: solo se ven girar las dos últimas.
     if (seq.length > 2) {
-      seq.slice(0, -2).forEach((i) => { hojas[i].classList.add("sin-trans"); hojas[i].classList.toggle("volteada", adelante); });
+      seq.slice(0, -2).forEach((i) => { hojas[i].classList.add("sin-trans"); hojas[i].classList.toggle("volteada", adelante); marcarCara(hojas[i], adelante); });
       seq = seq.slice(-2);
     }
     const extra = [];

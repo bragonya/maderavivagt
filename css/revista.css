@@ -86,6 +86,8 @@ html.libro-on, html.libro-on body { overflow: hidden; }
   box-shadow: 0 28px 60px -26px rgba(0,0,0,.75);
 }
 .cara.reverso { transform: rotateY(180deg); }
+/* Cara que no mira al lector (la marca revista.js). Safari en iPhone no siempre respeta backface-visibility. */
+.hoja.ver-frente > .cara.reverso, .hoja.ver-reverso > .cara.frente { visibility: hidden; }
 /* pliegue del lomo */
 .cara::after { content: ""; position: absolute; inset: 0; z-index: 30; pointer-events: none; }
 .cara.frente::after { background: linear-gradient(90deg, rgba(0,0,0,.34) 0%, rgba(0,0,0,.1) 2.2%, rgba(255,255,255,.06) 3.6%, rgba(0,0,0,0) 8%); }
