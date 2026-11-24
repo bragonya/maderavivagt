@@ -309,6 +309,8 @@
   // Celular y tableta (menos de 900 px): también a dos páginas, como la revista impresa; tocar una página la acerca
   // para leerla (zoom: "izq", "der" o "centro" en las portadas) y al deslizar se pasa a la siguiente.
   let compacto = false, escala = 1, anchoPag = 0, zoom = null, podar = 0;
+  // Acercamiento de la escena: translate(x, y) scale(s). zoom "libre" = el que deja el pellizco (dos dedos o trackpad).
+  let vista = { s: 1, x: 0, y: 0 };
 
   function medir() {
     modo = "doble";
@@ -377,24 +379,60 @@
   }
 
   // Acercar una página (celular). La escena se agranda y se corre para que esa página llene el ancho.
+  function pintarVista() {
+    const { s, x, y } = vista;
+    escena.style.transform = s === 1 && !x && !y ? "" : `translate(${x}px, ${y}px) scale(${s})`;
+  }
   function aplicarZoom(sinAnim) {
     capa.classList.toggle("con-zoom", !!zoom);
+    if (zoom !== "libre") {
+      const dx = zoom === "izq" ? escala * anchoPag / 2 : zoom === "der" ? -escala * anchoPag / 2 : 0;
+      vista = zoom ? { s: escala, x: dx, y: 0 } : { s: 1, x: 0, y: 0 };
+    }
     if (sinAnim) escena.style.transition = "none";
-    const dx = zoom === "izq" ? escala * anchoPag / 2 : zoom === "der" ? -escala * anchoPag / 2 : 0;
-    escena.style.transform = zoom ? `translateX(${dx}px) scale(${escala})` : "";
+    pintarVista();
     if (sinAnim) { void escena.offsetWidth; escena.style.transition = ""; }
   }
+
+  // ---------- Pellizcar para agrandar ----------
+  const maxEscala = () => (compacto ? Math.max(4, escala * 2.4) : 3);
+  const centroEscena = () => ({ x: escena.offsetLeft + escena.offsetWidth / 2, y: escena.offsetTop + escena.offsetHeight / 2 });
+  // Agranda o achica dejando quieto el punto (px, py) de la pantalla.
+  function zoomEn(px, py, s2, base) {
+    const c = centroEscena(), k = (s2 = Math.max(1, Math.min(maxEscala(), s2))) / base.s;
+    return { s: s2, x: px - c.x - k * (px - c.x - base.x), y: py - c.y - k * (py - c.y - base.y) };
+  }
+  // Que la revista agrandada no se salga de la pantalla: si es más grande que el espacio, sus bordes no se despegan.
+  function acotar(v) {
+    const c = centroEscena(), W = escena.offsetWidth * v.s, H = escena.offsetHeight * v.s, m = 8;
+    const arriba = compacto ? 64 : 70, abajo = innerHeight - (compacto ? 78 : 70);
+    v.x = W <= innerWidth - 2 * m ? 0 : Math.min(m - c.x + W / 2, Math.max(innerWidth - m - c.x - W / 2, v.x));
+    v.y = H <= abajo - arriba ? 0 : Math.min(arriba - c.y + H / 2, Math.max(abajo - c.y - H / 2, v.y));
+    return v;
+  }
+  // Al soltar: casi sin agrandar vuelve a las dos páginas; si no, se queda donde la dejó.
+  function terminarPellizco() {
+    capa.classList.remove("gesto");
+    if (vista.s < 1.08) { zoom = null; aplicarZoom(); }
+    else { zoom = "libre"; capa.classList.add("con-zoom"); acotar(vista); pintarVista(); }
+    ui();
+  }
+  function moverVista(v) { vista = acotar(v); zoom = "libre"; capa.classList.add("con-zoom", "gesto"); pintarVista(); }
+
   const ladoDe = (n) => (n === 0 || n === hojas.length ? "centro" : null);
   function acercar(lado) { zoom = ladoDe(actual) || lado; aplicarZoom(); ui(); }
   function alejar() { zoom = null; aplicarZoom(); ui(); }
   // Con una página acercada, "siguiente" pasa a la de al lado y, al llegar a la derecha, voltea la hoja.
+  // Con el acercamiento libre, cuenta como acercada la página que está más al centro.
   function avanzar() {
+    if (zoom === "libre") zoom = ladoDe(actual) || (vista.x > 0 ? "izq" : "der");
     if (!zoom) return sig();
     if (zoom === "izq") { zoom = "der"; aplicarZoom(); ui(); return; }
     if (actual >= maxActual()) return;
     sig(); zoom = ladoDe(actual) || "izq"; aplicarZoom(); ui();
   }
   function retroceder() {
+    if (zoom === "libre") zoom = ladoDe(actual) || (vista.x > 0 ? "izq" : "der");
     if (!zoom) return ant();
     if (zoom === "der") { zoom = "izq"; aplicarZoom(); ui(); return; }
     if (actual <= 0) return;
@@ -504,6 +542,7 @@
     let txt;
     if (p === 0) txt = "Portada · toque para abrir";
     else if ((modo === "doble" && actual === hojas.length) || (modo === "simple" && p === paginas.length - 1)) txt = "Contraportada";
+    else if (zoom === "libre") txt = `Páginas ${p}–${Math.min(p + 1, interiores)} · toque para alejar`;
     else if (zoom === "izq" || zoom === "der") txt = `Página ${zoom === "izq" ? p : p + 1} de ${interiores}`;
     else if (puedeAcercar()) txt = `Páginas ${p}–${Math.min(p + 1, interiores)} · toque para leer`;
     else txt = `Páginas ${p}–${Math.min(p + 1, interiores)} de ${interiores}`;
@@ -570,7 +609,8 @@
     await espera(460);
     capa.hidden = true;
     escena.style.transition = escena.style.transform = "";
-    zoom = null; capa.classList.remove("con-zoom");
+    zoom = null; vista = { s: 1, x: 0, y: 0 }; dedos.clear(); gesto = null;
+    capa.classList.remove("con-zoom", "gesto");
     clearTimeout(podar);
     document.documentElement.classList.remove("libro-on");
     libro.innerHTML = "";
@@ -637,20 +677,84 @@
   $prev.addEventListener("click", retroceder);
   $next.addEventListener("click", avanzar);
 
-  // Deslizar en cualquier parte de la pantalla (menos la barra y los botones) pasa la página.
-  let toque = null, arrastre = false;
+  // Gestos en cualquier parte de la pantalla (menos la barra y los botones):
+  //  · deslizar con un dedo pasa la página;
+  //  · pellizcar con dos dedos agranda donde están los dedos; con la página agrandada, un dedo la mueve.
+  const dedos = new Map();
+  let gesto = null, arrastre = false;
+  const distancia = (a, b) => Math.hypot(a.x - b.x, a.y - b.y) || 1;
+  const medio = (a, b) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
+  function empezarUnDedo(p) { gesto = { tipo: "uno", x: p.x, y: p.y, v: { ...vista }, movio: false }; }
   capa.addEventListener("pointerdown", (e) => {
-    toque = e.target.closest(".libro-top, .libro-ctrl") ? null : { x: e.clientX, y: e.clientY };
-    arrastre = false;
+    if (!abierta || e.target.closest(".libro-top, .libro-ctrl")) return;
+    dedos.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (dedos.size === 1) { arrastre = false; empezarUnDedo(dedos.get(e.pointerId)); }
+    else if (dedos.size === 2) {
+      const [a, b] = [...dedos.values()];
+      gesto = { tipo: "pinza", d: distancia(a, b), m: medio(a, b), v: { ...vista } };
+      arrastre = true;
+      capa.classList.add("gesto");
+    }
   });
-  capa.addEventListener("pointercancel", () => { toque = null; });
-  capa.addEventListener("dragstart", (e) => e.preventDefault()); // arrastrar una foto cancelaba el deslizamiento
-  capa.addEventListener("pointerup", (e) => {
-    if (!toque) return;
-    const dx = e.clientX - toque.x, dy = e.clientY - toque.y;
-    toque = null;
+  capa.addEventListener("pointermove", (e) => {
+    if (!dedos.has(e.pointerId) || !gesto) return;
+    dedos.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (gesto.tipo === "pinza" && dedos.size >= 2) {
+      const [a, b] = [...dedos.values()], m = medio(a, b);
+      const v = zoomEn(gesto.m.x, gesto.m.y, gesto.v.s * distancia(a, b) / gesto.d, gesto.v);
+      moverVista({ s: v.s, x: v.x + m.x - gesto.m.x, y: v.y + m.y - gesto.m.y });
+    } else if (gesto.tipo === "uno" && zoom === "libre") {
+      const dx = e.clientX - gesto.x, dy = e.clientY - gesto.y;
+      if (!gesto.movio && Math.hypot(dx, dy) < 6) return;
+      gesto.movio = arrastre = true;
+      moverVista({ s: gesto.v.s, x: gesto.v.x + dx, y: gesto.v.y + dy });
+    }
+  });
+  function soltar(e) {
+    if (!dedos.has(e.pointerId)) return;
+    const p = dedos.get(e.pointerId);
+    dedos.delete(e.pointerId);
+    if (!gesto) return;
+    if (gesto.tipo === "pinza") {
+      if (dedos.size < 2) { terminarPellizco(); if (dedos.size === 1) { empezarUnDedo([...dedos.values()][0]); gesto.movio = true; } else gesto = null; }
+      return;
+    }
+    const g = gesto; gesto = null;
+    if (g.movio) { capa.classList.remove("gesto"); return; }
+    if (e.type === "pointercancel" || zoom === "libre") return;
+    const dx = p.x - g.x, dy = p.y - g.y;
     if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) { arrastre = true; dx < 0 ? avanzar() : retroceder(); }
+  }
+  capa.addEventListener("pointerup", soltar);
+  capa.addEventListener("pointercancel", soltar);
+  capa.addEventListener("dragstart", (e) => e.preventDefault()); // arrastrar una foto cancelaba el deslizamiento
+  // Safari: que el pellizco no agrande toda la página web en vez de la revista.
+  const tactil = navigator.maxTouchPoints > 0;
+  let g0 = null;
+  capa.addEventListener("gesturestart", (e) => {
+    e.preventDefault();
+    if (tactil || !abierta) return; // en el celular el pellizco ya llega por los dedos
+    g0 = { v: { ...vista }, x: e.clientX, y: e.clientY };
   });
+  capa.addEventListener("gesturechange", (e) => {
+    e.preventDefault();
+    if (g0) moverVista(zoomEn(g0.x, g0.y, g0.v.s * e.scale, g0.v));
+  });
+  capa.addEventListener("gestureend", (e) => { e.preventDefault(); if (g0) { g0 = null; terminarPellizco(); } });
+  // Trackpad en Chrome/Edge/Firefox: pellizcar llega como rueda con Ctrl. Con la página agrandada, dos dedos la mueven.
+  let rueda = 0;
+  capa.addEventListener("wheel", (e) => {
+    if (!abierta) return;
+    if (e.ctrlKey) {
+      e.preventDefault();
+      moverVista(zoomEn(e.clientX, e.clientY, vista.s * Math.exp(-e.deltaY * 0.01), vista));
+    } else if (zoom === "libre") {
+      e.preventDefault();
+      moverVista({ ...vista, x: vista.x - e.deltaX, y: vista.y - e.deltaY });
+    } else return;
+    clearTimeout(rueda);
+    rueda = setTimeout(terminarPellizco, 180);
+  }, { passive: false });
   escena.addEventListener("click", (e) => {
     if (arrastre) { arrastre = false; return; }
     // Celular: con la revista a dos páginas, el primer toque acerca la página tocada (salvo la portada, que abre el libro).
