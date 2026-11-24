@@ -306,8 +306,9 @@
   const $copiar = capa.querySelector(".libro-copiar");
 
   let rev = null, prep = null, paginas = [], hojas = [], actual = 0, modo = "doble", abierta = false, tarjeta = null, ocupado = false;
-  // Celular y tableta (menos de 900 px): también a dos páginas, como la revista impresa; tocar una página la acerca
-  // para leerla (zoom: "izq", "der" o "centro" en las portadas) y al deslizar se pasa a la siguiente.
+  // Celular y tableta (menos de 900 px): también a dos páginas, como la revista impresa. Tocar la página derecha
+  // avanza y la izquierda regresa (igual que en la computadora); pellizcar con dos dedos agranda.
+  // zoom: "libre" (pellizco) o "izq"/"der"/"centro" (una página a lo ancho, al pasar con las flechas estando agrandada).
   let compacto = false, escala = 1, anchoPag = 0, zoom = null, podar = 0;
   // Acercamiento de la escena: translate(x, y) scale(s). zoom "libre" = el que deja el pellizco (dos dedos o trackpad).
   let vista = { s: 1, x: 0, y: 0 };
@@ -327,7 +328,6 @@
     escena.style.height = ph + "px";
     libro.style.fontSize = pw * 0.033 + "px";
   }
-  const puedeAcercar = () => compacto && escala >= 1.3;
 
   // Solo se arman las páginas cercanas a la que está a la vista; las demás quedan vacías y ocultas.
   // Armar la revista completa (20+ páginas, cada una en su capa 3D) hacía que el celular se quedara sin memoria.
@@ -420,7 +420,6 @@
   function moverVista(v) { vista = acotar(v); zoom = "libre"; capa.classList.add("con-zoom", "gesto"); pintarVista(); }
 
   const ladoDe = (n) => (n === 0 || n === hojas.length ? "centro" : null);
-  function acercar(lado) { zoom = ladoDe(actual) || lado; aplicarZoom(); ui(); }
   function alejar() { zoom = null; aplicarZoom(); ui(); }
   // Con una página acercada, "siguiente" pasa a la de al lado y, al llegar a la derecha, voltea la hoja.
   // Con el acercamiento libre, cuenta como acercada la página que está más al centro.
@@ -544,7 +543,7 @@
     else if ((modo === "doble" && actual === hojas.length) || (modo === "simple" && p === paginas.length - 1)) txt = "Contraportada";
     else if (zoom === "libre") txt = `Páginas ${p}–${Math.min(p + 1, interiores)} · toque para alejar`;
     else if (zoom === "izq" || zoom === "der") txt = `Página ${zoom === "izq" ? p : p + 1} de ${interiores}`;
-    else if (puedeAcercar()) txt = `Páginas ${p}–${Math.min(p + 1, interiores)} · toque para leer`;
+    else if (compacto) txt = `Páginas ${p}–${Math.min(p + 1, interiores)} · pellizque para agrandar`;
     else txt = `Páginas ${p}–${Math.min(p + 1, interiores)} de ${interiores}`;
     $pag.textContent = txt;
     $prev.disabled = actual === 0;
@@ -757,18 +756,12 @@
   }, { passive: false });
   escena.addEventListener("click", (e) => {
     if (arrastre) { arrastre = false; return; }
-    // Celular: con la revista a dos páginas, el primer toque acerca la página tocada (salvo la portada, que abre el libro).
-    if (puedeAcercar() && !zoom && actual > 0) {
-      const r = escena.getBoundingClientRect();
-      acercar(e.clientX < r.left + r.width / 2 ? "izq" : "der");
-      return;
-    }
     const ir = e.target.closest("[data-ir]");
     if (ir) { irDiseno(+ir.dataset.ir); return; }
     const otra = e.target.closest("[data-revista-ir]");
     if (otra) { location.hash = "#revista-" + otra.dataset.revistaIr; return; }
     if (e.target.closest("a, button")) return;
-    if (zoom) { alejar(); return; } // otro toque vuelve a las dos páginas
+    if (zoom) { alejar(); return; } // con la revista agrandada, un toque vuelve a las dos páginas
     const h = e.target.closest(".hoja");
     if (h) h.classList.contains("volteada") ? ant() : sig();
   });
