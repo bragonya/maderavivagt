@@ -18,11 +18,16 @@
   // ---------- Análisis de la foto ----------
   const lin = (v) => { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
   const lum = (r, g, b) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+  // Solo se guardan los resultados (proporción y análisis), no las fotos: retenerlas llenaba la memoria del celular.
   const cache = new Map();
-  const cargar = (src) => {
-    if (!cache.has("img|" + src)) cache.set("img|" + src, new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; }));
-    return cache.get("img|" + src);
+  const cargar = (src) => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+  const proporcion = (src) => {
+    if (!cache.has("prop|" + src)) cache.set("prop|" + src, cargar(src).then((i) => i.naturalWidth / i.naturalHeight));
+    return cache.get("prop|" + src);
   };
+  // Fondo desenfocado ya hecho (img/ref/borroso/, lo genera sincronizar-sitio.cjs). Si falta, se usa la foto con blur de CSS.
+  const borrosa = (src) => src.replace(/^img\/ref\/([^/]+)$/, "img/ref/borroso/$1");
+  const fondoBorroso = (src, extra = "") => `<img class="pg-fondo borroso" src="${borrosa(src)}" alt=""${extra} onerror="this.onerror=null;this.src='${src}';this.classList.add('css')">`;
 
   // Regiones (en fracciones del lienzo) donde puede ir el texto.
   const REG_PAGINA = { arriba: [0, 0, 1, 0.45], abajo: [0, 0.55, 1, 1] };
@@ -82,7 +87,7 @@
       alfa = (0.42 - Lp) / Math.max(Lv - Lp, 0.001);
     }
     const minimo = Math.min(0.88, 0.25 + Z.desv * 2 + Z.grad * 4); // fotos cargadas piden más velo
-    alfa = Math.min(0.94, Math.max(minimo, alfa));
+    alfa = Math.min(0.94, Math.max(minimo, alfa, pref.velo || 0)); // d.velo: velo mínimo para fondos muy cargados
     return { tono, rgb: rgb.join(","), alfa: alfa.toFixed(2) };
   }
 
@@ -91,9 +96,9 @@
     const prep = { disenos: {} };
     await Promise.all(r.disenos.map(async (d) => {
       try {
-        const img = await cargar(d.img);
         // Panorámica solo donde se verificó a mano que el texto cae en zona vacía (d.lado); si no, foto limpia + página de texto.
-        const modo = d.pliego || (d.lado && img.naturalWidth / img.naturalHeight >= 1.25 ? "pano" : "par");
+        // Las que no tienen d.lado no se cargan aquí: van en par.
+        const modo = d.pliego || (d.lado && (await proporcion(d.img)) >= 1.25 ? "pano" : "par");
         if (modo === "par") { prep.disenos[d.id] = { modo }; return; }
         const st = await analizar(d.img, d.foco, ASPECTO * 2, REG_PANO);
         const clave = d.lado && d.zona ? `${d.lado}-${d.zona}` : Object.keys(st).reduce((a, k) => (st[k].ruido < st[a].ruido ? k : a));
@@ -155,7 +160,7 @@
 
     P.push(`
       <div class="pg pg-ft pg-indice t-claro">
-        <img class="pg-fondo borroso" src="${r.portada}" alt="">
+        ${fondoBorroso(r.portada)}
         <div class="ft-bloque">
           <p class="ft-sup">Contenido</p>
           <h2 class="ft-nom">En esta <em>edición</em></h2>
@@ -175,7 +180,7 @@
       const foco = d.foco || "50% 50%";
       if (pr.modo === "pano") {
         const texto = `
-          <div class="ft-bloque"${d.alto ? ` style="max-height:${d.alto}%"` : ""}>
+          <div class="ft-bloque"${d.alto || d.ancho ? ` style="${d.alto ? `max-height:${d.alto}%;` : ""}${d.ancho ? `width:${d.ancho}%;` : ""}"` : ""}>
             ${sup(r, d)}
             <h3 class="ft-nom">${titular(d.nombre)}</h3>
             <p class="ft-valor">${esc(d.valor)}</p>
@@ -184,7 +189,7 @@
         for (const mitad of ["izq", "der"]) {
           const conTexto = mitad === pr.lado;
           P.push(`
-            <div class="pg pg-ft pg-pano mitad-${mitad} ${conTexto ? `con-texto z-${pr.zona} t-${pr.tono}` : "t-claro"}" style="--velo:${pr.rgb || "20,16,12"};--alfa:${pr.alfa || 0.6}">
+            <div class="pg pg-ft pg-pano mitad-${mitad} ${conTexto ? `con-texto z-${pr.zona} t-${pr.tono}${d.velo ? " velo-amplio" : ""}` : "t-claro"}" style="--velo:${pr.rgb || "20,16,12"};--alfa:${pr.alfa || 0.6}">
               <div class="pano"><img src="${d.img}" alt="${esc(d.nombre)}" style="object-position:${foco}"></div>
               <div class="velo"></div>
               ${conTexto ? texto : ""}
@@ -196,7 +201,7 @@
         // encaje "entera": la foto completa sobre su propio fondo desenfocado (para fotos anchas que no aguantan recorte).
         const foto = () => d.encaje === "entera" ? `
           <div class="pg pg-ft pg-solo pg-entera t-claro">
-            <img class="pg-fondo borroso" src="${d.img}" alt="">
+            ${fondoBorroso(d.img)}
             <img class="foto-entera" src="${d.img}" alt="${esc(d.nombre)}">
             <div class="velo"></div>
             ${pie(esc(d.nombre))}
@@ -208,7 +213,7 @@
           </div>`;
         const texto = () => `
           <div class="pg pg-ft pg-par t-claro">
-            <img class="pg-fondo borroso" src="${d.img}" alt="" style="object-position:${foco}">
+            ${fondoBorroso(d.img, ` style="object-position:${foco}"`)}
             <div class="ft-bloque">
               ${sup(r, d)}
               <h3 class="ft-nom grande">${titular(d.nombre)}</h3>
@@ -226,7 +231,7 @@
     const ultima = r.disenos[r.disenos.length - 1];
     P.push(`
       <div class="pg pg-ft pg-cta t-claro">
-        <img class="pg-fondo borroso" src="${ultima.img}" alt="">
+        ${fondoBorroso(ultima.img)}
         <div class="ft-bloque">
           <p class="ft-sup">¿Cuál va en su espacio?</p>
           <h2 class="ft-nom grande">Lo visitamos, medimos y le proponemos el estilo <em>sin costo.</em></h2>
@@ -301,47 +306,137 @@
   const $copiar = capa.querySelector(".libro-copiar");
 
   let rev = null, prep = null, paginas = [], hojas = [], actual = 0, modo = "doble", abierta = false, tarjeta = null, ocupado = false;
+  let ultimaVistaCatalogo = "";
+  // Celular y tableta (menos de 900 px): también a dos páginas, como la revista impresa. Tocar la página derecha
+  // avanza y la izquierda regresa (igual que en la computadora); pellizcar con dos dedos agranda.
+  // zoom: "libre" (pellizco) o "izq"/"der"/"centro" (una página a lo ancho, al pasar con las flechas estando agrandada).
+  let compacto = false, escala = 1, anchoPag = 0, zoom = null, podar = 0;
+  // Acercamiento de la escena: translate(x, y) scale(s). zoom "libre" = el que deja el pellizco (dos dedos o trackpad).
+  let vista = { s: 1, x: 0, y: 0 };
 
   function medir() {
-    modo = innerWidth >= 900 ? "doble" : "simple";
-    capa.classList.toggle("simple", modo === "simple");
-    let pw, ph;
-    if (modo === "doble") {
-      const w = innerWidth - 220, h = innerHeight - 140;
-      ph = Math.min(h, (w / 2) / ASPECTO); pw = ph * ASPECTO;
-    } else {
-      const w = innerWidth - 28, h = innerHeight - 150;
-      pw = Math.min(w, h * ASPECTO); ph = pw / ASPECTO;
-    }
+    modo = "doble";
+    compacto = innerWidth < 900;
+    capa.classList.toggle("compacto", compacto);
+    const w = compacto ? innerWidth - 16 : innerWidth - 220, h = innerHeight - (compacto ? 150 : 140);
+    const ph = Math.min(h, (w / 2) / ASPECTO), pw = ph * ASPECTO;
+    anchoPag = pw;
+    // Cuánto se acerca una página al tocarla: que llene el ancho sin pasarse del alto disponible.
+    escala = compacto ? Math.min((innerWidth - 12) / pw, (innerHeight - 124) / ph) : 1;
     capa.style.setProperty("--pw", pw + "px");
     capa.style.setProperty("--ph", ph + "px");
-    escena.style.width = (modo === "doble" ? pw * 2 : pw) + "px";
+    escena.style.width = pw * 2 + "px";
     escena.style.height = ph + "px";
-    libro.style.fontSize = pw * (modo === "doble" ? 0.033 : 0.037) + "px";
+    libro.style.fontSize = pw * 0.033 + "px";
   }
 
+  // Solo se arman las páginas cercanas a la que está a la vista; las demás quedan vacías y ocultas.
+  // Armar la revista completa (20+ páginas, cada una en su capa 3D) hacía que el celular se quedara sin memoria.
   function hoja(frente, reverso) {
     const h = document.createElement("div");
-    h.className = "hoja";
-    h.innerHTML = `<div class="cara frente">${frente}</div><div class="cara reverso">${reverso}</div>`;
+    h.className = "hoja lejos";
+    h.innerHTML = `<div class="cara frente"></div><div class="cara reverso"></div>`;
+    h._html = [frente, reverso];
     return h;
+  }
+  function llenar(h) {
+    if (h._lleno) return;
+    h._lleno = true; h._ajustada = false;
+    h.children[0].innerHTML = h._html[0];
+    h.children[1].innerHTML = h._html[1];
+  }
+  function vaciar(h) {
+    if (!h._lleno) return;
+    h._lleno = false;
+    h.children[0].innerHTML = h.children[1].innerHTML = "";
+  }
+  // vistas: hojas que se ven ahora (la de la izquierda y la de la derecha) más las que van a girar.
+  function sincronizar(extra = []) {
+    const ver = new Set([actual - 1, actual, ...extra]);
+    // Las que todavía están girando (pasos seguidos) siguen a la vista con sus vecinas hasta que terminan.
+    hojas.forEach((h, i) => { if (h.classList.contains("girando")) { ver.add(i - 1); ver.add(i); ver.add(i + 1); } });
+    const listas = new Set();
+    ver.forEach((i) => { listas.add(i - 1); listas.add(i); listas.add(i + 1); }); // las vecinas cargan sus fotos por adelantado
+    hojas.forEach((h, i) => {
+      if (listas.has(i)) llenar(h); else vaciar(h);
+      if (ver.has(i)) {
+        h.classList.remove("lejos");
+        if (!h._ajustada) { h._ajustada = true; ajustarTextos(h); }
+      } else h.classList.add("lejos");
+    });
   }
 
   function construir(pIndex) {
     medir();
+    zoom = null; aplicarZoom(true);
     paginas = pagsDe(rev, prep);
     libro.innerHTML = "";
     hojas = [];
-    if (modo === "doble") {
-      for (let k = 0; k < paginas.length / 2; k++) hojas.push(hoja(paginas[2 * k], paginas[2 * k + 1]));
-      actual = Math.ceil(pIndex / 2);
-    } else {
-      paginas.forEach((p) => hojas.push(hoja(p, `<div class="pg pg-blanca"></div>`)));
-      actual = pIndex;
-    }
-    hojas.forEach((h, i) => { h.classList.toggle("volteada", i < actual); libro.appendChild(h); });
+    for (let k = 0; k < paginas.length / 2; k++) hojas.push(hoja(paginas[2 * k], paginas[2 * k + 1]));
+    actual = Math.ceil(pIndex / 2);
+    hojas.forEach((h, i) => { h.classList.toggle("volteada", i < actual); marcarCara(h, i < actual); libro.appendChild(h); });
+    sincronizar();
     ordenar(); posicion(); ui();
-    ajustarTextos(libro);
+  }
+
+  // Acercar una página (celular). La escena se agranda y se corre para que esa página llene el ancho.
+  function pintarVista() {
+    const { s, x, y } = vista;
+    escena.style.transform = s === 1 && !x && !y ? "" : `translate(${x}px, ${y}px) scale(${s})`;
+  }
+  function aplicarZoom(sinAnim) {
+    capa.classList.toggle("con-zoom", !!zoom);
+    if (zoom !== "libre") {
+      const dx = zoom === "izq" ? escala * anchoPag / 2 : zoom === "der" ? -escala * anchoPag / 2 : 0;
+      vista = zoom ? { s: escala, x: dx, y: 0 } : { s: 1, x: 0, y: 0 };
+    }
+    if (sinAnim) escena.style.transition = "none";
+    pintarVista();
+    if (sinAnim) { void escena.offsetWidth; escena.style.transition = ""; }
+  }
+
+  // ---------- Pellizcar para agrandar ----------
+  const maxEscala = () => (compacto ? Math.max(4, escala * 2.4) : 3);
+  const centroEscena = () => ({ x: escena.offsetLeft + escena.offsetWidth / 2, y: escena.offsetTop + escena.offsetHeight / 2 });
+  // Agranda o achica dejando quieto el punto (px, py) de la pantalla.
+  function zoomEn(px, py, s2, base) {
+    const c = centroEscena(), k = (s2 = Math.max(1, Math.min(maxEscala(), s2))) / base.s;
+    return { s: s2, x: px - c.x - k * (px - c.x - base.x), y: py - c.y - k * (py - c.y - base.y) };
+  }
+  // Que la revista agrandada no se salga de la pantalla: si es más grande que el espacio, sus bordes no se despegan.
+  function acotar(v) {
+    const c = centroEscena(), W = escena.offsetWidth * v.s, H = escena.offsetHeight * v.s, m = 8;
+    const arriba = compacto ? 64 : 70, abajo = innerHeight - (compacto ? 78 : 70);
+    v.x = W <= innerWidth - 2 * m ? 0 : Math.min(m - c.x + W / 2, Math.max(innerWidth - m - c.x - W / 2, v.x));
+    v.y = H <= abajo - arriba ? 0 : Math.min(arriba - c.y + H / 2, Math.max(abajo - c.y - H / 2, v.y));
+    return v;
+  }
+  // Al soltar: casi sin agrandar vuelve a las dos páginas; si no, se queda donde la dejó.
+  function terminarPellizco() {
+    capa.classList.remove("gesto");
+    if (vista.s < 1.08) { zoom = null; aplicarZoom(); }
+    else { zoom = "libre"; capa.classList.add("con-zoom"); acotar(vista); pintarVista(); }
+    ui();
+  }
+  function moverVista(v) { vista = acotar(v); zoom = "libre"; capa.classList.add("con-zoom", "gesto"); pintarVista(); }
+
+  const ladoDe = (n) => (n === 0 || n === hojas.length ? "centro" : null);
+  function alejar() { zoom = null; aplicarZoom(); ui(); }
+  // Con una página acercada, "siguiente" pasa a la de al lado y, al llegar a la derecha, voltea la hoja.
+  // Con el acercamiento libre, cuenta como acercada la página que está más al centro.
+  function avanzar() {
+    if (zoom === "libre") zoom = ladoDe(actual) || (vista.x > 0 ? "izq" : "der");
+    if (!zoom) return sig();
+    if (zoom === "izq") { zoom = "der"; aplicarZoom(); ui(); return; }
+    if (actual >= maxActual()) return;
+    sig(); zoom = ladoDe(actual) || "izq"; aplicarZoom(); ui();
+  }
+  function retroceder() {
+    if (zoom === "libre") zoom = ladoDe(actual) || (vista.x > 0 ? "izq" : "der");
+    if (!zoom) return ant();
+    if (zoom === "der") { zoom = "izq"; aplicarZoom(); ui(); return; }
+    if (actual <= 0) return;
+    ant(); zoom = ladoDe(actual) || "der"; aplicarZoom(); ui();
   }
 
   const maxActual = () => (modo === "doble" ? hojas.length : hojas.length - 1);
@@ -359,8 +454,19 @@
     libro.classList.toggle("cerrado-atras", modo === "doble" && actual === hojas.length);
   }
 
+  // La cara que no mira al lector se oculta con visibility, sin depender de backface-visibility:
+  // Safari en iPhone no siempre la oculta y se veía al revés, encimada sobre la página.
+  // Al girar, el cambio de cara ocurre a la mitad, cuando la hoja está de canto.
+  function marcarCara(h, volteada) {
+    h.classList.toggle("ver-reverso", volteada);
+    h.classList.toggle("ver-frente", !volteada);
+  }
+
   function voltear(i, adelante) {
     const h = hojas[i];
+    if (!h) return;
+    clearTimeout(h._c);
+    h._c = setTimeout(() => marcarCara(h, adelante), DUR / 2);
     h.classList.add("girando");
     h.style.zIndex = 500 + (adelante ? i : hojas.length - i);
     h.classList.toggle("volteada", adelante);
@@ -372,16 +478,32 @@
     n = Math.max(0, Math.min(n, maxActual()));
     if (n === actual) return;
     const adelante = n > actual;
-    const seq = [];
+    let seq = [];
     if (adelante) for (let i = actual; i < n; i++) seq.push(i);
     else for (let i = actual - 1; i >= n; i--) seq.push(i);
+    // En un salto largo (desde el índice, o un enlace) las hojas del medio pasan sin animación: solo se ven girar las dos últimas.
+    if (seq.length > 2) {
+      seq.slice(0, -2).forEach((i) => { hojas[i].classList.add("sin-trans"); hojas[i].classList.toggle("volteada", adelante); marcarCara(hojas[i], adelante); });
+      seq = seq.slice(-2);
+    }
+    const extra = [];
+    for (let i = Math.min(...seq) - 1; i <= Math.max(...seq) + 1; i++) extra.push(i);
     actual = n;
+    sincronizar(extra);
+    ordenar();
+    void libro.offsetWidth; // que las hojas recién mostradas tengan estilo antes de girar
+    libro.querySelectorAll(".sin-trans").forEach((h) => h.classList.remove("sin-trans"));
     seq.forEach((i, j) => setTimeout(() => voltear(i, adelante), reducir ? 0 : j * 110));
+    clearTimeout(podar);
+    podar = setTimeout(() => sincronizar(), DUR + 80 + seq.length * 110);
     posicion(); ui();
   }
   const sig = () => irA(actual + 1);
   const ant = () => irA(actual - 1);
-  const irPagina = (p) => irA(modo === "doble" ? Math.ceil(p / 2) : p);
+  function irPagina(p) {
+    irA(Math.ceil(p / 2));
+    if (zoom) { zoom = ladoDe(actual) || (p % 2 ? "izq" : "der"); aplicarZoom(); ui(); }
+  }
   const irDiseno = (i) => irPagina(3 + 2 * i);
 
   // Diseño que se ve ahora (cada diseño ocupa las páginas 3+2i y 4+2i), o -1.
@@ -390,6 +512,32 @@
     const i = modo === "doble" ? actual - 2 : Math.floor((actual - 3) / 2);
     return i >= 0 && i < rev.disenos.length ? i : -1;
   }
+
+  function parametrosCatalogo() {
+    if (!rev) return null;
+    const i = disenoVisible();
+    const d = i >= 0 ? rev.disenos[i] : null;
+    return {
+      content_type: d ? "product" : "product_group",
+      content_ids: [d ? `${rev.id}:${d.slug}` : rev.id],
+      content_name: d ? d.nombre : rev.titulo,
+      content_category: rev.titulo,
+      catalog_id: rev.id,
+      ...(d ? { design_id: d.id, design_slug: d.slug } : {}),
+    };
+  }
+
+  function trackCatalogView() {
+    if (!abierta || !rev || !window.mvMetaPixel) return;
+    const i = disenoVisible();
+    const key = i >= 0 ? `${rev.id}:${rev.disenos[i].slug}` : `magazine:${rev.id}`;
+    if (key === ultimaVistaCatalogo) return;
+    ultimaVistaCatalogo = key;
+    const params = parametrosCatalogo();
+    window.mvMetaPixel.track("ViewContent", params);
+    window.mvMetaPixel.trackCustom(i >= 0 ? "CatalogDesignView" : "CatalogMagazineView", params);
+  }
+
   // El enlace de la barra sigue a la página: así "Copiar enlace" comparte el diseño que está a la vista.
   // Enlace para compartir lo que está a la vista: el sitio da enlaces limpios (/catalogo/<revista>/<diseño>/)
   // con su propia vista previa; si no, el de esta página con #revista-…
@@ -420,12 +568,15 @@
     let txt;
     if (p === 0) txt = "Portada · toque para abrir";
     else if ((modo === "doble" && actual === hojas.length) || (modo === "simple" && p === paginas.length - 1)) txt = "Contraportada";
-    else if (modo === "doble") txt = `Páginas ${p}–${Math.min(p + 1, interiores)} de ${interiores}`;
-    else txt = `Página ${p} de ${interiores}`;
+    else if (zoom === "libre") txt = `Páginas ${p}–${Math.min(p + 1, interiores)} · toque para alejar`;
+    else if (zoom === "izq" || zoom === "der") txt = `Página ${zoom === "izq" ? p : p + 1} de ${interiores}`;
+    else if (compacto) txt = `Páginas ${p}–${Math.min(p + 1, interiores)} · pellizque para agrandar`;
+    else txt = `Páginas ${p}–${Math.min(p + 1, interiores)} de ${interiores}`;
     $pag.textContent = txt;
     $prev.disabled = actual === 0;
     $next.disabled = actual === maxActual();
     marcarEnlace();
+    trackCatalogView();
   }
 
   // ---------- Abrir y cerrar ----------
@@ -436,6 +587,7 @@
     if (!r || ocupado) return;
     ocupado = true;
     rev = r;
+    ultimaVistaCatalogo = "";
     tarjeta = document.querySelector(`.revista[data-revista="${id}"]`);
     $titulo.innerHTML = `<b>Nº ${r.n}</b> ${esc(r.titulo)}`;
     capa.hidden = false;
@@ -464,7 +616,8 @@
       capa.classList.add("visible");
       await espera(250);
     }
-    escena.style.transition = "";
+    escena.style.transition = escena.style.transformOrigin = "";
+    escena.style.transform = "";
     libro.classList.remove("sin-anim");
     abierta = true;
     ocupado = false;
@@ -484,6 +637,9 @@
     await espera(460);
     capa.hidden = true;
     escena.style.transition = escena.style.transform = "";
+    zoom = null; vista = { s: 1, x: 0, y: 0 }; dedos.clear(); gesto = null;
+    capa.classList.remove("con-zoom", "gesto");
+    clearTimeout(podar);
     document.documentElement.classList.remove("libro-on");
     libro.innerHTML = "";
     hojas = [];
@@ -537,8 +693,13 @@
 
   // ---------- Eventos ----------
   capa.querySelector(".libro-cerrar").addEventListener("click", cerrar);
+  $wa.addEventListener("click", () => {
+    if (rev && window.mvMetaPixel) window.mvMetaPixel.trackCustom("CatalogQuoteIntent", parametrosCatalogo());
+  });
   $copiar.addEventListener("click", async () => {
     if (!rev) return;
+    const params = parametrosCatalogo();
+    if (window.mvMetaPixel) window.mvMetaPixel.trackCustom("CatalogShare", params);
     const url = enlaceActual();
     try { await navigator.clipboard.writeText(url); }
     catch { const t = document.createElement("textarea"); t.value = url; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); }
@@ -546,17 +707,87 @@
     clearTimeout($copiar._t);
     $copiar._t = setTimeout(() => $copiar.classList.remove("copiado"), 1800);
   });
-  $prev.addEventListener("click", ant);
-  $next.addEventListener("click", sig);
+  $prev.addEventListener("click", retroceder);
+  $next.addEventListener("click", avanzar);
 
-  let toque = null, arrastre = false;
-  escena.addEventListener("pointerdown", (e) => { toque = { x: e.clientX, y: e.clientY }; arrastre = false; });
-  escena.addEventListener("pointerup", (e) => {
-    if (!toque) return;
-    const dx = e.clientX - toque.x, dy = e.clientY - toque.y;
-    toque = null;
-    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) { arrastre = true; dx < 0 ? sig() : ant(); }
+  // Gestos en cualquier parte de la pantalla (menos la barra y los botones):
+  //  · deslizar con un dedo pasa la página;
+  //  · pellizcar con dos dedos agranda donde están los dedos; con la página agrandada, un dedo la mueve.
+  const dedos = new Map();
+  let gesto = null, arrastre = false;
+  const distancia = (a, b) => Math.hypot(a.x - b.x, a.y - b.y) || 1;
+  const medio = (a, b) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
+  function empezarUnDedo(p) { gesto = { tipo: "uno", x: p.x, y: p.y, v: { ...vista }, movio: false }; }
+  capa.addEventListener("pointerdown", (e) => {
+    if (!abierta || e.target.closest(".libro-top, .libro-ctrl")) return;
+    dedos.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (dedos.size === 1) { arrastre = false; empezarUnDedo(dedos.get(e.pointerId)); }
+    else if (dedos.size === 2) {
+      const [a, b] = [...dedos.values()];
+      gesto = { tipo: "pinza", d: distancia(a, b), m: medio(a, b), v: { ...vista } };
+      arrastre = true;
+      capa.classList.add("gesto");
+    }
   });
+  capa.addEventListener("pointermove", (e) => {
+    if (!dedos.has(e.pointerId) || !gesto) return;
+    dedos.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (gesto.tipo === "pinza" && dedos.size >= 2) {
+      const [a, b] = [...dedos.values()], m = medio(a, b);
+      const v = zoomEn(gesto.m.x, gesto.m.y, gesto.v.s * distancia(a, b) / gesto.d, gesto.v);
+      moverVista({ s: v.s, x: v.x + m.x - gesto.m.x, y: v.y + m.y - gesto.m.y });
+    } else if (gesto.tipo === "uno" && zoom === "libre") {
+      const dx = e.clientX - gesto.x, dy = e.clientY - gesto.y;
+      if (!gesto.movio && Math.hypot(dx, dy) < 6) return;
+      gesto.movio = arrastre = true;
+      moverVista({ s: gesto.v.s, x: gesto.v.x + dx, y: gesto.v.y + dy });
+    }
+  });
+  function soltar(e) {
+    if (!dedos.has(e.pointerId)) return;
+    const p = dedos.get(e.pointerId);
+    dedos.delete(e.pointerId);
+    if (!gesto) return;
+    if (gesto.tipo === "pinza") {
+      if (dedos.size < 2) { terminarPellizco(); if (dedos.size === 1) { empezarUnDedo([...dedos.values()][0]); gesto.movio = true; } else gesto = null; }
+      return;
+    }
+    const g = gesto; gesto = null;
+    if (g.movio) { capa.classList.remove("gesto"); return; }
+    if (e.type === "pointercancel" || zoom === "libre") return;
+    const dx = p.x - g.x, dy = p.y - g.y;
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) { arrastre = true; dx < 0 ? avanzar() : retroceder(); }
+  }
+  capa.addEventListener("pointerup", soltar);
+  capa.addEventListener("pointercancel", soltar);
+  capa.addEventListener("dragstart", (e) => e.preventDefault()); // arrastrar una foto cancelaba el deslizamiento
+  // Safari: que el pellizco no agrande toda la página web en vez de la revista.
+  const tactil = navigator.maxTouchPoints > 0;
+  let g0 = null;
+  capa.addEventListener("gesturestart", (e) => {
+    e.preventDefault();
+    if (tactil || !abierta) return; // en el celular el pellizco ya llega por los dedos
+    g0 = { v: { ...vista }, x: e.clientX, y: e.clientY };
+  });
+  capa.addEventListener("gesturechange", (e) => {
+    e.preventDefault();
+    if (g0) moverVista(zoomEn(g0.x, g0.y, g0.v.s * e.scale, g0.v));
+  });
+  capa.addEventListener("gestureend", (e) => { e.preventDefault(); if (g0) { g0 = null; terminarPellizco(); } });
+  // Trackpad en Chrome/Edge/Firefox: pellizcar llega como rueda con Ctrl. Con la página agrandada, dos dedos la mueven.
+  let rueda = 0;
+  capa.addEventListener("wheel", (e) => {
+    if (!abierta) return;
+    if (e.ctrlKey) {
+      e.preventDefault();
+      moverVista(zoomEn(e.clientX, e.clientY, vista.s * Math.exp(-e.deltaY * 0.01), vista));
+    } else if (zoom === "libre") {
+      e.preventDefault();
+      moverVista({ ...vista, x: vista.x - e.deltaX, y: vista.y - e.deltaY });
+    } else return;
+    clearTimeout(rueda);
+    rueda = setTimeout(terminarPellizco, 180);
+  }, { passive: false });
   escena.addEventListener("click", (e) => {
     if (arrastre) { arrastre = false; return; }
     const ir = e.target.closest("[data-ir]");
@@ -564,14 +795,15 @@
     const otra = e.target.closest("[data-revista-ir]");
     if (otra) { location.hash = "#revista-" + otra.dataset.revistaIr; return; }
     if (e.target.closest("a, button")) return;
+    if (zoom) { alejar(); return; } // con la revista agrandada, un toque vuelve a las dos páginas
     const h = e.target.closest(".hoja");
     if (h) h.classList.contains("volteada") ? ant() : sig();
   });
 
   document.addEventListener("keydown", (e) => {
     if (!abierta) return;
-    if (e.key === "ArrowRight") sig();
-    else if (e.key === "ArrowLeft") ant();
+    if (e.key === "ArrowRight") avanzar();
+    else if (e.key === "ArrowLeft") retroceder();
     else if (e.key === "Escape") cerrar();
   });
 
