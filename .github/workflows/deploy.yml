@@ -29,6 +29,17 @@ jobs:
         run: |
           sed -i 's/__WEB3FORMS_ACCESS_KEY__/${{ secrets.WEB3FORMS_ACCESS_KEY }}/g' index.html
 
+      # Llave pública (pk_…) del planificador de Stackline: es visible en la página por diseño;
+      # va en una variable para cambiarla sin tocar el código. Sin ella el planificador no aparece.
+      - name: Inject Stackline Planner Key
+        env:
+          STACKLINE_PLANNER_KEY: ${{ vars.STACKLINE_PLANNER_KEY }}
+        run: |
+          if [ -z "$STACKLINE_PLANNER_KEY" ]; then
+            echo "::warning::Falta la variable STACKLINE_PLANNER_KEY: el planificador no se mostrará."
+          fi
+          sed -i "s/__STACKLINE_PLANNER_KEY__/${STACKLINE_PLANNER_KEY}/g" index.html
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 

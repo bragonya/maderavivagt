@@ -517,6 +517,14 @@ html.motion .paso:not(.on) h3, html.motion .paso:not(.on) p { opacity: .32; }
   .galeria figcaption { opacity: 1; transform: none; font-size: 16px; padding: 30px 12px 10px; }
 }
 
+/* ---------- Planificador por presupuesto (Stackline) ---------- */
+/* Más ancho que las demás secciones (.wrap llega a 1360 px): el planificador tiene
+   tres columnas y aprovecha la pantalla, con un margen lateral más chico. */
+.planificador-wrap { width: 100%; max-width: 1920px; margin: 0 auto; padding: 0 clamp(12px, 2vw, 32px); }
+/* embed.js pone el bloque dentro; si no carga, el div queda vacío y no ocupa espacio. */
+#planificador { padding: clamp(64px, 10vh, 120px) 0; }
+#planificador:empty { display: none; }
+
 /* ==========================================================================
    AGENDA TU VISITA
    ========================================================================== */
